@@ -21,8 +21,21 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: lots of sanity checking
             
             // Read 1.5.x data
-            const string am2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx_older";
-            const string outputAm2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx";
+            var debug = true;
+            string am2rPath = "";
+            string outputAm2rPath = "";
+            if (debug)
+            {
+                am2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx_older";
+                outputAm2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx";
+            }
+            else
+            {
+                Console.WriteLine("Please enter the full path to your 1.5.5 data.win");
+                am2rPath = Console.ReadLine();
+                Console.WriteLine("Please enter the output path where you want the randomized game to be");
+                outputAm2rPath = Console.ReadLine();
+            }
             var gmData = new UndertaleData();
             using (FileStream fs = new FileInfo(am2rPath).OpenRead())
             {
@@ -385,6 +398,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: Varia not in menu when collected!
             
+            // TODO: when respawning, one doesnt spawn with full health, but instead the one defined in loadcharater vars!
+            
+            // TODO: when killing arachnus, spring shows up for a brief moment
+
             // TODO: all other locations! this is just very basic stuff
             // Bombs
             var subscreenMenuStep = gmData.Code.ByName("gml_Object_oSubscreenMenu_Step_0");
