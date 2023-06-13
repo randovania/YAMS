@@ -100,10 +100,16 @@ public enum ItemEnum
     
     [EnumMember(Value = "Missiles")]
     Missile,
+    [EnumMember(Value = "Locked Missiles")]
+    LockedMissile = Missile,
     [EnumMember(Value = "Super Missiles")]
     SuperMissile,
+    [EnumMember(Value = "Locked Super Missiles")]
+    LockedSuperMissile = SuperMissile,
     [EnumMember(Value = "Power Bombs")]
     PBomb,
+    [EnumMember(Value = "Locked Power Bombs")]
+    LockedPBomb = PBomb,
     
     [EnumMember(Value = "Missile Launcher")]
     MissileLauncher,

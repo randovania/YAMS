@@ -11,6 +11,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
+            const uint ThothBridgeLeftDoorID = 400000;
+            const uint ThothBridgeRightDoorID = 400001;
+            const uint A2WaterTurbineLeftDoorID = 400002;
+            
             // Change this to not have to deal with floating point madness
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             
@@ -19,6 +23,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: implement power beam
             
             // TODO: lots of sanity checking
+            
+            // TODO: make insanity save stations enabled again
+            
+            // TODO: have some "FOOL!" thing.
             
             // Read 1.5.x data
             var debug = true;
@@ -181,20 +189,82 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             });
             
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemSMissileLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_9"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_10"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_11"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_12"]] },
+                }
+            });
+            
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
             gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
             
             // Remove other game modes, rename "normal" to "Randovania"
-            //TODO:
+            var gameSelMenuStepCode = gmData.Code.ByName("gml_Object_oGameSelMenu_Step_0");
+            ReplaceGMLInCode(gameSelMenuStepCode, "if (global.mod_gamebeaten == 1)", "if (false)");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSlotMenu_normal_only_Create_0"), 
+                "d0str = get_text(\"Title-Additions\", \"GameSlot_NewGame_NormalGame\")", "d0str = \"Randovania\";");
 
-            // TODO: add doors to gfs thoth bridge
+            // Unlock fusion etc. by default
+            var unlockStuffCode = gmData.Code.ByName("gml_Object_oControl_Other_2");
+            AppendGMLInCode(unlockStuffCode, "global.mod_fusion_unlocked = 1; global.mod_gamebeaten = 1;");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), "temcollunlock = 1;");
+
+            // Fix plasma chamber having a missile door instead of normal after tester dead
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
+            
+            // Add doors to gfs thoth bridge
+            var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
+            var thothRightDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothRightDoor_Create") };
+            gmData.Code.Add(thothLeftDoorCC);
+            gmData.Code.Add(thothRightDoorCC);
+            gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(new UndertaleRoom.GameObject()
+            {
+                X = 24,
+                Y = 96,
+                ObjectDefinition = gmData.GameObjects.ByName("oDoorA8"),
+                InstanceID = ThothBridgeLeftDoorID,
+                ScaleY = 1,
+                ScaleX = 1,
+                CreationCode = thothLeftDoorCC
+            });
+            gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(new UndertaleRoom.GameObject()
+            {
+                X = 616,
+                Y = 96,
+                ObjectDefinition = gmData.GameObjects.ByName("oDoorA8"),
+                InstanceID = ThothBridgeRightDoorID,
+                ScaleX = -1,
+                ScaleY = 1,
+                CreationCode = thothRightDoorCC
+            });
+            
+            // Turn these blocks always off because they're annoying
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
+                "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", "if (true)");
             
             // TODO: add door from water turbine station to hydro station exterior"
             
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
             ReplaceGMLInCode(newGameCode,"oControl.mod_randomgamebool = 0", "oControl.mod_randomgamebool = 1");
+            
+            // Fix local metroids
+            ReplaceGMLInCode(newGameCode, "global.monstersleft = 47", "global.monstersleft = 47; global.monstersarea = 38");
 
             // Add main (super) missile / PB launcher
             // missileLauncher, SMissileLauncher, PBombLauncher
@@ -282,6 +352,24 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 draw_sprite(sGUIPBomb, 3, (xoff + 1), 4)
 """);
             
+            // Fix weapon selection with toggle
+            var chStepControlCode = gmData.Code.ByName("gml_Script_chStepControl");
+            ReplaceGMLInCode(chStepControlCode, "if (kMissile && kMissilePushedSteps == 1 && global.maxmissiles > 0", "if (kMissile && kMissilePushedSteps == 1");
+            ReplaceGMLInCode(chStepControlCode, "if (global.currentweapon == 1 && global.missiles == 0)", "if (global.currentweapon == 1 && (global.maxmissiles == 0 || global.missiles == 0))");
+            
+            // Fix weapon selection with hold
+            ReplaceGMLInCode(chStepControlCode, """
+                if (global.currentweapon == 0)
+                    global.currentweapon = 1
+            """, """
+            if (global.currentweapon == 0)
+            {
+                if (global.maxmissiles > 0) global.currentweapon = 1;
+                else if (global.maxsmissiles > 0) global.currentweapon = 2;
+            }
+            """);
+            ReplaceGMLInCode(chStepControlCode, "if (global.maxmissiles > 0 && (state", "if ((state");
+            
             // TODO: change samus arm cannon to different sprite, when no launcher. This requires delving into state machine tho and that is *pain*
             
             // Set geothermal reactor to always be exploded
@@ -347,8 +435,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "popup_text(text1)");
             
             
-            
-            
+            // TODO: fix db logic errors
 
             // Decouple Major items from item locations
             PrependGMLInCode(characterVarsCode, "global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
@@ -390,17 +477,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(characterVarsCode, "global.currentsuit = 0", 
                 "global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
             
-            
-            // TODO: local metroid counter goofed up!
-            
-            
-            //TODO: spazer not in menu when collected!
-            
-            // TODO: Varia not in menu when collected!
-            
-            // TODO: when respawning, one doesnt spawn with full health, but instead the one defined in loadcharater vars!
-            
-            // TODO: when killing arachnus, spring shows up for a brief moment
+            // Fix spring showing up for a brief moment when killing arachnus
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArachnus_Alarm_11"), "if (temp_randitem == oItemJumpBall)", "if (false)");
 
             // TODO: all other locations! this is just very basic stuff
             // Bombs
@@ -414,10 +492,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(subscreenMenuStep, "global.item[1] == 0", "!global.hasPowergrip");
             
             // Spiderball
+            // TODO: change septogg scripts
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[2]", "global.hasSpiderball");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[2] == 0", "!global.hasSpiderball");
             
             // Jumpball
+            // TODO: instance code for destroyable block
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[3]", "global.hasJumpball");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[3] == 0", "!global.hasJumpball");
             
@@ -427,10 +507,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(subscreenMenuStep, "global.item[4] == 0", "!global.hasHijump");
             
             // Varia
-            // TODO!!! lots of damage scripts!
+            // TODO!!! gml_Script_characterStepEvent! needs fixing first, as otherwise it'll crash with current utmt setup
             var subscreenSuitDraw = gmData.Code.ByName("gml_Object_oSubScreenSuit_Draw_0");
             ReplaceGMLInCode(subscreenSuitDraw, "global.item[5]", "global.hasVaria");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[5] == 0", "!global.hasVaria");
+            foreach(var code in new[]{"gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown", "gml_Object_oQueenHead_Step_0"})
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[5] == 0", "!global.hasVaria");
             
             // Spacejump
             ReplaceGMLInCode(subcreenBootsDraw, "global.item[6]", "global.hasSpacejump");
@@ -457,7 +539,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Ice
             ReplaceGMLInCode(itemsSwapScript, "global.item[11]", "global.hasIbeam");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[11] == 0", "!global.hasIbeam");
-            
+            foreach(var code in new[]{"gml_Object_oEris_Create_0", "gml_Object_oErisBody1_Create_0", "gml_Object_oErisHead_Create_0", "gml_Object_oErisSegment_Create_0"})
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[11] == 0", "!global.hasIbeam");
+
             // Wave
             ReplaceGMLInCode(itemsSwapScript, "global.item[12]", "global.hasWbeam");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[12] == 0", "!global.hasWbeam");
@@ -670,8 +754,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 "if (global.gameHash != uniqueGameHash) { " +
                 "show_message(\"Save file is from another seed! (\" + global.gameHash + \")\"); " +
                 "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
-                "} playerhealth = global.maxhealth");
-
+                "} global.playerhealth = global.maxhealth");
+            // TODO: instead of just show_messsage, have an actual proper in-game solution
+            
             var sv6loadDetails = gmData.Code.ByName("gml_Script_sv6_load_details");
             ReplaceGMLInCode(sv6loadDetails, "V7.0", "RDV V8.0");
             ReplaceGMLInCode(sv6loadDetails, "sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid);");
@@ -683,15 +768,20 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.GeneralInfo.Name = gmData.Strings.MakeString("AM2R_RDV");
             gmData.GeneralInfo.FileName = gmData.Strings.MakeString("AM2R_RDV");
             
-            // TODO: unlock fusion etc. by default!
+            // Change starting health and energy per tank
+            ReplaceGMLInCode(characterVarsCode, "global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1};");
+            ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
             
             // Set starting items
             foreach ((var item, var quantity) in seedObject.StartingItems)
             {
                 switch (item)
                 {
+                    // TODO: what if more than 100 energy per tank? should cap?
                     case ItemEnum.EnergyTank:
-                        // TODO: figure out etank multiplier
+                        ReplaceGMLInCode(characterVarsCode, "global.etanks = 0", $"global.etanks = {quantity};");
+                        ReplaceGMLInCode(characterVarsCode, $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1}",
+                            $"global.playerhealth = {(seedObject.Patches.EnergyPerTank + (seedObject.Patches.EnergyPerTank * quantity)-1)};");
                         break;
                     case ItemEnum.Missile:
                         ReplaceGMLInCode(characterVarsCode, "global.missiles = 0", $"global.missiles = {quantity};");
@@ -703,13 +793,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                         ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", $"global.pbombs = {quantity};");
                         break;
                     case ItemEnum.MissileLauncher:
-                        ReplaceGMLInCode(characterVarsCode, "global.missileLauncher = 0", $"global.missileLauncher = {quantity};");
-                        break;
                     case ItemEnum.SuperMissileLauncher:
-                        ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncher = 0", $"global.SMissileLauncher = {quantity};");
-                        break;
                     case ItemEnum.PBombLauncher:
-                        ReplaceGMLInCode(characterVarsCode, "global.PBombLauncher = 0", $"global.PBombLauncher = {quantity};");
+                        // Are handled further down
                         break;
                     case ItemEnum.Bombs:
                         ReplaceGMLInCode(characterVarsCode, "global.hasBombs = 0", $"global.hasBombs = {quantity};");
@@ -742,7 +828,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                         ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
                         break;
                     case ItemEnum.Power:
-                        // TODO:
+                        // TODO: implement powerbeam
                         break;
                     case ItemEnum.Charge:
                         ReplaceGMLInCode(characterVarsCode, "global.hasCbeam = 0", $"global.hasCbeam = {quantity};");
@@ -769,8 +855,17 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             }
             
+            // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
+            if (!seedObject.Patches.RequireMissileLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.MissileLauncher))
+                ReplaceGMLInCode(characterVarsCode, "global.missileLauncher = 0", "global.missileLauncher = 1");
+            if (!seedObject.Patches.RequireSuperLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.SuperMissileLauncher))
+                ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncher = 0", "global.SMissileLauncher = 1");
+            if (!seedObject.Patches.RequirePBLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.PBombLauncher))
+                ReplaceGMLInCode(characterVarsCode, "global.PBombLauncher = 0", "global.PBombLauncher = 1");
+            
             // Set starting location
             ReplaceGMLInCode(startNewGame, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
+            ReplaceGMLInCode(characterVarsCode, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
 
             // TODO: refactor pause menu! it draws shit weird as its looking for *tanks* instead of actual values
             
@@ -787,6 +882,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 AppendGMLInCode(createCode, $"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\"");
                 
                 // TODO: set weird variables for button presses that some items have (i.e. hold X to use)
+                // this requires setting it blank for items that don't use it
                 
                 // First 4 is for Collision event
                 var collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
@@ -810,43 +906,45 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     ItemEnum.Screwattack => "event_inherited(); if (active) {{ global.screwattack = 1; global.hasScrewattack = 1; }} with (oCharacter) sfx_stop(spinjump_sound);",
                     ItemEnum.Varia => """
                         event_inherited()
-                        global.SuitChange = 1
+                        global.hasVaria = 1;
+                        global.SuitChange = 1;
                         if collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true)
-                            global.SuitChange = 0
+                            global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
-                            global.SuitChange = 0
-                        global.SuitChangeX = x
-                        global.SuitChangeY = y
-                        global.SuitChangeGravity = 0
-                        if active
+                            global.SuitChange = 0;
+                        global.SuitChangeX = x;
+                        global.SuitChangeY = y;
+                        global.SuitChangeGravity = 0;
+                        if (active)
                         {
                             with (oCharacter)
-                                alarm[1] = 1
+                                alarm[1] = 1;
                         }
                     """,
                     ItemEnum.Spacejump => "event_inherited(); if (active) { global.spacejump = 1; global.hasSpacejump = 1; } with (oCharacter) sfx_stop(spinjump_sound);",
                     ItemEnum.Speedbooster => "event_inherited(); if (active) { global.speedbooster = 1; global.hasSpeedbooster = 1; }",
                     ItemEnum.Hijump => "event_inherited(); if (active) { global.hijump = 1; global.hasHijump = 1; }",
                     ItemEnum.Gravity => """
-                        event_inherited()
-                        global.SuitChange = 1
-                        if collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true)
-                            global.SuitChange = 0
+                        event_inherited();
+                        global.hasGravity = 1;
+                        global.SuitChange = 1;
+                        if (collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true))
+                            global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
-                            global.SuitChange = 0
-                        global.SuitChangeX = x
-                        global.SuitChangeY = y
-                        global.SuitChangeGravity = 1
-                        if active
+                            global.SuitChange = 0;
+                        global.SuitChangeX = x;
+                        global.SuitChangeY = y;
+                        global.SuitChangeGravity = 1;
+                        if (active)
                         {
                             with (oCharacter)
-                                alarm[4] = 1
+                                alarm[4] = 1;
                         }
                     """,
                     ItemEnum.Charge => "event_inherited(); if (active) { global.cbeam = 1; global.hasCbeam = 1; }",
                     ItemEnum.Ice => "event_inherited(); if (active) { global.ibeam = 1; global.hasIbeam = 1; }",
                     ItemEnum.Wave => "event_inherited(); if (active) { global.wbeam = 1; global.hasWbeam = 1; }",
-                    ItemEnum.Spazer => "event_inherited(); if (active) { global.sbeam = 1; global.Sbeam = 1; }",
+                    ItemEnum.Spazer => "event_inherited(); if (active) { global.sbeam = 1; global.hasSbeam = 1; }",
                     ItemEnum.Plasma => "event_inherited(); if (active) { global.pbeam = 1; global.hasPbeam = 1; }",
                     ItemEnum.Morphball => "event_inherited(); if (active) { global.morphball = 1; global.hasMorph = 1; }",
                     ItemEnum.Nothing => "event_inherited();",
@@ -884,13 +982,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     global.maxpbombs += {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.PBombExpansion).Value.Quantity}
 """);
             
-            // Check whether option has been set for non-main launchers, if yes enable the main launchers in character var
-            if (!seedObject.Patches.RequireMissileLauncher)
-                ReplaceGMLInCode(characterVarsCode, "global.missileLauncher = 0", "global.missileLauncher = 1");
-            if (!seedObject.Patches.RequireSuperLauncher)
-                ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncher = 0", "global.SMissileLauncher = 1");
-            if (!seedObject.Patches.RequirePBLauncher)
-                ReplaceGMLInCode(characterVarsCode, "global.PBombLauncher = 0", "global.PBombLauncher = 1");
             
             // Set how much items the launchers give
             if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.MissileLauncher))
@@ -905,8 +996,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 ReplaceGMLInCode(characterVarsCode, "global.PBombLauncherExpansion = 2", 
                     $"global.PBombLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.PBombLauncher).Value.Quantity};");
             
-            ReplaceGMLInCode(characterVarsCode, "global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1};");
-            ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
+            
             // Also change how gui health is drawn
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_gui_health"), """
             if (ceil(guih) == 100)
@@ -916,7 +1006,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             if (ceil(guih) == {seedObject.Patches.EnergyPerTank})
                 guih = {seedObject.Patches.EnergyPerTank-1};
             """);
-
+            
             // Draw_gui has a huge fucking block that does insane etank shenanigans
             // because i dont want to copypaste the whole thing into here, i'll get the index where it starts, where it ends, and replace that section with my own
             var drawGuiText = Decompiler.Decompile(drawGuiCode, decompileContext);
@@ -930,7 +1020,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
               var etankIndex = 0
               if (global.playerhealth > ({{seedObject.Patches.EnergyPerTank-0.01}} + ((i-1)*{{seedObject.Patches.EnergyPerTank}})))
                 etankIndex = 1;
-              drawXOff = ((i-1) * 6) + (floor((i-1) / 5) * 3) 
+              var drawXOff = (floor((i-1)/2) * 6) + (floor((i-1) / 5) * 3) 
               var drawYOff = 4;
               if (i % 2 == 0) drawYOff = 10
               draw_sprite(sGUIETank, etankIndex, (0+etankxoff+drawXOff), drawYOff)
@@ -940,15 +1030,15 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: ability to turn off septoggs!
             
-            // TODO: ability to turn off the random room geometry!
+            // TODO: ability to turn off the random room geometry changes!
+
+            
             
             // TODO: ability to reset regentime for bomb blocks!
 
             // TODO: ability to skip cutscenes!
 
             // TODO: make launchers increase m/s/pb tanks?
-            
-            // TODO: weird visual glitch when you only have super and try to select them            
             
             // Go through every room's creation code, and set popup_text(room_name)
             // TODO: make this an option
