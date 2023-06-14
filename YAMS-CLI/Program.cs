@@ -20,11 +20,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/example.json"));
             
-            // TODO: implement power beam
-            
             // TODO: lots of sanity checking
             
-            // TODO: make insanity save stations enabled again
+            // TODO: make insanity save stations enabled again by using jes' code
             
             // TODO: have some "FOOL!" thing.
             
@@ -253,11 +251,103 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 CreationCode = thothRightDoorCC
             });
             
-            // Turn these blocks always off because they're annoying
+            // Add door from water turbine station to hydro station exterior
+            var waterTurbineDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_waterStationDoor_Create") };
+            gmData.Code.Add(waterTurbineDoorCC);
+            var rm_a2a08 = gmData.Rooms.ByName("rm_a2a08");
+            rm_a2a08.GameObjects.Add(new UndertaleRoom.GameObject()
+            {
+                X = 24,
+                Y = 96,
+                ObjectDefinition = gmData.GameObjects.ByName("oDoor"),
+                InstanceID = A2WaterTurbineLeftDoorID,
+                ScaleX = 1,
+                ScaleY = 1,
+                CreationCode = waterTurbineDoorCC
+            });
+            
+            var tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040174);
+            tempTile.X = 16;
+            var doorTileset = gmData.Backgrounds.ByName("tlDoor");
+            tempTile.BackgroundDefinition = doorTileset;
+            tempTile.SourceX = 112;
+            tempTile.SourceY = 64;
+            
+            tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040175);
+            tempTile.X = 16;
+            tempTile.BackgroundDefinition = doorTileset;
+            tempTile.SourceX = 112;
+            tempTile.SourceY = 32;
+            
+            tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040176);
+            tempTile.X = 16;
+            tempTile.BackgroundDefinition = doorTileset;
+            tempTile.SourceX = 112;
+            tempTile.SourceY = 16;
+            
+            tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040177);
+            tempTile.X = 16;
+            tempTile.BackgroundDefinition = doorTileset;
+            tempTile.SourceX = 112;
+            tempTile.SourceY = 0;
+
+            tempTile = new UndertaleRoom.Tile()
+            {
+                X = 0,
+                Y = 144,
+                BackgroundDefinition = doorTileset,
+                SourceX = 96,
+                SourceY = 64,
+                Width = 16,
+                Height = 16,
+                InstanceID = gmData.GeneralInfo.LastTile++
+            };
+            rm_a2a08.Tiles.Add(tempTile);
+            
+            tempTile = new UndertaleRoom.Tile()
+            {
+                X = 0,
+                Y = 128,
+                BackgroundDefinition = doorTileset,
+                SourceX = 96,
+                SourceY = 32,
+                Width = 16,
+                Height = 16,
+                InstanceID = gmData.GeneralInfo.LastTile++
+            };
+            rm_a2a08.Tiles.Add(tempTile);
+            
+            tempTile = new UndertaleRoom.Tile()
+            {
+                X = 0,
+                Y = 112,
+                BackgroundDefinition = doorTileset,
+                SourceX = 96,
+                SourceY = 16,
+                Width = 16,
+                Height = 16,
+                InstanceID = gmData.GeneralInfo.LastTile++
+            };
+            rm_a2a08.Tiles.Add(tempTile);
+            
+            tempTile = new UndertaleRoom.Tile()
+            {
+                X = 0,
+                Y = 96,
+                BackgroundDefinition = doorTileset,
+                SourceX = 96,
+                SourceY = 0,
+                Width = 16,
+                Height = 16,
+                InstanceID = gmData.GeneralInfo.LastTile++
+            };
+            rm_a2a08.Tiles.Add(tempTile);
+
+            // Turn these blocks always off because they're annoying TODO: lock this behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
                 "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", "if (true)");
             
-            // TODO: add door from water turbine station to hydro station exterior"
+            
             
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
@@ -434,9 +524,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 """);
             ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "popup_text(text1)");
             
-            
-            // TODO: fix db logic errors
-
             // Decouple Major items from item locations
             PrependGMLInCode(characterVarsCode, "global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
                                                 "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
@@ -827,9 +914,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.Gravity:
                         ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
                         break;
-                    case ItemEnum.Power:
-                        // TODO: implement powerbeam
-                        break;
                     case ItemEnum.Charge:
                         ReplaceGMLInCode(characterVarsCode, "global.hasCbeam = 0", $"global.hasCbeam = {quantity};");
                         break;
@@ -948,7 +1032,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     ItemEnum.Plasma => "event_inherited(); if (active) { global.pbeam = 1; global.hasPbeam = 1; }",
                     ItemEnum.Morphball => "event_inherited(); if (active) { global.morphball = 1; global.hasMorph = 1; }",
                     ItemEnum.Nothing => "event_inherited();",
-                    // TODO: power beam!
                     _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
                 };
                 SubstituteGMLCode(collisionCode, collisionCodeToBe);
@@ -1020,7 +1103,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
               var etankIndex = 0
               if (global.playerhealth > ({{seedObject.Patches.EnergyPerTank-0.01}} + ((i-1)*{{seedObject.Patches.EnergyPerTank}})))
                 etankIndex = 1;
-              var drawXOff = (floor((i-1)/2) * 6) + (floor((i-1) / 5) * 3) 
+              var drawXOff = (floor((i-1)/2) * 6) + (floor((i-1) / 10) * 3) 
               var drawYOff = 4;
               if (i % 2 == 0) drawYOff = 10
               draw_sprite(sGUIETank, etankIndex, (0+etankxoff+drawXOff), drawYOff)
@@ -1032,13 +1115,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: ability to turn off the random room geometry changes!
 
-            
+            // TODO: instead of implementing power beam, implement arm cannon or something. is less insane than refactoring samus state machine and menu
             
             // TODO: ability to reset regentime for bomb blocks!
 
             // TODO: ability to skip cutscenes!
-
-            // TODO: make launchers increase m/s/pb tanks?
             
             // Go through every room's creation code, and set popup_text(room_name)
             // TODO: make this an option
