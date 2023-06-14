@@ -343,9 +343,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             };
             rm_a2a08.Tiles.Add(tempTile);
 
-            // Turn these blocks always off because they're annoying TODO: lock this behind a setting because they can make for some interesting changes
+            // Lock these blocks behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
-                "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", "if (true)");
+                "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", 
+                $"if ({(seedObject.Patches.RemoveGraveGrottoBlocks ? "true" : "false")})");
 
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");

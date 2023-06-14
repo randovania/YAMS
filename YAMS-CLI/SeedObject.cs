@@ -40,6 +40,9 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("change_level_design")]
     public bool ChangeLevelDesign;
+
+    [JsonInclude] [JsonPropertyName("remove_grave_grotto_blocks")]
+    public bool RemoveGraveGrottoBlocks;
     
     [JsonInclude]
     [JsonPropertyName("respawn_bomb_blocks")]
