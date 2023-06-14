@@ -920,6 +920,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.PBomb:
                         ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", $"global.pbombs = {quantity};");
                         break;
+                    
+                    case ItemEnum.LockedMissile:
+                    case ItemEnum.LockedSuperMissile:
+                    case ItemEnum.LockedPBomb:
+                        break;
+                    
                     case ItemEnum.MissileLauncher:
                     case ItemEnum.SuperMissileLauncher:
                     case ItemEnum.PBombLauncher:
@@ -997,8 +1003,27 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // TODO: refactor pause menu! it draws shit weird as its looking for *tanks* instead of actual values
             
+            // TODO: pause menu is weird and doesnt show the collectables?
+            
+            // Modify minimap for power plant because of pb movement
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_07"), """
+            global.map[35, 43] = "0112300"
+            global.map[35, 44] = "1210300"
+            global.map[35, 45] = "1210300"
+            """, """
+            global.map[35, 43] = "0101330"
+            global.map[35, 44] = "0101300"
+            global.map[35, 45] = "0101300"
+            """);
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "&& itemid == 253", "&& false");
+
+            // TODO: proper damage values, add to test
+            //TODO: save data corrupted when beating game
+            
             // Door locks
             // TODO:
+            
+            // TODO: make doors automatically free their event when passing through them!
             
             // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
             foreach ((var pickupName, PickupObject pickup) in seedObject.PickupObjects)
