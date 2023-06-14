@@ -50,10 +50,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             var decompileContext = new GlobalDecompileContext(gmData, false);
 
-            void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText)
+            void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
             {
                 var codeText = Decompiler.Decompile(code, decompileContext);
-                if (!codeText.Contains(textToReplace))
+                if (!codeText.Contains(textToReplace) && !ignoreErrors)
                     throw new ApplicationException($"The text \"{textToReplace}\" was not found in \"{code.Name.Content}\"!");
                 codeText = codeText.Replace(textToReplace, replacementText);
                 code.ReplaceGML(codeText, gmData);
@@ -346,9 +346,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Turn these blocks always off because they're annoying TODO: lock this behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
                 "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", "if (true)");
-            
-            
-            
+
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
             ReplaceGMLInCode(newGameCode,"oControl.mod_randomgamebool = 0", "oControl.mod_randomgamebool = 1");
@@ -462,6 +460,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: change samus arm cannon to different sprite, when no launcher. This requires delving into state machine tho and that is *pain*
             
+            // TODO: fill the rest here out out properly
+            // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0");
+            
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
             
@@ -567,57 +569,95 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Fix spring showing up for a brief moment when killing arachnus
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArachnus_Alarm_11"), "if (temp_randitem == oItemJumpBall)", "if (false)");
 
-            // TODO: all other locations! this is just very basic stuff
             // Bombs
             var subscreenMenuStep = gmData.Code.ByName("gml_Object_oSubscreenMenu_Step_0");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[0] == 0", "!global.hasBombs");
             var subscreenMiscDaw = gmData.Code.ByName("gml_Object_oSubScreenMisc_Draw_0");
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[0]", "global.hasBombs");
             
+            foreach(var code in new[]{"gml_Script_spawn_rnd_pickup", "gml_Script_spawn_rnd_pickup_at", "gml_Script_spawn_many_powerups", 
+                        "gml_Script_spawn_many_powerups_tank", "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create",
+                        "gml_RoomCC_rm_a3h03_5279_Create", "gml_Room_rm_a3b08_Create"
+                    })
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[0]", "global.hasBombs");
+            var elderSeptogg = gmData.GameObjects.ByName("oElderSeptogg");
+            foreach (UndertaleRoom room in gmData.Rooms)
+            {
+                foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
+                    ReplaceGMLInCode(go.CreationCode, "global.item[0]", "global.hasBombs", true);
+            }
+            
+            
             // Powergrip
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[1]", "global.hasPowergrip");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[1] == 0", "!global.hasPowergrip");
             
             // Spiderball
-            // TODO: change septogg scripts
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[2]", "global.hasSpiderball");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[2] == 0", "!global.hasSpiderball");
+            foreach (UndertaleCode code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+                                                                  c.Name.Content.Contains('2') || c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
+                ReplaceGMLInCode(code, "global.item[2]", "global.hasSpiderball");
             
             // Jumpball
-            // TODO: instance code for destroyable block
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[3]", "global.hasJumpball");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[3] == 0", "!global.hasJumpball");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "global.item[3] == 0", "!global.hasJumpball");
             
             // Hijump
             var subcreenBootsDraw = gmData.Code.ByName("gml_Object_oSubScreenBoots_Draw_0");
             ReplaceGMLInCode(subcreenBootsDraw, "global.item[4]", "global.hasHijump");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[4] == 0", "!global.hasHijump");
-            
+            foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+                                                        c.Name.Content.Contains('4')) || c.Name.Content == "gml_Room_rm_a3b08_Create"))
+                ReplaceGMLInCode(code, "global.item[4]", "global.hasHijump");
             // Varia
             // TODO!!! gml_Script_characterStepEvent! needs fixing first, as otherwise it'll crash with current utmt setup
             var subscreenSuitDraw = gmData.Code.ByName("gml_Object_oSubScreenSuit_Draw_0");
             ReplaceGMLInCode(subscreenSuitDraw, "global.item[5]", "global.hasVaria");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[5] == 0", "!global.hasVaria");
             foreach(var code in new[]{"gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown", "gml_Object_oQueenHead_Step_0"})
-                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[5] == 0", "!global.hasVaria");
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[5]", "global.hasVaria");
             
             // Spacejump
             ReplaceGMLInCode(subcreenBootsDraw, "global.item[6]", "global.hasSpacejump");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[6] == 0", "!global.hasSpacejump");
+            foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+                                                        c.Name.Content.Contains('6')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5a03_") || 
+                                                       c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
+                ReplaceGMLInCode(code, "global.item[6]", "global.hasSpacejump", true);
             
             // Speedbooster
             ReplaceGMLInCode(subcreenBootsDraw, "global.item[7]", "global.hasSpeedbooster");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[7] == 0", "!global.hasSpeedbooster");
+            foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+                                                        c.Name.Content.Contains('7')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5c08_")))
+                ReplaceGMLInCode(code, "global.item[7]", "global.hasSpeedbooster", true);
+
             
             // Screwattack
             ReplaceGMLInCode(subscreenMiscDaw, "global.item[8]", "global.hasScrewattack");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[8] == 0", "!global.hasScrewattack");
+            foreach(var code in new[]{"gml_Script_scr_septoggs_2468", "gml_Script_scr_septoggs_48", "gml_RoomCC_rm_a1a06_4447_Create", 
+                        "gml_RoomCC_rm_a1a06_4448_Create", "gml_RoomCC_rm_a1a06_4449_Create", "gml_RoomCC_rm_a3a04_5499_Create", "gml_RoomCC_rm_a3a04_5500_Create",
+                        "gml_RoomCC_rm_a3a04_5501_Create", "gml_RoomCC_rm_a4a01_6476_Create", "gml_RoomCC_rm_a4a01_6477_Create", "gml_RoomCC_rm_a4a01_6478_Create",
+                        "gml_RoomCC_rm_a5c13_7639_Create", "gml_RoomCC_rm_a5c13_7640_Create", "gml_RoomCC_rm_a5c13_7641_Create", "gml_RoomCC_rm_a5c13_7642_Create",
+                        "gml_RoomCC_rm_a5c13_7643_Create", "gml_RoomCC_rm_a5c13_7644_Create"
+                    })
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[8]", "global.hasScrewattack");
+
             
             // Gravity
-            // TODO: lots of damage scripts!
             ReplaceGMLInCode(subscreenSuitDraw, "global.item[9]", "global.hasGravity");
             ReplaceGMLInCode(subscreenMenuStep, "global.item[9] == 0", "!global.hasGravity");
             
+            foreach(var code in new[]{"gml_Script_scr_variasuitswap", "gml_Object_oGravitySuitChangeFX_Step_0", "gml_Object_oGravitySuitChangeFX_Other_10",
+                        "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create", "gml_RoomCC_rm_a5a03_8631_Create", "gml_RoomCC_rm_a5a03_8632_Create",
+                        "gml_RoomCC_rm_a5a03_8653_Create", "gml_RoomCC_rm_a5a03_8654_Create", "gml_RoomCC_rm_a5a03_8655_Create", "gml_RoomCC_rm_a5a03_8656_Create",
+                        "gml_RoomCC_rm_a5a03_8657_Create", "gml_RoomCC_rm_a5a03_8674_Create", "gml_RoomCC_rm_a5a05_8701_Create", "gml_RoomCC_rm_a5a06_8704_Create"
+                    })
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[9]", "global.hasGravity");
+
             // Charge
             var itemsSwapScript = gmData.Code.ByName("gml_Script_scr_itemsmenu_swap");
             ReplaceGMLInCode(itemsSwapScript, "global.item[10]", "global.hasCbeam");
@@ -914,6 +954,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.Gravity:
                         ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
                         break;
+                    // TODO: make a general arm weapon thing. see todo at very top somwewhere
+                    case ItemEnum.Power:
+                        break;
                     case ItemEnum.Charge:
                         ReplaceGMLInCode(characterVarsCode, "global.hasCbeam = 0", $"global.hasCbeam = {quantity};");
                         break;
@@ -963,10 +1006,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 gmObject.Sprite = gmData.Sprites.ByName(pickup.SpriteDetails.Name);
                 // First 0 is for creation event
                 var createCode = gmObject.Events[0][0].Actions[0].CodeId;
-                AppendGMLInCode(createCode, $"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\"");
-                
-                // TODO: set weird variables for button presses that some items have (i.e. hold X to use)
-                // this requires setting it blank for items that don't use it
+                AppendGMLInCode(createCode, $"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\";" +
+                                            $"btn1_name = \"\"; btn2_name = \"\";");
                 
                 // First 4 is for Collision event
                 var collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
@@ -983,10 +1024,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     ItemEnum.PBombExpansion=> "scr_powerbomb_character_event()",
                     ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                                      "{{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }}",
-                    ItemEnum.Bombs => "event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
+                    ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
                     ItemEnum.Powergrip =>"event_inherited(); if (active) {{ global.powergrip = 1; global.hasPowergrip = 1; }}",
-                    ItemEnum.Spiderball => "event_inherited(); if (active) {{ global.spiderball = 1; global.hasSpiderball = 1; }}",
-                    ItemEnum.Springball => "event_inherited(); if (active) {{ global.jumpball = 1; global.hasJumpball = 1; }}",
+                    ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) {{ global.spiderball = 1; global.hasSpiderball = 1; }}",
+                    ItemEnum.Springball => "btn1_name = \"Jump\"; event_inherited(); if (active) {{ global.jumpball = 1; global.hasJumpball = 1; }}",
                     ItemEnum.Screwattack => "event_inherited(); if (active) {{ global.screwattack = 1; global.hasScrewattack = 1; }} with (oCharacter) sfx_stop(spinjump_sound);",
                     ItemEnum.Varia => """
                         event_inherited()
@@ -1025,7 +1066,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                                 alarm[4] = 1;
                         }
                     """,
-                    ItemEnum.Charge => "event_inherited(); if (active) { global.cbeam = 1; global.hasCbeam = 1; }",
+                    ItemEnum.Charge => "btn1_name = \"Fire\"; event_inherited(); if (active) { global.cbeam = 1; global.hasCbeam = 1; }",
                     ItemEnum.Ice => "event_inherited(); if (active) { global.ibeam = 1; global.hasIbeam = 1; }",
                     ItemEnum.Wave => "event_inherited(); if (active) { global.wbeam = 1; global.hasWbeam = 1; }",
                     ItemEnum.Spazer => "event_inherited(); if (active) { global.sbeam = 1; global.hasSbeam = 1; }",
@@ -1111,7 +1152,21 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             """);
             
-            // TODO: ability to turn off septoggs!
+            // Turn off Septoggs if the wished configuration
+            if (seedObject.Patches.SeptoggHelpers)
+                ReplaceGMLInCode(characterVarsCode, "global.septoggHelpers = 0", "global.septoggHelpers = 1");
+            foreach (var code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_")))
+                PrependGMLInCode(code, "if (!global.septoggHelpers) return true;");
+            
+            foreach (UndertaleRoom room in gmData.Rooms)
+            {
+                foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
+                    ReplaceGMLInCode(go.CreationCode, "oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1", 
+                        "global.hasBombs && global.septoggHelpers", true);
+            }
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h25_4105_Create"), "else if (global.hasBombs == 1 || global.hasSpiderball == 1 || global.hasSpacejump == 1)",
+                "else if (!global.septoggHelpers)");
+            
             
             // TODO: ability to turn off the random room geometry changes!
 
