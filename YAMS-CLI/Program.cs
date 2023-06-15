@@ -220,8 +220,20 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Unlock fusion etc. by default
             var unlockStuffCode = gmData.Code.ByName("gml_Object_oControl_Other_2");
             AppendGMLInCode(unlockStuffCode, "global.mod_fusion_unlocked = 1; global.mod_gamebeaten = 1;");
-            AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), "temcollunlock = 1;");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), "itemcollunlock = 1;");
 
+            // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
+            var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
+            ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(global.playerhealth) + \"/\" + string(maxhealth) )");
+            ReplaceGMLInCode(ssDraw, "(string(global.mtanks) + \"/44\")", "( string(global.missiles) + \"/\" + string(maxmissiles) )");
+            ReplaceGMLInCode(ssDraw, "(string(global.stanks) + \"/10\")", "( string(global.smissiles) + \"/\" + string(maxsmissiles) )");
+            ReplaceGMLInCode(ssDraw, " (string(global.ptanks) + \"/10\")", "( string(global.pbombs) + \"/\" + string(maxpbombs) )");
+            foreach (var code in new[] {ssDraw.Name.Content, "scr_SubScrTop_swap", "scr_SubScrTop_swap2"})
+            {
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.stanks > 0", "true");
+                ReplaceGMLInCode(gmData.Code.ByName(code), "global.ptanks > 0", "true");
+            }
+            
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
             
@@ -459,11 +471,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             """);
             ReplaceGMLInCode(chStepControlCode, "if (global.maxmissiles > 0 && (state", "if ((state");
             
-            // TODO: change samus arm cannon to different sprite, when no launcher. This requires delving into state machine tho and that is *pain*
+            // TODO: change samus arm cannon to different sprite, when no missile launcher. This requires delving into state machine tho and that is *pain*
             
-            // TODO: fill the rest here out out properly
+            // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0");
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -741,7 +753,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             """);
             
             // Save current hash seed, so we can compare saves later
-            PrependGMLInCode(characterVarsCode, $"global.gameHash = \"{seedObject.Identifier.Hash}\"");
+            PrependGMLInCode(characterVarsCode, $"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
             
             // modify gravity pod room to *always* spawn an item
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a5a07_Create"), "if (oControl.mod_gravity != 9)", "");
@@ -877,7 +889,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             """, "");
             
             //complain if invalid game hash
-            PrependGMLInCode(sv6load, $"var uniqueGameHash = \"{seedObject.Identifier.Hash}\"");
+            PrependGMLInCode(sv6load, $"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
             ReplaceGMLInCode(sv6load, "global.playerhealth = global.maxhealth", 
                 "if (global.gameHash != uniqueGameHash) { " +
                 "show_message(\"Save file is from another seed! (\" + global.gameHash + \")\"); " +
@@ -888,9 +900,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             var sv6loadDetails = gmData.Code.ByName("gml_Script_sv6_load_details");
             ReplaceGMLInCode(sv6loadDetails, "V7.0", "RDV V8.0");
             ReplaceGMLInCode(sv6loadDetails, "sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid);");
-            
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_load_stats"), "V7.0", "RDV V8.0");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_load_stats2"), "V7.0", "RDV V8.0");
+
+            foreach (var code in new[] {"gml_Script_save_stats", "gml_Script_save_stats2", "gml_Script_load_stats", "gml_Script_load_stats2"})
+                ReplaceGMLInCode(gmData.Code.ByName(code), "V7.0", "RDV V8.0");
             
             // Change to custom save directory
             gmData.GeneralInfo.Name = gmData.Strings.MakeString("AM2R_RDV");
@@ -1000,10 +1012,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Set starting location
             ReplaceGMLInCode(startNewGame, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
             ReplaceGMLInCode(characterVarsCode, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
-
-            // TODO: refactor pause menu! it draws shit weird as its looking for *tanks* instead of actual values
-            
-            // TODO: pause menu is weird and doesnt show the collectables?
             
             // Modify minimap for power plant because of pb movement
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_07"), """
@@ -1018,7 +1026,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "&& itemid == 253", "&& false");
 
             // TODO: proper damage values, add to test
-            //TODO: save data corrupted when beating game
             
             // Door locks
             // TODO:
@@ -1201,6 +1208,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: ability to reset regentime for bomb blocks!
 
             // TODO: ability to skip cutscenes!
+            if (seedObject.Patches.SkipCutscenes)
+            {
+                
+            }
+            
+            // TODO: ability to skip mines crystal
             
             // Go through every room's creation code, and set popup_text(room_name)
             // TODO: make this an option
