@@ -219,6 +219,26 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             });
             
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemPBombLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_9"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_10"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_11"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_12"]] },
+                }
+            });
+            
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
             gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
@@ -1238,7 +1258,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 
             }
             
-            // TODO: ability to skip mines crystal
+            // TODO: ability to skip mines crystal - dont, just skip the excavator cutscene
             
             // Go through every room's creation code, and set popup_text(room_name)
             // TODO: make this an option
