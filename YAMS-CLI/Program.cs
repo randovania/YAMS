@@ -129,6 +129,19 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: double check margins in every sprite
             gmData.Sprites.Add(new UndertaleSprite()
             {
+                Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16, 
+                MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_4"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
                 Name = gmData.Strings.MakeString("sItemUnknown"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
                 Textures =
                 {
@@ -224,11 +237,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
-            ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(global.playerhealth) + \"/\" + string(maxhealth) )");
-            ReplaceGMLInCode(ssDraw, "(string(global.mtanks) + \"/44\")", "( string(global.missiles) + \"/\" + string(maxmissiles) )");
-            ReplaceGMLInCode(ssDraw, "(string(global.stanks) + \"/10\")", "( string(global.smissiles) + \"/\" + string(maxsmissiles) )");
-            ReplaceGMLInCode(ssDraw, " (string(global.ptanks) + \"/10\")", "( string(global.pbombs) + \"/\" + string(maxpbombs) )");
-            foreach (var code in new[] {ssDraw.Name.Content, "scr_SubScrTop_swap", "scr_SubScrTop_swap2"})
+            ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(global.playerhealth) + \"/\" + string(global.maxhealth) )");
+            ReplaceGMLInCode(ssDraw, "(string(global.mtanks) + \"/44\")", "( string(global.missiles) + \"/\" + string(global.maxmissiles) )");
+            ReplaceGMLInCode(ssDraw, "(string(global.stanks) + \"/10\")", "( string(global.smissiles) + \"/\" + string(global.maxsmissiles) )");
+            ReplaceGMLInCode(ssDraw, " (string(global.ptanks) + \"/10\")", "( string(global.pbombs) + \"/\" + string(global.maxpbombs) )");
+            foreach (var code in new[] {ssDraw.Name.Content, "gml_Script_scr_SubScrTop_swap", "gml_Script_scr_SubScrTop_swap2"})
             {
                 ReplaceGMLInCode(gmData.Code.ByName(code), "global.stanks > 0", "true");
                 ReplaceGMLInCode(gmData.Code.ByName(code), "global.ptanks > 0", "true");
@@ -475,7 +488,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes");
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
