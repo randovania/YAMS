@@ -47,7 +47,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 gmData = UndertaleIO.Read(fs);
             }
-
             var decompileContext = new GlobalDecompileContext(gmData, false);
 
             void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
@@ -246,6 +245,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 ReplaceGMLInCode(gmData.Code.ByName(code), "global.stanks > 0", "true");
                 ReplaceGMLInCode(gmData.Code.ByName(code), "global.ptanks > 0", "true");
             }
+            
+            // Make doors automatically free their event when passing through them!
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)", 
+                "{ event_user(2); if(event > 0) global.event[event] = 1; }");
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -488,7 +491,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0;");
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -1041,10 +1044,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: proper damage values, add to test
             
             // Door locks
-            // TODO:
-            
-            // TODO: make doors automatically free their event when passing through them!
-            
+            // TODO: door locks
+
             // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
             foreach ((var pickupName, PickupObject pickup) in seedObject.PickupObjects)
             {
@@ -1218,7 +1219,18 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // TODO: instead of implementing power beam, implement arm cannon or something. is less insane than refactoring samus state machine and menu
             
-            // TODO: ability to reset regentime for bomb blocks!
+            // Stop Bomb blocks from respawning
+            if (seedObject.Patches.RespawnBombBlocks)
+                ReplaceGMLInCode(characterVarsCode, "global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
+            foreach (UndertaleRoom room in gmData.Rooms)
+            {
+                foreach (var go in room.GameObjects)
+                {
+                    // Instance ID here is for a puzzle in a2, that when not respawned makes it a tad hard.
+                    if (go.ObjectDefinition.Name.Content.StartsWith("oBlockBomb") && go.CreationCode is not null && go.InstanceID != 110602)
+                        AppendGMLInCode(go.CreationCode, "if (!global.respawnBombBlocks) regentime = -1");
+                }
+            }
 
             // TODO: ability to skip cutscenes!
             if (seedObject.Patches.SkipCutscenes)
