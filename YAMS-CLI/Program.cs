@@ -11,6 +11,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
+            // TODO: spider ball challenge bomb block regenerates even tho it shouldnt?
+            
+            // TODO: make mines save crystal gone automatically when you come from above door
+            
+            // TODO: when starting it thoth, make PB blocks disabled when you go down
+            
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
             const uint A2WaterTurbineLeftDoorID = 400002;
@@ -20,11 +26,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/example.json"));
             
+            // TODO: lots of code cleanup
+            
             // TODO: lots of sanity checking
             
             // TODO: make insanity save stations enabled again by using jes' code
-            
-            // TODO: have some "FOOL!" thing.
             
             // Read 1.5.x data
             var debug = true;
@@ -239,6 +245,25 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             });
             
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemDNA"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_9"]] },
+                }
+            });
+            
+            // TODO: make DNA show up on pause screen
+
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
             gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
@@ -271,6 +296,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 "{ event_user(2); if(event > 0) global.event[event] = 1; }");
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
+            // TODO: make this more dynamic instead?
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
             
             // Add doors to gfs thoth bridge
@@ -390,6 +416,194 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 InstanceID = gmData.GeneralInfo.LastTile++
             };
             rm_a2a08.Tiles.Add(tempTile);
+            
+            // Implement dna item
+            var enemyObject = gmData.GameObjects.ByName("oItem");
+            for (int i = 350; i <= 395; i++)
+            {
+                var go = new UndertaleGameObject();
+                go.Name = gmData.Strings.MakeString("oItemDNA_" + i);
+                go.ParentId = enemyObject;
+                // Add create event
+                var create = new UndertaleCode();
+                create.Name = gmData.Strings.MakeString($"gml_Object_oItemDNA_{i}_Create_0");
+                SubstituteGMLCode(create, "event_inherited(); itemid = " + i + ";");
+                gmData.Code.Add(create);
+                var createEventList = go.Events[0];
+                var action = new UndertaleGameObject.EventAction();
+                action.CodeId = create;
+                var gEvent = new UndertaleGameObject.Event();
+                gEvent.Actions.Add(action);
+                createEventList.Add(gEvent);
+                
+                var collision = new UndertaleCode();
+                collision.Name = gmData.Strings.MakeString($"gml_Object_oItemDNA_{i}_Collision_267");
+                gmData.Code.Add(collision);
+                var collisionEventList = go.Events[4];
+                action = new UndertaleGameObject.EventAction();
+                action.CodeId = collision;
+                gEvent = new UndertaleGameObject.Event();
+                gEvent.EventSubtype = 267; // 267 is oCharacter ID
+                gEvent.Actions.Add(action);
+                collisionEventList.Add(gEvent);
+                gmData.GameObjects.Add(go);
+            }
+            
+            // Metroid ID to DNA map
+            var scrDNASpawn = new UndertaleCode();
+            scrDNASpawn.Name = gmData.Strings.MakeString("gml_Script_scr_DNASpawn");
+            SubstituteGMLCode(scrDNASpawn, """
+            if (argument0 == 0)
+                return oItemDNA_350;
+            if (argument0 == 1)
+                return oItemDNA_351;
+            if (argument0 == 2)
+                return oItemDNA_352;
+            if (argument0 == 3)
+                return oItemDNA_353;
+            if (argument0 == 4)
+                return oItemDNA_354;
+            if (argument0 == 5)
+                return oItemDNA_355;
+            if (argument0 == 6)
+                return oItemDNA_358;
+            if (argument0 == 7)
+                return oItemDNA_357;
+            if (argument0 == 8)
+                return oItemDNA_356;
+            if (argument0 == 9)
+                return oItemDNA_359;
+            if (argument0 == 10)
+                return oItemDNA_361;
+            if (argument0 == 11)
+                return oItemDNA_360;
+            if (argument0 == 12)
+                return oItemDNA_373;
+            if (argument0 == 13)
+                return oItemDNA_375;
+            if (argument0 == 14)
+                return oItemDNA_362;
+            if (argument0 == 15)
+                return oItemDNA_376;
+            if (argument0 == 16)
+                return oItemDNA_377;
+            if (argument0 == 17)
+                return oItemDNA_378;
+            if (argument0 == 18)
+                return oItemDNA_363;
+            if (argument0 == 19)
+                return oItemDNA_379;
+            if (argument0 == 20)
+                return oItemDNA_380;
+            if (argument0 == 21)
+                return oItemDNA_381;
+            if (argument0 == 22)
+                return oItemDNA_374;
+            if (argument0 == 23)
+                return oItemDNA_364;
+            if (argument0 == 24)
+                return oItemDNA_365;
+            if (argument0 == 25)
+                return oItemDNA_366;
+            if (argument0 == 26)
+                return oItemDNA_382;
+            if (argument0 == 27)
+                return oItemDNA_389;
+            if (argument0 == 28)
+                return oItemDNA_383;
+            if (argument0 == 29)
+                return oItemDNA_384;
+            if (argument0 == 30)
+                return oItemDNA_390;
+            if (argument0 == 31)
+                return oItemDNA_385;
+            if (argument0 == 32)
+                return oItemDNA_388;
+            if (argument0 == 33)
+                return oItemDNA_391;
+            if (argument0 == 34)
+                return oItemDNA_370;
+            if (argument0 == 35)
+                return oItemDNA_368;
+            if (argument0 == 36)
+                return oItemDNA_367;
+            if (argument0 == 37)
+                return oItemDNA_371;
+            if (argument0 == 38)
+                return oItemDNA_369;
+            if (argument0 == 39)
+                return oItemDNA_386;
+            if (argument0 == 40)
+                return oItemDNA_387;
+            if (argument0 == 41)
+                return oItemDNA_372;
+            if (argument0 == 42)
+                return oItemDNA_392;
+            if (argument0 == 43)
+                return oItemDNA_394;
+            if (argument0 == 44)
+                return oItemDNA_393;
+            if (argument0 == 45)
+                return oItemDNA_395;            
+            """);
+            gmData.Code.Add(scrDNASpawn);
+            gmData.Scripts.Add(new UndertaleScript() {Name = gmData.Strings.MakeString("scr_DNASpawn"), Code = scrDNASpawn});
+
+            // Make metroids drop an item onto you on death
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMGamma_Other_10"), "check_areaclear()",
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMZeta_Other_10"), "check_areaclear()",
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMOmega_Other_10"), "check_areaclear()",
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+
+            // Make new global.lavastate 11 that requires 46 dna to be collected
+            AppendGMLInCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; }");
+            
+            // Check lavastate at labs
+            var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
+            var labBlock = new UndertaleRoom.GameObject();
+            labBlock.X = 64;
+            labBlock.Y = 96;
+            labBlock.ScaleX = 2;
+            labBlock.ScaleY = 4;
+            labBlock.InstanceID = gmData.GeneralInfo.LastObj++;
+            labBlock.ObjectDefinition = gmData.GameObjects.ByName("oSolid1");
+            var labBlockCode = new UndertaleCode();
+            labBlockCode.Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7b04A_labBlock_Create");
+            SubstituteGMLCode(labBlockCode, "if (global.lavastate > 11) {  tile_layer_delete(-99); instance_destroy(); }");
+            gmData.Code.Add(labBlockCode);
+            labBlock.CreationCode = labBlockCode;
+            labsRoom.GameObjects.Add(labBlock);
+            labsRoom.Tiles.Add(new UndertaleRoom.Tile()
+            {
+                X = 64,
+                Y = 96,
+                TileDepth = -99,
+                BackgroundDefinition = gmData.Backgrounds.ByName("tlArea7Outside"),
+                InstanceID = gmData.GeneralInfo.LastTile++,
+                SourceX = 0,
+                SourceY = 208,
+                Width = 32,
+                Height = 32
+            });
+            labsRoom.Tiles.Add(new UndertaleRoom.Tile()
+            {
+                X = 64,
+                Y = 128,
+                TileDepth = -99,
+                BackgroundDefinition = gmData.Backgrounds.ByName("tlArea7Outside"),
+                InstanceID = gmData.GeneralInfo.LastTile++,
+                SourceX = 0,
+                SourceY = 208,
+                Width = 32,
+                Height = 32
+            });
+
+            // Move alpha in nest
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a6a09_8945_Create"), "if (global.lavastate > 8)", "y = 320; if (false)");
 
             // Lock these blocks behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
@@ -521,7 +735,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Rooms.ByName("rm_a4b02b").CreationCodeId, "instance_create(314, 192, scr_itemsopen(oControl.mod_253))", "");
             
             // Set lava state and the metroid scanned events
-            AppendGMLInCode(characterVarsCode, "global.lavastate = 7; global.event[4] = 1; global.event[56] = 1;" +
+            AppendGMLInCode(characterVarsCode, "global.lavastate = 11; global.event[4] = 1; global.event[56] = 1;" +
                                                " global.event[155] = 1; global.event[173] = 1; global.event[204] = 1; global.event[259] = 1");
             
             // Improve when expansions trigger big pickup text and popup_text
@@ -576,7 +790,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "popup_text(text1)");
             
             // Decouple Major items from item locations
-            PrependGMLInCode(characterVarsCode, "global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
+            PrependGMLInCode(characterVarsCode, "global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
                                                 "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
                                                 "global.hasCbeam = 0; global.hasIbeam = 0; global.hasWbeam = 0; global.hasSbeam  = 0; global.hasPbeam = 0; global.hasMorph = 0;");
             
@@ -845,6 +1059,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ds_list_add(list, global.maxsmissiles)
             ds_list_add(list, global.maxpbombs)
             ds_list_add(list, global.gameHash)
+            ds_list_add(list, global.dna)
             comment = "gives me some leeway in case i need to add more"
             repeat (15)
             {
@@ -895,6 +1110,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             global.maxsmissiles = readline()
             global.maxpbombs = readline()
             global.gameHash = readline()
+            global.dna = readline()
             ds_list_clear(list)
             """);
             gmData.Code.Add(loadGlobalsCode);
@@ -979,6 +1195,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.PBombLauncher:
                         // Are handled further down
                         break;
+                    
+                    case ItemEnum.DNA:
+                        ReplaceGMLInCode(characterVarsCode, "global.dna =", "global.dna = 1 +");
+                        break;
+                    
                     case ItemEnum.Bombs:
                         ReplaceGMLInCode(characterVarsCode, "global.hasBombs = 0", $"global.hasBombs = {quantity};");
                         break;
@@ -1060,6 +1281,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             global.map[35, 45] = "0101300"
             """);
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "&& itemid == 253", "&& false");
+            
+            // Make items spawned from metroids not change map
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (distance_to_object(oItem) > 180)", 
+                "if ((distance_to_object(oItem) > 180) && (instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0))");
 
             // TODO: proper damage values, add to test
             
@@ -1091,6 +1316,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     ItemEnum.PBombExpansion=> "scr_powerbomb_character_event()",
                     ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                                      "{{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }}",
+                    ItemEnum.DNA => "event_inherited(); if (active) global.dna++;",
                     ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
                     ItemEnum.Powergrip =>"event_inherited(); if (active) {{ global.powergrip = 1; global.hasPowergrip = 1; }}",
                     ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) {{ global.spiderball = 1; global.hasSpiderball = 1; }}",
@@ -1281,8 +1507,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // For room rando, go through each door and modify where it leads to
             // TODO: Implement this whenever room rando gets done.
-            
-            
+
             // Write back to disk
             using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
             {

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -92,6 +93,9 @@ public class StartingLocationObject
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ItemEnum
 {
+    [EnumMember(Value = "DNA")]
+    DNA,
+    
     [EnumMember(Value = "Missile Expansion")]
     MissileExpansion,
     [EnumMember(Value = "Super Missile Expansion")]
