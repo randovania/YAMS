@@ -93,98 +93,98 @@ public class StartingLocationObject
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ItemEnum
 {
-    [EnumMember(Value = "Artifact1")]
-    Artifact1,
-    [EnumMember(Value = "Artifact2")]
-    Artifact2,
-    [EnumMember(Value = "Artifact3")]
-    Artifact3,
-    [EnumMember(Value = "Artifact4")]
-    Artifact4,
-    [EnumMember(Value = "Artifact5")]
-    Artifact5,
-    [EnumMember(Value = "Artifact6")]
-    Artifact6,
-    [EnumMember(Value = "Artifact7")]
-    Artifact7,
-    [EnumMember(Value = "Artifact8")]
-    Artifact8,
-    [EnumMember(Value = "Artifact9")]
-    Artifact9,
-    [EnumMember(Value = "Artifact10")]
-    Artifact10,
-    [EnumMember(Value = "Artifact11")]
-    Artifact11,
-    [EnumMember(Value = "Artifact12")]
-    Artifact12,
-    [EnumMember(Value = "Artifact13")]
-    Artifact13,
-    [EnumMember(Value = "Artifact14")]
-    Artifact14,
-    [EnumMember(Value = "Artifact15")]
-    Artifact15,
-    [EnumMember(Value = "Artifact16")]
-    Artifact16,
-    [EnumMember(Value = "Artifact17")]
-    Artifact17,
-    [EnumMember(Value = "Artifact18")]
-    Artifact18,
-    [EnumMember(Value = "Artifact19")]
-    Artifact19,
-    [EnumMember(Value = "Artifact20")]
-    Artifact20,
-    [EnumMember(Value = "Artifact21")]
-    Artifact21,
-    [EnumMember(Value = "Artifact22")]
-    Artifact22,
-    [EnumMember(Value = "Artifact23")]
-    Artifact23,
-    [EnumMember(Value = "Artifact24")]
-    Artifact24,
-    [EnumMember(Value = "Artifact25")]
-    Artifact25,
-    [EnumMember(Value = "Artifact26")]
-    Artifact26,
-    [EnumMember(Value = "Artifact27")]
-    Artifact27,
-    [EnumMember(Value = "Artifact28")]
-    Artifact28,
-    [EnumMember(Value = "Artifact29")]
-    Artifact29,
-    [EnumMember(Value = "Artifact30")]
-    Artifact30,
-    [EnumMember(Value = "Artifact31")]
-    Artifact31,
-    [EnumMember(Value = "Artifact32")]
-    Artifact32,
-    [EnumMember(Value = "Artifact33")]
-    Artifact33,
-    [EnumMember(Value = "Artifact34")]
-    Artifact34,
-    [EnumMember(Value = "Artifact35")]
-    Artifact35,
-    [EnumMember(Value = "Artifact36")]
-    Artifact36,
-    [EnumMember(Value = "Artifact37")]
-    Artifact37,
-    [EnumMember(Value = "Artifact38")]
-    Artifact38,
-    [EnumMember(Value = "Artifact39")]
-    Artifact39,
-    [EnumMember(Value = "Artifact40")]
-    Artifact40,
-    [EnumMember(Value = "Artifact41")]
-    Artifact41,
-    [EnumMember(Value = "Artifact42")]
-    Artifact42,
-    [EnumMember(Value = "Artifact43")]
-    Artifact43,
-    [EnumMember(Value = "Artifact44")]
-    Artifact44,
-    [EnumMember(Value = "Artifact45")]
-    Artifact45,
-    [EnumMember(Value = "Artifact46")]
-    Artifact46,
+    [EnumMember(Value = "Metroid DNA 1")]
+    DNA1,
+    [EnumMember(Value = "Metroid DNA 2")]
+    DNA2,
+    [EnumMember(Value = "Metroid DNA 3")]
+    DNA3,
+    [EnumMember(Value = "Metroid DNA 4")]
+    DNA4,
+    [EnumMember(Value = "Metroid DNA 5")]
+    DNA5,
+    [EnumMember(Value = "Metroid DNA 6")]
+    DNA6,
+    [EnumMember(Value = "Metroid DNA 7")]
+    DNA7,
+    [EnumMember(Value = "Metroid DNA 8")]
+    DNA8,
+    [EnumMember(Value = "Metroid DNA 9")]
+    DNA9,
+    [EnumMember(Value = "Metroid DNA 10")]
+    DNA10,
+    [EnumMember(Value = "Metroid DNA 11")]
+    DNA11,
+    [EnumMember(Value = "Metroid DNA 12")]
+    DNA12,
+    [EnumMember(Value = "Metroid DNA 13")]
+    DNA13,
+    [EnumMember(Value = "Metroid DNA 14")]
+    DNA14,
+    [EnumMember(Value = "Metroid DNA 15")]
+    DNA15,
+    [EnumMember(Value = "Metroid DNA 16")]
+    DNA16,
+    [EnumMember(Value = "Metroid DNA 17")]
+    DNA17,
+    [EnumMember(Value = "Metroid DNA 18")]
+    DNA18,
+    [EnumMember(Value = "Metroid DNA 19")]
+    DNA19,
+    [EnumMember(Value = "Metroid DNA 20")]
+    DNA20,
+    [EnumMember(Value = "Metroid DNA 21")]
+    DNA21,
+    [EnumMember(Value = "Metroid DNA 22")]
+    DNA22,
+    [EnumMember(Value = "Metroid DNA 23")]
+    DNA23,
+    [EnumMember(Value = "Metroid DNA 24")]
+    DNA24,
+    [EnumMember(Value = "Metroid DNA 25")]
+    DNA25,
+    [EnumMember(Value = "Metroid DNA 26")]
+    DNA26,
+    [EnumMember(Value = "Metroid DNA 27")]
+    DNA27,
+    [EnumMember(Value = "Metroid DNA 28")]
+    DNA28,
+    [EnumMember(Value = "Metroid DNA 29")]
+    DNA29,
+    [EnumMember(Value = "Metroid DNA 30")]
+    DNA30,
+    [EnumMember(Value = "Metroid DNA 31")]
+    DNA31,
+    [EnumMember(Value = "Metroid DNA 32")]
+    DNA32,
+    [EnumMember(Value = "Metroid DNA 33")]
+    DNA33,
+    [EnumMember(Value = "Metroid DNA 34")]
+    DNA34,
+    [EnumMember(Value = "Metroid DNA 35")]
+    DNA35,
+    [EnumMember(Value = "Metroid DNA 36")]
+    DNA36,
+    [EnumMember(Value = "Metroid DNA 37")]
+    DNA37,
+    [EnumMember(Value = "Metroid DNA 38")]
+    DNA38,
+    [EnumMember(Value = "Metroid DNA 39")]
+    DNA39,
+    [EnumMember(Value = "Metroid DNA 40")]
+    DNA40,
+    [EnumMember(Value = "Metroid DNA 41")]
+    DNA41,
+    [EnumMember(Value = "Metroid DNA 42")]
+    DNA42,
+    [EnumMember(Value = "Metroid DNA 43")]
+    DNA43,
+    [EnumMember(Value = "Metroid DNA 44")]
+    DNA44,
+    [EnumMember(Value = "Metroid DNA 45")]
+    DNA45,
+    [EnumMember(Value = "Metroid DNA 46")]
+    DNA46,
     
     [EnumMember(Value = "Missile Expansion")]
     MissileExpansion,
