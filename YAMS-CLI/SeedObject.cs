@@ -93,8 +93,98 @@ public class StartingLocationObject
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ItemEnum
 {
-    [EnumMember(Value = "DNA")]
-    DNA,
+    [EnumMember(Value = "Artifact1")]
+    Artifact1,
+    [EnumMember(Value = "Artifact2")]
+    Artifact2,
+    [EnumMember(Value = "Artifact3")]
+    Artifact3,
+    [EnumMember(Value = "Artifact4")]
+    Artifact4,
+    [EnumMember(Value = "Artifact5")]
+    Artifact5,
+    [EnumMember(Value = "Artifact6")]
+    Artifact6,
+    [EnumMember(Value = "Artifact7")]
+    Artifact7,
+    [EnumMember(Value = "Artifact8")]
+    Artifact8,
+    [EnumMember(Value = "Artifact9")]
+    Artifact9,
+    [EnumMember(Value = "Artifact10")]
+    Artifact10,
+    [EnumMember(Value = "Artifact11")]
+    Artifact11,
+    [EnumMember(Value = "Artifact12")]
+    Artifact12,
+    [EnumMember(Value = "Artifact13")]
+    Artifact13,
+    [EnumMember(Value = "Artifact14")]
+    Artifact14,
+    [EnumMember(Value = "Artifact15")]
+    Artifact15,
+    [EnumMember(Value = "Artifact16")]
+    Artifact16,
+    [EnumMember(Value = "Artifact17")]
+    Artifact17,
+    [EnumMember(Value = "Artifact18")]
+    Artifact18,
+    [EnumMember(Value = "Artifact19")]
+    Artifact19,
+    [EnumMember(Value = "Artifact20")]
+    Artifact20,
+    [EnumMember(Value = "Artifact21")]
+    Artifact21,
+    [EnumMember(Value = "Artifact22")]
+    Artifact22,
+    [EnumMember(Value = "Artifact23")]
+    Artifact23,
+    [EnumMember(Value = "Artifact24")]
+    Artifact24,
+    [EnumMember(Value = "Artifact25")]
+    Artifact25,
+    [EnumMember(Value = "Artifact26")]
+    Artifact26,
+    [EnumMember(Value = "Artifact27")]
+    Artifact27,
+    [EnumMember(Value = "Artifact28")]
+    Artifact28,
+    [EnumMember(Value = "Artifact29")]
+    Artifact29,
+    [EnumMember(Value = "Artifact30")]
+    Artifact30,
+    [EnumMember(Value = "Artifact31")]
+    Artifact31,
+    [EnumMember(Value = "Artifact32")]
+    Artifact32,
+    [EnumMember(Value = "Artifact33")]
+    Artifact33,
+    [EnumMember(Value = "Artifact34")]
+    Artifact34,
+    [EnumMember(Value = "Artifact35")]
+    Artifact35,
+    [EnumMember(Value = "Artifact36")]
+    Artifact36,
+    [EnumMember(Value = "Artifact37")]
+    Artifact37,
+    [EnumMember(Value = "Artifact38")]
+    Artifact38,
+    [EnumMember(Value = "Artifact39")]
+    Artifact39,
+    [EnumMember(Value = "Artifact40")]
+    Artifact40,
+    [EnumMember(Value = "Artifact41")]
+    Artifact41,
+    [EnumMember(Value = "Artifact42")]
+    Artifact42,
+    [EnumMember(Value = "Artifact43")]
+    Artifact43,
+    [EnumMember(Value = "Artifact44")]
+    Artifact44,
+    [EnumMember(Value = "Artifact45")]
+    Artifact45,
+    [EnumMember(Value = "Artifact46")]
+    Artifact46,
     
     [EnumMember(Value = "Missile Expansion")]
     MissileExpansion,

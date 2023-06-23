@@ -11,11 +11,19 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // TODO: spider ball challenge bomb block regenerates even tho it shouldnt?
+            // TODO: add fusion mode rdv setting 
+
+            // TODO: repeteadly going exiting and getting into arachnus door makes the item despawn
+            
+            // TODO: fix boss doors being whack
+            
+            // TODO: implement hints for trooper logs and final chozo log
             
             // TODO: make mines save crystal gone automatically when you come from above door
             
-            // TODO: when starting it thoth, make PB blocks disabled when you go down
+            // TODO: when starting at thoth, make PB blocks disabled when you go down
+            
+            // TODO: zetas/metroid music is bugged sometimes??
             
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
@@ -86,7 +94,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Import new Sprites
             // TODO: add a bunch of sprites that'll be added into the future
             Dictionary<string, int> nameToPageItemDict = new Dictionary<string, int>();
-            const int pageDimension = 256;
+            const int pageDimension = 512;
             int lastUsedX = 0, lastUsedY = 0, currentShelfHeight = 0;
             var newTexturePage = new Image<Rgba32>(pageDimension, pageDimension);
             var utTexturePage = new UndertaleEmbeddedTexture();
@@ -96,14 +104,17 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 var sprite = Image.Load(filePath);
                 currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
-                if (lastUsedX + sprite.Width > pageDimension)
+                if ((lastUsedX + sprite.Width) > pageDimension)
                 {
                     lastUsedX = 0;
                     lastUsedY += currentShelfHeight;
                     currentShelfHeight = sprite.Height + 1; // One pixel padding
+
+                    if (sprite.Width > pageDimension)
+                        throw new NotSupportedException($"Currently a sprite ({filePath}) is bigger than the max size of a {pageDimension} texture page!");
                 }
 
-                if (lastUsedY + sprite.Height > pageDimension)
+                if ((lastUsedY + sprite.Height) > pageDimension)
                     throw new NotSupportedException($"Currently all the sprites would be above a {pageDimension} texture page!");
 
                 int xCoord = lastUsedX;
@@ -124,7 +135,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 newTexturePage.Save(ms, PngFormat.Instance);
                 utTexturePage.TextureData = new UndertaleEmbeddedTexture.TexData() { TextureBlob = ms.ToArray() };
             }
-            
+
+            gmData.Backgrounds.ByName("bg_MapBottom2").Texture = gmData.TexturePageItems[nameToPageItemDict["bg_MapBottom2"]];
+            gmData.Backgrounds.ByName("bgGUIMetCountBG1").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
+            gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
+            gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2ELM"]];
             
             gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissile"]]});
             gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]]});
@@ -262,7 +277,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             });
             
-            // TODO: make DNA show up on pause screen
+            var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
+            
+           
 
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
@@ -296,8 +313,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 "{ event_user(2); if(event > 0) global.event[event] = 1; }");
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
-            // TODO: make this more dynamic instead?
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
+            
+            // Fix skreek street not actually having skreeks
+            PrependGMLInCode(gmData.Code.ByName("gml_Script_scr_skreeks_destroy"), "exit");
             
             // Add doors to gfs thoth bridge
             var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
@@ -449,6 +468,25 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 gmData.GameObjects.Add(go);
             }
             
+            // Adjust global item array to be 400
+            ReplaceGMLInCode(characterVarsCode, """
+            i = 350
+            repeat (350)
+            {
+                i -= 1
+                global.item[i] = 0
+            }
+            """, """
+            i = 400
+            repeat (400)
+            {
+                i -= 1
+                global.item[i] = 0
+            }
+            """);
+            ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_add_items"), "350", "400");
+            ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_get_items"), "350", "400");
+            
             // Metroid ID to DNA map
             var scrDNASpawn = new UndertaleCode();
             scrDNASpawn.Name = gmData.Strings.MakeString("gml_Script_scr_DNASpawn");
@@ -549,18 +587,50 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Code.Add(scrDNASpawn);
             gmData.Scripts.Add(new UndertaleScript() {Name = gmData.Strings.MakeString("scr_DNASpawn"), Code = scrDNASpawn});
 
+            // Make DNA count show on map
+            ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext)", 
+                "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext); draw_text((view_xview[0] + 158), ((view_yview[0] + 198) + rectoffset), string(global.dna) + \"/46\")");
+            ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext)", 
+                "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext); draw_text((view_xview[0] + 157), ((view_yview[0] + 197) + rectoffset), string(global.dna) + \"/46\")");
+            
+            // Fix item percentage now that more items have been added
+            foreach (var name in new[] {"gml_Object_oGameSelMenu_Other_12", "gml_Object_oSS_Fg_Draw_0", "gml_Object_oScoreScreen_Create_0", "gml_Object_oScoreScreen_Other_10", "gml_Object_oIGT_Step_0", })
+                ReplaceGMLInCode(gmData.Code.ByName(name), "/ 88", "/ 134");
+            
+            // Make Charge Beam always hit metroids
+            foreach (string name in new[] { "gml_Object_oMAlpha_Collision_439", "gml_Object_oMGamma_Collision_439", "gml_Object_oMZeta_Collision_439", "gml_Object_oMOmegaMask2_Collision_439", "gml_Object_oMOmegaMask3_Collision_439"})
+                ReplaceGMLInCode(gmData.Code.ByName(name), "global.missiles == 0 && global.smissiles == 0", "true && true");
+            
+            // Replace Metroids counters with DNA counters
+            var drawGuiCode = gmData.Code.ByName("gml_Script_draw_gui");
+            ReplaceGMLInCode(drawGuiCode, "global.monstersleft", "global.dna");
+            ReplaceGMLInCode(drawGuiCode, "global.monstersarea", "46 - global.dna");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_14"), "get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_10"), "get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_13"), "get_text(\"OptionsDisplay\", \"MonsterCounter_Tip\")", 
+                "\"Switches the type of the HUD DNA Counter\"");
+            var optionsDisplayUser2 = gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_12");
+            ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Local\")", "\"Until Labs\"");
+            ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Global\")", "\"Current\"");
+            ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Disabled_Tip\")", "\"Don't show the DNA Counter\"");
+            ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Local_Tip\")", "\"Show the remaining DNA until you can access the Genetics Laboratory\"");
+            ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Global_Tip\")", "\"Show the currently collected DNA\"");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "global.monstersleft", "global.dna");
+            
+            // TODO: add shortcut between nest and hideout, and waterfalls and nest
+            
             // Make metroids drop an item onto you on death
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMGamma_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMZeta_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMOmega_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) active = 1;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
 
             // Make new global.lavastate 11 that requires 46 dna to be collected
-            AppendGMLInCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; }");
+            SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; }");
             
             // Check lavastate at labs
             var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
@@ -615,12 +685,17 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(newGameCode,"oControl.mod_randomgamebool = 0", "oControl.mod_randomgamebool = 1");
             
             // Fix local metroids
-            ReplaceGMLInCode(newGameCode, "global.monstersleft = 47", "global.monstersleft = 47; global.monstersarea = 38");
+            // TODO: i forgot to exclude some scan events, which leads the counters being desynced...
+            ReplaceGMLInCode(newGameCode, "global.monstersleft = 47", "global.monstersleft = 47; global.monstersarea = 46");
 
+            // Make it in oItem, that itemtype one's automatically spawn a popup
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "global.itemtype = itemtype", 
+                "if (itemtype == 1) {popup_text(text1);} global.itemtype = itemtype");
+            
             // Add main (super) missile / PB launcher
             // missileLauncher, SMissileLauncher, PBombLauncher
             // also add an item for them + amount of expansions they give
-            var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
+            
             PrependGMLInCode(characterVarsCode, "global.missileLauncher = 0; global.SMissileLauncher = 0; global.PBombLauncher = 0;" +
                                                 "global.missileLauncherExpansion = 30; global.SMissileLauncherExpansion = 2; global.PBombLauncherExpansion = 2;");
             
@@ -642,7 +717,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(chStepFireCode, "&& global.pbombs > 0", "&& global.pbombs > 0 && global.PBombLauncher");
             
             // Change GUI For toggle, use a red item sprite instead of green, for hold use a red instead of yellow
-            var drawGuiCode = gmData.Code.ByName("gml_Script_draw_gui");
             // Replace Missile GUI
             ReplaceGMLInCode(drawGuiCode, """
                 if (oCharacter.armmsl == 1)
@@ -729,6 +803,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
+            
+            // Set a bunch of metroid events to already be scanned
+            AppendGMLInCode(characterVarsCode, "global.event[301] = 1; global.event[305] = 1; global.event[306] = 1;");
             
             // Move Geothermal PB to big shaft
             AppendGMLInCode(gmData.Rooms.ByName("rm_a4b02a").CreationCodeId, "instance_create(272, 400, scr_itemsopen(oControl.mod_253));");
@@ -1148,10 +1225,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
                 "} global.playerhealth = global.maxhealth");
             // TODO: instead of just show_messsage, have an actual proper in-game solution
+            // reference: https://cdn.discordapp.com/attachments/914294505107251231/1121816654385516604/image.png
             
             var sv6loadDetails = gmData.Code.ByName("gml_Script_sv6_load_details");
             ReplaceGMLInCode(sv6loadDetails, "V7.0", "RDV V8.0");
-            ReplaceGMLInCode(sv6loadDetails, "sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid);");
+            ReplaceGMLInCode(sv6loadDetails, "sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid); sv6_get_newglobals(fid);");
 
             foreach (var code in new[] {"gml_Script_save_stats", "gml_Script_save_stats2", "gml_Script_load_stats", "gml_Script_load_stats2"})
                 ReplaceGMLInCode(gmData.Code.ByName(code), "V7.0", "RDV V8.0");
@@ -1196,7 +1274,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                         // Are handled further down
                         break;
                     
-                    case ItemEnum.DNA:
+                    case var x when x.ToString().StartsWith("Artifact"):
                         ReplaceGMLInCode(characterVarsCode, "global.dna =", "global.dna = 1 +");
                         break;
                     
@@ -1230,7 +1308,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.Gravity:
                         ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
                         break;
-                    // TODO: make a general arm weapon thing. see todo at very top somwewhere
+                    // TODO: make a general arm weapon thing. see todo further down somwewhere
                     case ItemEnum.Power:
                         break;
                     case ItemEnum.Charge:
@@ -1286,7 +1364,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (distance_to_object(oItem) > 180)", 
                 "if ((distance_to_object(oItem) > 180) && (instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0))");
 
-            // TODO: proper damage values, add to test
+            // TODO: proper damage values in DB, add to test
             
             // Door locks
             // TODO: door locks
@@ -1316,7 +1394,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     ItemEnum.PBombExpansion=> "scr_powerbomb_character_event()",
                     ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                                      "{{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }}",
-                    ItemEnum.DNA => "event_inherited(); if (active) global.dna++;",
+                    var x when x.ToString().StartsWith("Artifact") => "event_inherited(); if (active) { global.dna++; check_areaclear(); }",
                     ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
                     ItemEnum.Powergrip =>"event_inherited(); if (active) {{ global.powergrip = 1; global.hasPowergrip = 1; }}",
                     ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) {{ global.spiderball = 1; global.hasSpiderball = 1; }}",
@@ -1473,21 +1551,41 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 foreach (var go in room.GameObjects)
                 {
                     // Instance ID here is for a puzzle in a2, that when not respawned makes it a tad hard.
-                    if (go.ObjectDefinition.Name.Content.StartsWith("oBlockBomb") && go.CreationCode is not null && go.InstanceID != 110602)
-                        AppendGMLInCode(go.CreationCode, "if (!global.respawnBombBlocks) regentime = -1");
+                    if (!go.ObjectDefinition.Name.Content.StartsWith("oBlockBomb") || go.InstanceID == 110602) continue;
+                    
+                    if (go.CreationCode is null)
+                    {
+                        var code = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_" + room.Name.Content + "_" + go.InstanceID + "_Create")};
+                        gmData.Code.Add(code);
+                        go.CreationCode = code;
+                    }
+                    AppendGMLInCode(go.CreationCode, "if (!global.respawnBombBlocks) regentime = -1");
                 }
             }
 
-            // TODO: ability to skip cutscenes!
             if (seedObject.Patches.SkipCutscenes)
             {
-                
+                // First Alpha cutscene - event 0
+                AppendGMLInCode(characterVarsCode, "global.event[0] = 1");
+                // Gamma mutation cutscene - TODO: requires changes in DB! event 109
+                AppendGMLInCode(characterVarsCode, "global.event[109] = 1");
+                // Zeta mutation cutscene - event 205
+                AppendGMLInCode(characterVarsCode, "global.event[205] = 1");
+                // Omega Mutation cutscene - event 300
+                AppendGMLInCode(characterVarsCode, "global.event[300] = 1");
+                // Hatchling cutscene - 302
+                AppendGMLInCode(characterVarsCode, "global.event[302] = 1");
+                // Drill cutscene - event 172 to 3
+                AppendGMLInCode(characterVarsCode, "global.event[172] = 3");
             }
             
-            // TODO: ability to skip mines crystal - dont, just skip the excavator cutscene
-            
+            // TODO: make a seperate option for item cutscene skips
+            // Varia cutscene - should be moved to quick item pickups
+            // Gravity cutscene - should be moved to quick item pickups
+            // item collect cutscene - should be moved to quick item pickups
+
             // Go through every room's creation code, and set popup_text(room_name)
-            // TODO: make this an option
+            // TODO: make this an cosmetic option
             foreach ((var internalName, var room) in seedObject.RoomObjects)
             {
                 var roomName = room.DisplayName;
@@ -1508,6 +1606,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // For room rando, go through each door and modify where it leads to
             // TODO: Implement this whenever room rando gets done.
 
+            // TODO: temp. remove when cause was figured out
+            AppendGMLInCode(drawGuiCode, "if (global.lavastate < 12 && (global.monstersarea != (global.monstersleft - 1))) {draw_set_font(global.fontMenuSmall); draw_set_alpha(1); draw_text_shadow(2, (24 + (0 * 8)), \"WARNING: METROID DESYNC, REPORT TO MIEPEE\");}");
+            
             // Write back to disk
             using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
             {
