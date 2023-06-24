@@ -11,6 +11,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
+            // Prevent bad OSes from running
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                int x = 1/0;
+            }
+            
             // TODO: add fusion mode rdv setting 
 
             // TODO: repeteadly going exiting and getting into arachnus door makes the item despawn
