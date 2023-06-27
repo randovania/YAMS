@@ -14,6 +14,9 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("game_patches")]
     public GamePatches Patches;
+
+    [JsonInclude] [JsonPropertyName("door_locks")]
+    public Dictionary<uint, DoorLock> DoorLocks;
     
     [JsonInclude]
     [JsonPropertyName("pickups")]
@@ -30,6 +33,28 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("starting_location")]
     public StartingLocationObject StartingLocation;
+}
+
+public class DoorLock
+{
+    [JsonInclude]
+    [JsonPropertyName("lock")]
+    public DoorLockType Lock;
+}
+
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+public enum DoorLockType
+{
+    [EnumMember(Value = "Normal Door")]
+    Normal,
+    [EnumMember(Value = "Missile Door")]
+    Missile,
+    [EnumMember(Value = "Super Missile Door")]
+    SuperMissile,
+    [EnumMember(Value = "Power Bomb Door")]
+    PBomb,
+    [EnumMember(Value = "Locked Door")]
+    Locked,
 }
 
 public class GamePatches
