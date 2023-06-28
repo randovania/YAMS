@@ -210,6 +210,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]]});
             gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBomb"]]});
             
+            // Add new sprites for doors
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorChargeBeam"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorWaveBeam"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSpazerBeam"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorPlasmaBeam"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorIceBeam"]]});
             
             // TODO: double check margins in every sprite
             gmData.Sprites.Add(new UndertaleSprite()
@@ -373,11 +379,13 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 ReplaceGMLInCode(gmData.Code.ByName(code), "global.ptanks > 0", "true");
             }
             
-            // Make doors automatically free their event when passing through them!
+            // Make doors automatically free their event when passing through them!...
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)", 
                 "{ event_user(2); if(event > 0 && lock < 4) global.event[event] = 1; }");
+            // ...But don't make them automatically opened for non-ammo doors!
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "lock = 0", "if (lock < 4) lock = 0;");
             
-            // Make doors when unlocked, go to the type they were before
+            // Make doors when unlocked, go to the type they were before except for ammo doors
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Create_0"), "originalLock = lock;");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Other_13"), "lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
             
@@ -386,6 +394,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Fix doors unlocking in arachnus/torizo/genesis
             foreach (var codeName in new string[] {"gml_Room_rm_a2a04_Create", "gml_Room_rm_a3a01_Create", "gml_Room_rm_a8a11_Create"})
                 AppendGMLInCode(gmData.Code.ByName(codeName), "with (oDoor) lock = 4; with (oDoorA8) lock = 4; with (oDoorA4) lock = 4; with (oDoorA5) lock = 4;");
+            
+            // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
+                                                                                                "(lock == 6 && other.wbeam) || (lock == 7 && other.sbeam) || " +
+                                                                                                "(lock == 7 && other.sbeam) || (lock == 8 && other.pbeam) || " +
+                                                                                                "(lock == 9 && other.ibeam)");
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -1589,6 +1603,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     door.ObjectDefinition = a5Door;
                 }
             }
+            // Also fix depth value for them
+            a5Door.Depth = -99;
             
             
             var doorEventIndex = 350;
@@ -1619,6 +1635,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             DoorLockType.SuperMissile => $"lock = 2; originalLock = lock; event = {doorEventIndex};",
                             DoorLockType.PBomb => $"lock = 3; originalLock = lock; event = {doorEventIndex};",
                             DoorLockType.Locked => $"lock = 4; originalLock = lock; event = -1;",
+                            DoorLockType.Charge => $"lock = 5; originalLock = lock; event = -1;",
+                            DoorLockType.Wave => $"lock = 6; originalLock = lock; event = -1;",
+                            DoorLockType.Spazer => $"lock = 7; originalLock = lock; event = -1;",
+                            DoorLockType.Plasma => $"lock = 8; originalLock = lock; event = -1;",
+                            DoorLockType.Ice => $"lock = 9; originalLock = lock; event = -1;",
                             _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                         };
                         

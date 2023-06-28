@@ -55,6 +55,16 @@ public enum DoorLockType
     PBomb,
     [EnumMember(Value = "Locked Door")]
     Locked,
+    [EnumMember(Value = "Charge Beam Door")]
+    Charge,
+    [EnumMember(Value = "Wave Beam Door")]
+    Wave,
+    [EnumMember(Value = "Spazer Beam Door")]
+    Spazer,
+    [EnumMember(Value = "Plasma Beam Door")]
+    Plasma,
+    [EnumMember(Value = "Ice Beam Door")]
+    Ice,
 }
 
 public class GamePatches
