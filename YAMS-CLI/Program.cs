@@ -14,8 +14,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
         {
             // TODO: put killing metroids with only charge behind a combat trick
             
-            // TODO: hideout pipe room and depths entrance needs to change music
-            
             // TODO: add fusion mode rdv setting 
 
             // TODO: repeteadly going exiting and getting into arachnus door makes the item despawn?? double check whether this happens
@@ -210,12 +208,22 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]]});
             gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBomb"]]});
             
+            // Replace existing door sprites
+            gmData.Sprites.ByName("sDoorA5Locks").Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorBlue"]];
+            gmData.Sprites.ByName("sDoorA5Locks").Textures[1].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorMissile"]];
+            gmData.Sprites.ByName("sDoorA5Locks").Textures[2].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSuper"]];
+            gmData.Sprites.ByName("sDoorA5Locks").Textures[3].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorPBomb"]];
+            gmData.Sprites.ByName("sDoorA5Locks").Textures[4].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorLocked"]];
+            
             // Add new sprites for doors
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorChargeBeam"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorWaveBeam"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSpazerBeam"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorPlasmaBeam"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorIceBeam"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorBomb"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSpider"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorScrew"]]});
             
             // TODO: double check margins in every sprite
             gmData.Sprites.Add(new UndertaleSprite()
@@ -350,8 +358,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
             
-           
-
+            // TODO: fix walljump logic in tower exterior west
+            // TODO: western cave entrance logic bug with getting the item
+                
+            
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
             gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
@@ -369,7 +379,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
-            ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(global.playerhealth) + \"/\" + string(global.maxhealth) )");
+            ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
             ReplaceGMLInCode(ssDraw, "(string(global.mtanks) + \"/44\")", "( string(global.missiles) + \"/\" + string(global.maxmissiles) )");
             ReplaceGMLInCode(ssDraw, "(string(global.stanks) + \"/10\")", "( string(global.smissiles) + \"/\" + string(global.maxsmissiles) )");
             ReplaceGMLInCode(ssDraw, " (string(global.ptanks) + \"/10\")", "( string(global.pbombs) + \"/\" + string(global.maxpbombs) )");
@@ -389,11 +399,13 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Create_0"), "originalLock = lock;");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Other_13"), "lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
             
-            // TODO: health in menu has rounding bullshit
-            
-            // Fix doors unlocking in arachnus/torizo/genesis
-            foreach (var codeName in new string[] {"gml_Room_rm_a2a04_Create", "gml_Room_rm_a3a01_Create", "gml_Room_rm_a8a11_Create"})
+            // Fix doors unlocking in arachnus/torizo/tester/genesis
+            foreach (var codeName in new[] {"gml_Room_rm_a2a04_Create", "gml_Room_rm_a3a01_Create", "gml_Room_rm_a4a05_Create", "gml_Room_rm_a8a11_Create"})
                 AppendGMLInCode(gmData.Code.ByName(codeName), "with (oDoor) lock = 4; with (oDoorA8) lock = 4; with (oDoorA4) lock = 4; with (oDoorA5) lock = 4;");
+            
+            // Fix doors in tester to be always blue
+            foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
+                SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
             
             // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
@@ -401,6 +413,22 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                                                                                                 "(lock == 7 && other.sbeam) || (lock == 8 && other.pbeam) || " +
                                                                                                 "(lock == 9 && other.ibeam)");
             
+            // Implement other weapon doors (bomb = 10, spider = 11, screw = 12)
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_435"), "lock == 0", "(lock == 0 || lock == 10)");
+            var doorSamusCollision = new UndertaleCode();
+            doorSamusCollision.Name = gmData.Strings.MakeString($"gml_Object_oDoor_Collision_267");
+            SubstituteGMLCode(doorSamusCollision, "if (!open && ((lock == 11 && other.state == other.SPIDERBALL) || " +
+                                                  "(lock == 12 && global.screwattack && other.state == other.JUMPING && !other.vjump && !other.walljumping && (!other.inwater || global.currentsuit >= 2))))" +
+                                                  "event_user(1)");
+            gmData.Code.Add(doorSamusCollision);
+            var doorCollisionList = gmData.GameObjects.ByName("oDoor").Events[4];
+            var varDoorAction = new UndertaleGameObject.EventAction();
+            varDoorAction.CodeId = doorSamusCollision;
+            var varDoorEvent = new UndertaleGameObject.Event();
+            varDoorEvent.EventSubtype = 267; // 267 is oCharacter ID
+            varDoorEvent.Actions.Add(varDoorAction);
+            doorCollisionList.Add(varDoorEvent);
+
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
             
@@ -731,7 +759,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             SubstituteGMLCode(hideoutPipeCode, "targetroom = 327; targetx = 216; targety = 400; direction = 90;");
             gmData.Code.Add(hideoutPipeCode);
             hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode));
-            AppendGMLInCode(hideoutPipeRoom.CreationCodeId, "global.darkness = 0");
+            AppendGMLInCode(hideoutPipeRoom.CreationCodeId, "global.darkness = 0; mus_change(mus_get_main_song());");
             
             // Nest
             var nestPipeRoom = gmData.Rooms.ByName("rm_a6b03");
@@ -748,6 +776,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 368, solidObject, null, 3));
             nestPipeRoom.GameObjects.Add(CreateRoomObject(224, 384, solidObject));
             nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 400, solidObject, null, 3));
+            
+            AppendGMLInCode(nestPipeRoom.CreationCodeId, "mus_change(musArea6A)");
             
             var nestPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
             SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
@@ -776,6 +806,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 176, solidObject));
             depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 192, solidObject, null, 3));
             
+            AppendGMLInCode(depthsPipeRoom.CreationCodeId, "mus_change(musArea6A);");
             
             var depthsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
             SubstituteGMLCode(depthsPipeCode, "targetroom = 348; targetx = 904; targety = 208; direction = 180;");
@@ -812,7 +843,16 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
             
-            // TODO: see if it's possible to shorten save animation
+            // TODO: see if it's possible to shorten save animation - it is, fix character step event first
+            // gml_Script_characterStepEvent -> 
+            /*
+                if (cutsceneSkip) {
+             *  instance_create(x, y, oSaveFX)
+                instance_create(x, y, oSaveSparks)
+                }
+                ...
+                if ((statetime == 230 && !cutsceneSkip) || (statetime == 10  cutsceneskip))
+             */
             
             // Make metroids drop an item onto you on death
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
@@ -1290,12 +1330,99 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 AppendGMLInCode(room.CreationCodeId, "global.objdeactivate = 0");
             
             // Make new game not hardcode separate starting values
+            PrependGMLInCode(characterVarsCode, "global.startingSave = 0;");
             var startNewGame = gmData.Code.ByName("gml_Script_start_new_game");
             ReplaceGMLInCode(startNewGame, """
                 global.start_room = 21
                 global.save_x = 3408
                 global.save_y = 1184
-                """, "global.save_room = 0; set_start_location();");
+                """, "global.save_room = global.startingSave; set_start_location();");
+            
+            // Modify main menu to have a "restart from starting save" option
+            SubstituteGMLCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Other_10"), """
+            op1 = instance_create(x, y, oPauseOption)
+            op1.optionid = 0
+            op1.label = get_text("PauseMenu", "Resume")
+            op2 = instance_create(x, (y + 16), oPauseOption)
+            op2.optionid = 1
+            op2.label = get_text("PauseMenu", "Restart")
+            op3 = instance_create(x, (y + 32), oPauseOption)
+            op3.optionid = 2
+            op3.label = "Restart from Start Location"
+            op4 = instance_create(x, (y + 48), oPauseOption)
+            op4.optionid = 3
+            op4.label = get_text("PauseMenu", "Options")
+            op5 = instance_create(x, (y + 64), oPauseOption)
+            op5.optionid = 4
+            op5.label = get_text("PauseMenu", "Quit")
+            """);
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Create_0"), "lastitem = 3", "lastitem = 4;");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Create_0"), """
+            tip[0] = get_text("PauseMenu", "Resume_Tip");
+            tip[1] = get_text("PauseMenu", "Restart_Tip");
+            tip[2] = "Abandon the current game and load from Starting Area";
+            tip[3] = get_text("PauseMenu", "Options_Tip");
+            tip[4] = get_text("PauseMenu", "Quit_Tip");
+            global.tiptext = tip[global.curropt];
+            """);
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Step_0"), """
+                    if (global.curropt == 1)
+                    {
+                        instance_create(50, 92, oOptionsReload)
+                        instance_destroy()
+                    }
+                    if (global.curropt == 2)
+                    {
+                        instance_create(50, 92, oOptionsMain)
+                        instance_destroy()
+                    }
+                    if (global.curropt == 3)
+                    {
+                        instance_create(50, 92, oOptionsQuit)
+                        instance_destroy()
+                    }
+            """, """
+                    if (global.curropt == 1)
+                    {
+                        instance_create(50, 92, oOptionsReload)
+                        global.shouldLoadFromStart = 0;
+                        instance_destroy()
+                    }
+                    if (global.curropt == 2)
+                    {
+                        instance_create(50, 92, oOptionsReload)
+                        global.shouldLoadFromStart = 1;
+                        instance_destroy()
+                    }
+                    if (global.curropt == 3)
+                    {
+                        instance_create(50, 92, oOptionsMain)
+                        instance_destroy()
+                    }
+                    if (global.curropt == 4)
+                    {
+                        instance_create(50, 92, oOptionsQuit)
+                        instance_destroy()
+                    }
+            """);
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Other_11"), """
+            if instance_exists(op5)
+            {
+                with (op5)
+                    instance_destroy()
+            }
+
+            """);
+            PrependGMLInCode(gmData.Code.ByName("gml_Object_oControl_Create_0"), "global.shouldLoadFromStart = 0;");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oLoadGame_Other_10"), """
+            if (global.shouldLoadFromStart)
+            {
+              global.save_room = global.startingSave;
+              set_start_location();
+              room_change(global.start_room, 1)
+              global.shouldLoadFromStart = 0;  
+            }
+            """);
             
             // Modify save scripts to load our new globals / stuff we modified
             var saveGlobalsCode = new UndertaleCode();
@@ -1335,6 +1462,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ds_list_add(list, global.maxpbombs)
             ds_list_add(list, global.gameHash)
             ds_list_add(list, global.dna)
+            ds_list_add(list, global.startingSave)
             comment = "gives me some leeway in case i need to add more"
             repeat (15)
             {
@@ -1386,6 +1514,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             global.maxpbombs = readline()
             global.gameHash = readline()
             global.dna = readline()
+            global.startingSave = readline();
             ds_list_clear(list)
             """);
             gmData.Code.Add(loadGlobalsCode);
@@ -1543,7 +1672,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 ReplaceGMLInCode(characterVarsCode, "global.PBombLauncher = 0", "global.PBombLauncher = 1");
             
             // Set starting location
-            ReplaceGMLInCode(startNewGame, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
+            ReplaceGMLInCode(characterVarsCode, "global.startingSave = 0", $"global.startingSave = {seedObject.StartingLocation.SaveRoom}");
             ReplaceGMLInCode(characterVarsCode, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
             
             // Modify minimap for power plant because of pb movement
@@ -1570,7 +1699,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: proper damage values in DB, add to test
             
             // Door locks
-            // TODO: implement beam doors
             // Adjust global event array to be 700
             ReplaceGMLInCode(characterVarsCode, """
             i = 350
@@ -1627,7 +1755,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             gmData.Code.Add(code);
                             gameObject.CreationCode = code;
                         }
-
+                        
                         string codeText = doorLock.Lock switch
                         {
                             DoorLockType.Normal => "lock = 0; event = -1;",
@@ -1640,6 +1768,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             DoorLockType.Spazer => $"lock = 7; originalLock = lock; event = -1;",
                             DoorLockType.Plasma => $"lock = 8; originalLock = lock; event = -1;",
                             DoorLockType.Ice => $"lock = 9; originalLock = lock; event = -1;",
+                            DoorLockType.Bomb => "lock = 10; originalLock = lock; event = -1;",
+                            DoorLockType.Spider => "lock = 11; originalLock = lock; event = -1;",
+                            DoorLockType.Screw => "lock = 12; originaLock = lock; event = -1;",
+                            // TODO: implement new door types here
                             _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                         };
                         
@@ -1913,8 +2045,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera;}");
             
             // TODO: power grip is off-centered
-            // TODO: add word wrap to item tracker current location text
-            // TODO: do something about potential deadlock in a5 (requires ice/screw to leave) and a2 (requires bombs/spider/spring/power grip to leave)
             // TODO: "unknown item" is off-cetnered
             
             // TODO: make a seperate option for item cutscene skips

@@ -65,6 +65,12 @@ public enum DoorLockType
     Plasma,
     [EnumMember(Value = "Ice Beam Door")]
     Ice,
+    [EnumMember(Value = "Bomb Door")]
+    Bomb,
+    [EnumMember(Value = "Spider Ball Door")]
+    Spider,
+    [EnumMember(Value = "Screw Attack Door")]
+    Screw,
 }
 
 public class GamePatches
