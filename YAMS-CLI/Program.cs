@@ -410,7 +410,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // Fix tester events sharing an event with tower activated - moved tester to 206
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[206]");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "!global.event[206]");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[206]");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[206] = 1;");
             
             // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
