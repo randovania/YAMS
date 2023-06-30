@@ -12,11 +12,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // TODO: put killing metroids with only charge behind a combat trick
-            
             // TODO: add fusion mode rdv setting 
 
-            // TODO: repeteadly going exiting and getting into arachnus door makes the item despawn?? double check whether this happens
+            // TODO: redo logic for labs
+            
+            // TODO: redo logic for gravity area shaft
             
             // TODO: implement hints for trooper logs and final chozo log
             
@@ -358,10 +358,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
             
-            // TODO: fix walljump logic in tower exterior west
-            // TODO: western cave entrance logic bug with getting the item
-                
-            
             // Fix power grip sprite
             gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
             gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
@@ -400,12 +396,19 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Other_13"), "lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
             
             // Fix doors unlocking in arachnus/torizo/tester/genesis
-            foreach (var codeName in new[] {"gml_Room_rm_a2a04_Create", "gml_Room_rm_a3a01_Create", "gml_Room_rm_a4a05_Create", "gml_Room_rm_a8a11_Create"})
-                AppendGMLInCode(gmData.Code.ByName(codeName), "with (oDoor) lock = 4; with (oDoorA8) lock = 4; with (oDoorA4) lock = 4; with (oDoorA5) lock = 4;");
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a04_Create"), "if (!global.event[103]) {with (oDoor) lock = 4;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3a01_Create"), "if (!global.event[152]) {with (oDoor) lock = 4;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4a05_Create"), "if (!global.event[206]) {with (oDoor) lock = 4;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a11_Create"), "if (!global.event[307]) {with (oDoor) lock = 4;}");
             
             // Fix doors in tester to be always blue
             foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
                 SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
+            
+            // Fix tester events sharing an event with tower activated - moved tester to 206
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[206]");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "!global.event[206]");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[206] = 1;");
             
             // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
@@ -1034,6 +1037,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(chStepControlCode, "if (global.maxmissiles > 0 && (state", "if ((state");
             
             // TODO: change samus arm cannon to different sprite, when no missile launcher. This requires delving into state machine tho and that is *pain*
+            // For that, also make her not arm the cannon if you have missile launcher but no missiles
             
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
@@ -1336,7 +1340,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 global.start_room = 21
                 global.save_x = 3408
                 global.save_y = 1184
-                """, "global.save_room = global.startingSave; set_start_location();");
+                """, "load_character_vars(); global.save_room = global.startingSave; set_start_location();");
             
             // Modify main menu to have a "restart from starting save" option
             SubstituteGMLCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Other_10"), """
@@ -1635,8 +1639,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     case ItemEnum.Gravity:
                         ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
                         break;
-                    // TODO: make a general arm weapon thing. see todo further down somwewhere
                     case ItemEnum.Power:
+                        // Stubbed for now, may get a purpose in the future
                         break;
                     case ItemEnum.Charge:
                         ReplaceGMLInCode(characterVarsCode, "global.hasCbeam = 0", $"global.hasCbeam = {quantity};");
@@ -1718,10 +1722,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_add_events"), "350", "700");
             ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_get_events"), "350", "700");
             
-            // TODO: revise logic for getting from hideout omega nest to right dock
-            
-            // TODO: arm cannon activates even without the launcher???
-            
             // Replace every normal, a4 and a8 door with an a5 door for consistency
             var a5Door = gmData.GameObjects.ByName("oDoorA5");
             foreach (var room in gmData.Rooms)
@@ -1802,7 +1802,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 var collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
                 var collisionCodeToBe = pickup.ItemEffect switch
                 {
-                    
                     ItemEnum.EnergyTank => "scr_energytank_character_event()",
                     ItemEnum.MissileExpansion => "scr_missile_character_event()",
                     ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
@@ -1960,8 +1959,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: ability to turn off the random room geometry changes!
 
-            // TODO: instead of implementing power beam, implement arm cannon or something. is less insane than refactoring samus state machine and menu
-            
             // Stop Bomb blocks from respawning
             if (seedObject.Patches.RespawnBombBlocks)
                 ReplaceGMLInCode(characterVarsCode, "global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
@@ -2043,9 +2040,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera;}");
             // 3 Orb cutscene
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera;}");
-            
-            // TODO: power grip is off-centered
-            // TODO: "unknown item" is off-cetnered
             
             // TODO: make a seperate option for item cutscene skips
             // Varia cutscene - should be moved to quick item pickups
