@@ -408,10 +408,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
                 SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
             
-            // Fix tester events sharing an event with tower activated - moved tester to 206
-            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[206]");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[206]");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[206] = 1;");
+            // TODO: activating tower for some reason force unlocks right door to be lock = 0
+            
+            // Fix tester events sharing an event with tower activated - moved tester to 207
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[207]");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[207]");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[207] = 1;");
             
             // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
             foreach (var codeName in new[] {"gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create", 
