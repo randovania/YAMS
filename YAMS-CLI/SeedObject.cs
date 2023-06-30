@@ -71,6 +71,10 @@ public enum DoorLockType
     Spider,
     [EnumMember(Value = "Screw Attack Door")]
     Screw,
+    [EnumMember(Value = "Tower Activated Door")]
+    TowerEnabled,
+    [EnumMember(Value = "After Tester Door")]
+    TesterDead,
 }
 
 public class GamePatches
@@ -109,6 +113,14 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("require_pb_launcher")]
     public bool RequirePBLauncher;
+    
+    [JsonInclude]
+    [JsonPropertyName("fusion_mode")]
+    public bool FusionMode;
+    
+    [JsonInclude]
+    [JsonPropertyName("nest_pipes")]
+    public bool NestPipes;
     
 }
 

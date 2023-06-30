@@ -12,11 +12,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // TODO: add fusion mode rdv setting 
-
-            // TODO: redo logic for labs
+            // TODO: fix doors in labs! they should always be blue, the metroid controller should lock them if metroids exist
             
-            // TODO: redo logic for gravity area shaft
+            // TODO: use jes' patch to make beams not despawn instantly
             
             // TODO: implement hints for trooper logs and final chozo log
             
@@ -224,6 +222,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorBomb"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSpider"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorScrew"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTowerEnabled"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTester"]]});
             
             // TODO: double check margins in every sprite
             gmData.Sprites.Add(new UndertaleSprite()
@@ -373,6 +373,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             AppendGMLInCode(unlockStuffCode, "global.mod_fusion_unlocked = 1; global.mod_gamebeaten = 1;");
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), "itemcollunlock = 1;");
 
+            // Make fusion only a damage multiplier, leaving the fusion stuff up to a setting
+            PrependGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0;");
+            
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
             ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
@@ -410,6 +413,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "!global.event[206]");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[206] = 1;");
             
+            // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
+            foreach (var codeName in new[] {"gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create", 
+                         "gml_RoomCC_rm_a7b06A_9421_Create", "gml_RoomCC_rm_a7b06A_9420_Create", "gml_RoomCC_rm_a7b07_9437_Create", "gml_RoomCC_rm_a7b07_9438_Create",
+                         "gml_RoomCC_rm_a7b08_9455_Create", "gml_RoomCC_rm_a7b08_9454_Create", "gml_RoomCC_rm_a7b08A_9467_Create", "gml_RoomCC_rm_a7b08A_9470_Create"
+                     })
+                SubstituteGMLCode(gmData.Code.ByName(codeName), "");
+            SubstituteGMLCode(gmData.Code.ByName("gml_Object_oMonsterDoorControl_Alarm_0"), "if (instance_number(oMonster) > 0) { with (oDoor) lock = 4 }");
+            
             // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
                                                                                                 "(lock == 6 && other.wbeam) || (lock == 7 && other.sbeam) || " +
@@ -431,6 +442,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             varDoorEvent.EventSubtype = 267; // 267 is oCharacter ID
             varDoorEvent.Actions.Add(varDoorAction);
             doorCollisionList.Add(varDoorEvent);
+            
+            // Implement tower activated (13) and tester dead doors (14)
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (global.event[200] && lock == 13)" +
+                                                                                                "|| (global.event[206] && lock == 14)");
 
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -738,114 +753,117 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "global.monstersleft", "global.dna");
             
             // Add shortcut between nest and hideout
-            // Hideout
-            var hideoutPipeRoom = gmData.Rooms.ByName("rm_a6a11");
-            var pipeTileset = gmData.Backgrounds.ByName("tlWarp");
-            var pipeBGTileset = gmData.Backgrounds.ByName("tlWarpPipes");
-            var solidObject = gmData.GameObjects.ByName("oSolid1");
-            var pipeObject = gmData.GameObjects.ByName("oWarpPipeTrigger");
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, 100, pipeTileset, 0, 48, 48, 48));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, -101, pipeTileset, 32, 0));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 176, -101, pipeTileset, 48, 32));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 176, -101, pipeTileset, 16, 0));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 192, -101, pipeTileset, 0, 32));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 208, -101, pipeTileset, 32, 16));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 208, -101, pipeTileset, 48, 48));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 208, -101, pipeTileset, 16, 16));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-            
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 176, solidObject, null, 3));
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 192, solidObject));
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 208, solidObject, null, 3));
-            
-            var hideoutPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6a11_pipe_Create") };
-            SubstituteGMLCode(hideoutPipeCode, "targetroom = 327; targetx = 216; targety = 400; direction = 90;");
-            gmData.Code.Add(hideoutPipeCode);
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode));
-            AppendGMLInCode(hideoutPipeRoom.CreationCodeId, "global.darkness = 0; mus_change(mus_get_main_song());");
-            
-            // Nest
-            var nestPipeRoom = gmData.Rooms.ByName("rm_a6b03");
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, 100, pipeTileset, 0, 48, 48, 48));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, -101, pipeTileset, 0, 0));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(208, 368, -101, pipeTileset, 48, 32));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 368, -101, pipeTileset, 48, 0));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 384, -101, pipeTileset, 16, 32));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 400, -101, pipeTileset, 0, 16));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(208, 400, -101, pipeTileset, 48, 48));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 400, -101, pipeTileset, 48, 16));
-            //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-            
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 368, solidObject, null, 3));
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(224, 384, solidObject));
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 400, solidObject, null, 3));
-            
-            AppendGMLInCode(nestPipeRoom.CreationCodeId, "mus_change(musArea6A)");
-            
-            var nestPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
-            SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
-            gmData.Code.Add(nestPipeCode);
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode));
-            
-            // Add shortcut between Depths and Waterfalls
-            // Depths
-            var depthsPipeRoom = gmData.Rooms.ByName("rm_a6b11");
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, 100, pipeTileset, 0, 48, 48, 48));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, -101, pipeTileset, 32, 0));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 160, -101, pipeTileset, 48, 32));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 160, -101, pipeTileset, 16, 0));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 176, -101, pipeTileset, 0, 32));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 192, -101, pipeTileset, 32, 16));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 192, -101, pipeTileset, 48, 48));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 192, -101, pipeTileset, 16, 16));
-            //depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-            
-            // Clean up some tiles/collision
-            depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 112 && t.Y == 160));
-            depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 80 && t.Y == 192));
-            depthsPipeRoom.GameObjects.First(o => o.X == 96 && o.Y == 208).ObjectDefinition = solidObject;
-            
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 160, solidObject, null, 3));
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 176, solidObject));
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 192, solidObject, null, 3));
-            
-            AppendGMLInCode(depthsPipeRoom.CreationCodeId, "mus_change(musArea6A);");
-            
-            var depthsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
-            SubstituteGMLCode(depthsPipeCode, "targetroom = 348; targetx = 904; targety = 208; direction = 180;");
-            gmData.Code.Add(depthsPipeCode);
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode));
-            
-            // Waterfalls
-            var waterfallsPipeRoom = gmData.Rooms.ByName("rm_a7a07");
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, 100, pipeTileset, 0, 48, 48, 48));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, -101, pipeTileset, 0, 0));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 176, -101, pipeTileset, 48, 32));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 176, -101, pipeTileset, 48, 0));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 192, -101, pipeTileset, 16, 32));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 208, -101, pipeTileset, 0, 16));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 208, -101, pipeTileset, 48, 48));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 208, -101, pipeTileset, 48, 16));
-            //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-            
-            // Clean up some tiles/collision
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 208));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 896 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 880 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 224, -100, gmData.Backgrounds.ByName("tlRock7A"), 0, 32, 32));
-            
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 176, solidObject, null, 3));
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(912, 192, solidObject));
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 208, solidObject, null, 3));
-            
-            var waterfallsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7a07_pipe_Create") };
-            SubstituteGMLCode(waterfallsPipeCode, "targetroom = 335; targetx = 104; targety = 192; direction = 0;");
-            gmData.Code.Add(waterfallsPipeCode);
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode));
-            
-            AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
-            
+            if (seedObject.Patches.NestPipes)
+            {
+                // Hideout
+                var hideoutPipeRoom = gmData.Rooms.ByName("rm_a6a11");
+                var pipeTileset = gmData.Backgrounds.ByName("tlWarp");
+                var pipeBGTileset = gmData.Backgrounds.ByName("tlWarpPipes");
+                var solidObject = gmData.GameObjects.ByName("oSolid1");
+                var pipeObject = gmData.GameObjects.ByName("oWarpPipeTrigger");
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, 100, pipeTileset, 0, 48, 48, 48));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, -101, pipeTileset, 32, 0));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 176, -101, pipeTileset, 48, 32));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 176, -101, pipeTileset, 16, 0));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 192, -101, pipeTileset, 0, 32));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 208, -101, pipeTileset, 32, 16));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 208, -101, pipeTileset, 48, 48));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 208, -101, pipeTileset, 16, 16));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
+
+                hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 176, solidObject, null, 3));
+                hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 192, solidObject));
+                hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 208, solidObject, null, 3));
+
+                var hideoutPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6a11_pipe_Create") };
+                SubstituteGMLCode(hideoutPipeCode, "targetroom = 327; targetx = 216; targety = 400; direction = 90;");
+                gmData.Code.Add(hideoutPipeCode);
+                hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode));
+                AppendGMLInCode(hideoutPipeRoom.CreationCodeId, "global.darkness = 0; mus_change(mus_get_main_song());");
+
+                // Nest
+                var nestPipeRoom = gmData.Rooms.ByName("rm_a6b03");
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, 100, pipeTileset, 0, 48, 48, 48));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, -101, pipeTileset, 0, 0));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 368, -101, pipeTileset, 48, 32));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 368, -101, pipeTileset, 48, 0));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 384, -101, pipeTileset, 16, 32));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 400, -101, pipeTileset, 0, 16));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 400, -101, pipeTileset, 48, 48));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 400, -101, pipeTileset, 48, 16));
+                //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
+
+                nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 368, solidObject, null, 3));
+                nestPipeRoom.GameObjects.Add(CreateRoomObject(224, 384, solidObject));
+                nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 400, solidObject, null, 3));
+
+                AppendGMLInCode(nestPipeRoom.CreationCodeId, "mus_change(musArea6A)");
+
+                var nestPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
+                SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
+                gmData.Code.Add(nestPipeCode);
+                nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode));
+
+                // Add shortcut between Depths and Waterfalls
+                // Depths
+                var depthsPipeRoom = gmData.Rooms.ByName("rm_a6b11");
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, 100, pipeTileset, 0, 48, 48, 48));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, -101, pipeTileset, 32, 0));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 160, -101, pipeTileset, 48, 32));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 160, -101, pipeTileset, 16, 0));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 176, -101, pipeTileset, 0, 32));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 192, -101, pipeTileset, 32, 16));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 192, -101, pipeTileset, 48, 48));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 192, -101, pipeTileset, 16, 16));
+                //depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 80, 100, pipeBGTileset, 0, 32, 32, 96));
+
+                // Clean up some tiles/collision
+                depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 112 && t.Y == 160));
+                depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 80 && t.Y == 192));
+                depthsPipeRoom.GameObjects.First(o => o.X == 96 && o.Y == 208).ObjectDefinition = solidObject;
+
+                depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 160, solidObject, null, 3));
+                depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 176, solidObject));
+                depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 192, solidObject, null, 3));
+
+                AppendGMLInCode(depthsPipeRoom.CreationCodeId, "mus_change(musArea6A);");
+
+                var depthsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
+                SubstituteGMLCode(depthsPipeCode, "targetroom = 348; targetx = 904; targety = 208; direction = 180;");
+                gmData.Code.Add(depthsPipeCode);
+                depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode));
+
+                // Waterfalls
+                var waterfallsPipeRoom = gmData.Rooms.ByName("rm_a7a07");
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, 100, pipeTileset, 0, 48, 48, 48));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, -101, pipeTileset, 0, 0));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 176, -101, pipeTileset, 48, 32));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 176, -101, pipeTileset, 48, 0));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 192, -101, pipeTileset, 16, 32));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 208, -101, pipeTileset, 0, 16));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 208, -101, pipeTileset, 48, 48));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 208, -101, pipeTileset, 48, 16));
+                //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
+
+                // Clean up some tiles/collision
+                waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 192));
+                waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 208));
+                waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 896 && t.Y == 192));
+                waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 880 && t.Y == 192));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 224, -100, gmData.Backgrounds.ByName("tlRock7A"), 0, 32, 32));
+
+                waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 176, solidObject, null, 3));
+                waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(912, 192, solidObject));
+                waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 208, solidObject, null, 3));
+
+                var waterfallsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7a07_pipe_Create") };
+                SubstituteGMLCode(waterfallsPipeCode, "targetroom = 335; targetx = 104; targety = 192; direction = 0;");
+                gmData.Code.Add(waterfallsPipeCode);
+                waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode));
+
+                AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
+            }
+
             // TODO: see if it's possible to shorten save animation - it is, fix character step event first
             // gml_Script_characterStepEvent -> 
             /*
@@ -916,7 +934,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Lock these blocks behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
                 "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", 
-                $"if ({(seedObject.Patches.RemoveGraveGrottoBlocks ? "true" : "false")})");
+                $"if ({(seedObject.Patches.RemoveGraveGrottoBlocks.ToString().ToLower())})");
 
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
@@ -1770,8 +1788,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             DoorLockType.Ice => $"lock = 9; originalLock = lock; event = -1;",
                             DoorLockType.Bomb => "lock = 10; originalLock = lock; event = -1;",
                             DoorLockType.Spider => "lock = 11; originalLock = lock; event = -1;",
-                            DoorLockType.Screw => "lock = 12; originaLock = lock; event = -1;",
+                            DoorLockType.Screw => "lock = 12; originalLock = lock; event = -1;",
                             // TODO: implement new door types here
+                            DoorLockType.TowerEnabled => "lock = 13; originalLock = lock; event = -1;",
+                            DoorLockType.TesterDead => "lock = 14; originalLock = lock; event = -1;",
                             _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                         };
                         
@@ -2056,6 +2076,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 var gmRoom = gmData.Rooms.ByName(internalName);
                 AppendGMLInCode(gmRoom.CreationCodeId, $"popup_text(\"{roomName}\")");
             }
+            
+            // Set fusion mode value
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0", $"mod_fusion = {(seedObject.Patches.FusionMode ? 1 : 0)}");
             
             // Display Seed hash
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Draw_0"), $"""
