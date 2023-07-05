@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
@@ -17,8 +18,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: implement hints for DNA
             
             // TODO: when starting at thoth, make PB blocks disabled when you go down
-            
-            // TODO: zetas/metroid music is bugged sometimes??
             
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
@@ -221,8 +220,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorScrew"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTowerEnabled"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTester"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorGuardian"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorArachnus"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTorizo"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSerris"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorGenesis"]]});
             
             // New sprites for door animation
+            gmData.Sprites.ByName("sDoorA5").Textures.Clear();
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_1"]]});
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_2"]]});
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_3"]]});
@@ -233,7 +238,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_8"]]});
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_9"]]});
 
-            // TODO: double check margins in every sprite
             gmData.Sprites.Add(new UndertaleSprite()
             {
                 Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16, 
@@ -384,6 +388,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Make fusion only a damage multiplier, leaving the fusion stuff up to a setting
             PrependGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0;");
             
+            // Fix varia cutscene
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0"), "bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
+            
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
             ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
@@ -416,9 +423,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
                 SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
             
-            // Fix Tower activation unlocking right door
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0"), "lock = 0", "lock = lock;");
-            
+            // Fix Tower activation unlocking right door for door lock rando
+            if (!seedObject.DoorLocks.ContainsKey(127890))
+                ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0"), "lock = 0", "lock = lock;");
             
             // Fix tester being fought in darkness / proboscums being disabled on not activated tower
             PrependGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10"), "global.darkness = 0;");
@@ -461,10 +468,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             doorCollisionList.Add(varDoorEvent);
             
             // TODO: make boss doors also openable by missiles/bombs at one point
-            // Implement tower activated (13) and tester dead doors (14)
+            // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19)
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (global.event[200] && lock == 13)" +
-                                                                                                "|| (global.event[207] && lock == 14)");
+                                                                                                "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
+                                                                                                "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
+                                                                                                "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)");
 
+            // TODO: emp devices unlock all doors automatically! needs to be fixeed!
+            
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
             
@@ -903,15 +914,15 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 if ((statetime == 230 && !cutsceneSkip) || (statetime == 10  cutsceneskip))
              */
             
-            // Make metroids drop an item onto you on death
+            // Make metroids drop an item onto you on death and increase music timer to not cause issues
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[1] = 120;");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMGamma_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[2] = 120;");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMZeta_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[3] = 120;");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMOmega_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; }");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[4] = 120;");
 
             // Make new global.lavastate 11 that requires 46 dna to be collected
             SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
@@ -962,7 +973,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Lock these blocks behind a setting because they can make for some interesting changes
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
                 "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", 
-                $"if ({(seedObject.Patches.RemoveGraveGrottoBlocks.ToString().ToLower())})");
+                $"if ({(!seedObject.Patches.GraveGrottoBlocks).ToString().ToLower()})");
 
             // enable randomizer to be always on
             var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
@@ -986,27 +997,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             PrependGMLInCode(characterVarsCode, "global.missileLauncher = 0; global.SMissileLauncher = 0; global.PBombLauncher = 0;" +
                                                 "global.missileLauncherExpansion = 30; global.SMissileLauncherExpansion = 2; global.PBombLauncherExpansion = 2;");
             
-            // Dynamically changingg blocks TODO
-            // screw+pipes related
-            // gml_RoomCC_rm_a1a06_4447_Create - 4449 - screw attack before pipe room in GT
-            // NEEDED a2a09 and a2a08 and the lower hub for screw attack before pipe rooms
-            // gml_RoomCC_rm_a3a04_5499_Create - 5501 - screw attack before pipe in A3
-            // gml_RoomCC_rm_a4a01_6476_Create - 78 - screw attack before pipe in a4
-            // NEEDED: the a2 exit in a4!
-            // a bunch of tiles in a5c13 - screw blocks before pipe hub
             
-            
-            // gml_RoomCC_rm_a3h03_5279_Create - bomb blocks before a3 entry
-            
-            // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
-            // a bunch of tiles in gml_RoomCC_rm_a5c08 - speed booster blocks near a5 activation
-            // a bunch of tiles in a5c22 - screw blocks before screw attack
-            // a few tiles in a5c31 - crumble blocks before ice chamber
-            // a bunch of tiles in a5a03 - crumble blocks near gravity pit
-            // a bunch of blocks in rm_a5a06 - bomb blocks right before gravity chamber
-            
-            // gml_RoomCC_rm_a4h03_6341_Create - 6342 should always be gone when coming from below because that makes sense
-            // gml_RoomCC_rm_a2a06_4759_Create / 4761 - bomb blocks in puzzle before varia SHOULD ALWAYS BE DONE!!
             
             // Make expansion set to default values
             ReplaceGMLInCode(characterVarsCode, "global.missiles = oControl.mod_Mstartingcount", "global.missiles = 0;");
@@ -1109,7 +1100,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0;");
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -1836,6 +1827,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             // TODO: implement new door types here
                             DoorLockType.TowerEnabled => "lock = 13; originalLock = lock; event = -1;",
                             DoorLockType.TesterDead => "lock = 14; originalLock = lock; event = -1;",
+                            DoorLockType.GuardianDead => "lock = 15; originalLock = lock; event = -1;",
+                            DoorLockType.ArachnusDead => "lock = 16; originalLock = lock; event = -1;",
+                            DoorLockType.TorizoDead => "lock = 17; originalLock = lock; event = -1;",
+                            DoorLockType.SerrisDead => "lock = 18; originalLock = lock; event = -1;",
+                            DoorLockType.GenesisDead => "lock = 19; originalLock = lock; event = -1;",
                             _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                         };
                         
@@ -2021,8 +2017,39 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 "else if (!global.septoggHelpers)");
             
             
-            // TODO: ability to turn off the random room geometry changes!
-
+            // Options to turn off the random room geometry changes!
+            // screw+pipes related
+            if (seedObject.Patches.ScrewPipeBlocks)
+                ReplaceGMLInCode(characterVarsCode, "global.screwPipeBlocks = 0", "global.screwPipeBlocks = 1");
+            // Screw blocks before normal pipe rooms
+            foreach (var codeName in new[] {"gml_Room_rm_a1a06_Create", "gml_Room_rm_a2a08_Create", "gml_Room_rm_a2a09_Create", "gml_Room_rm_a2a12_Create", "gml_Room_rm_a3a04_Create", "gml_Room_rm_a4h01_Create", "gml_Room_rm_a4a01_Create"})
+                AppendGMLInCode(gmData.Code.ByName(codeName), "if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");
+            // a bunch of tiles in a5c13 - screw blocks before pipe hub
+            for (int i = 39; i <= 44; i++)
+                SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");            
+            
+            // TODO: a3 entrance block and sotflock prevention blocks
+            // gml_RoomCC_rm_a3h03_5279_Create - bomb blocks before a3 entry
+            
+            // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
+            // a bunch of tiles in gml_RoomCC_rm_a5c08 - speed booster blocks near a5 activation
+            // a bunch of tiles in a5c22 - screw blocks before screw attack
+            // a few tiles in a5c31 - crumble blocks before ice chamber
+            // a bunch of tiles in a5a03 - crumble blocks near gravity pit
+            // a bunch of blocks in rm_a5a06 - bomb blocks right before gravity chamber
+            
+            // A4 exterior top, always remove the bomb blocks when coming from that entrance
+            foreach (string codeName in new[] {"gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create"})
+                ReplaceGMLInCode(gmData.Code.ByName(codeName), "oControl.mod_previous_room == 214 && global.spiderball == 0", 
+                    "oCharacter.x > 300 && oCharacter.y < 500");
+            
+            // The bomb block puzzle in the room before varia dont need to be done anymore because it's already now covered by "dont regen bomb blocks" option
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",
+                "if (false)");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4759_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && global.hasGravity == 0)",
+                "if (false)");
+            
+            
             // Stop Bomb blocks from respawning
             if (seedObject.Patches.RespawnBombBlocks)
                 ReplaceGMLInCode(characterVarsCode, "global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
@@ -2101,9 +2128,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Drill cutscene - event 172 to 3
             AppendGMLInCode(characterVarsCode, "global.event[172] = global.skipCutscenes * 3");
             // 1 Orb cutscene
-            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(768, 48, oSolid2x2); block2.material = 3;}");
             // 3 Orb cutscene
-            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3}");
+            // Fix audio for the orb cutscenes
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
+            
             
             // TODO: make a seperate option for item cutscene skips
             // Varia cutscene - should be moved to quick item pickups
@@ -2134,6 +2164,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // For room rando, go through each door and modify where it leads to
             // TODO: Implement this whenever room rando gets done.
+            
             
             // Write back to disk
             using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())

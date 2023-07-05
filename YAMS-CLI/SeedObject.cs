@@ -75,6 +75,17 @@ public enum DoorLockType
     TowerEnabled,
     [EnumMember(Value = "After Tester Door")]
     TesterDead,
+    [EnumMember(Value = "Guardian Door")]
+    GuardianDead,
+    [EnumMember(Value = "Arachnus Door")]
+    ArachnusDead,
+    [EnumMember(Value = "Torizo Door")]
+    TorizoDead,
+    [EnumMember(Value = "Serris Soul Door")]
+    SerrisDead,
+    [EnumMember(Value = "Genesis Door")]
+    GenesisDead,
+    
 }
 
 public class GamePatches
@@ -87,8 +98,8 @@ public class GamePatches
     [JsonPropertyName("change_level_design")]
     public bool ChangeLevelDesign;
 
-    [JsonInclude] [JsonPropertyName("remove_grave_grotto_blocks")]
-    public bool RemoveGraveGrottoBlocks;
+    [JsonInclude] [JsonPropertyName("grave_grotto_blocks")]
+    public bool GraveGrottoBlocks;
     
     [JsonInclude]
     [JsonPropertyName("respawn_bomb_blocks")]
@@ -121,6 +132,10 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("nest_pipes")]
     public bool NestPipes;
+    
+    [JsonInclude]
+    [JsonPropertyName("screw_pipe_blocks")]
+    public bool ScrewPipeBlocks;
     
 }
 
