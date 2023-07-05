@@ -916,16 +916,19 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // Make metroids drop an item onto you on death and increase music timer to not cause issues
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[1] = 120;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[1] >= 0) alarm[1] = 120; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMGamma_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[2] = 120;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[2] >= 0) alarm[2] = 120; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMZeta_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[3] = 120;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[3] >= 0) alarm[3] = 120; }");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMOmega_Other_10"), "check_areaclear()",
-                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) alarm[4] = 120;");
+                "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[4] >= 0) alarm[4] = 120; }");
 
             // Make new global.lavastate 11 that requires 46 dna to be collected
             SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
+            
+            //TODO: screw blocks new bg2 overgrown alley
+            // TODO: with fusion mode, every difficulty will be marked as brutal
             
             // Check lavastate at labs
             var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
@@ -1100,7 +1103,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;");
+            PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
+                                                "global.a3Block = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -2026,11 +2030,15 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 AppendGMLInCode(gmData.Code.ByName(codeName), "if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");
             // a bunch of tiles in a5c13 - screw blocks before pipe hub
             for (int i = 39; i <= 44; i++)
-                SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");            
+                SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) instance_destroy();");            
             
-            // TODO: a3 entrance block and sotflock prevention blocks
-            // gml_RoomCC_rm_a3h03_5279_Create - bomb blocks before a3 entry
+            // Bomb block before a3 entry
+            if (seedObject.Patches.A3EntranceBlocks)
+                ReplaceGMLInCode(characterVarsCode, "global.a3Block = 0", "global.a3Block = 1;");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a3h03_5279_Create"), "if ((oControl.mod_randomgamebool == 1 || oControl.mod_splitrandom == 1) && global.hasBombs == 0 && global.ptanks == 0)",
+                "if (!global.a3Block)");
             
+            // TODO: sotflock prevention blocks
             // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
             // a bunch of tiles in gml_RoomCC_rm_a5c08 - speed booster blocks near a5 activation
             // a bunch of tiles in a5c22 - screw blocks before screw attack
@@ -2041,7 +2049,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // A4 exterior top, always remove the bomb blocks when coming from that entrance
             foreach (string codeName in new[] {"gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create"})
                 ReplaceGMLInCode(gmData.Code.ByName(codeName), "oControl.mod_previous_room == 214 && global.spiderball == 0", 
-                    "oCharacter.x > 300 && oCharacter.y < 500");
+                    "oCharacter.x > 300 && oCharacter.x < 500");
             
             // The bomb block puzzle in the room before varia dont need to be done anymore because it's already now covered by "dont regen bomb blocks" option
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",

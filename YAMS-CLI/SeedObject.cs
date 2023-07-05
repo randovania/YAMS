@@ -134,6 +134,14 @@ public class GamePatches
     public bool NestPipes;
     
     [JsonInclude]
+    [JsonPropertyName("softlock_prevention_blocks")]
+    public bool SoftlockPrevention;
+    
+    [JsonInclude]
+    [JsonPropertyName("a3_entrance_blocks")]
+    public bool A3EntranceBlocks;
+    
+    [JsonInclude]
     [JsonPropertyName("screw_pipe_blocks")]
     public bool ScrewPipeBlocks;
     
