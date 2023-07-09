@@ -2444,7 +2444,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"""
             cat[5] = "DNA Hints"
             lbl[50] = "Main Caves"
-            txt[50, 0] = "{seedObject.Hints[ItemEnum.DNA1]}#-#{seedObject.Hints[ItemEnum.DNA15]}#-#{seedObject.Hints[ItemEnum.DNA16]}#-#{seedObject.Hints[ItemEnum.DNA33]}"
+            txt[50, 0] = "{seedObject.Hints[ItemEnum.DNA1]}#-#{seedObject.Hints[ItemEnum.DNA15]}#-#{seedObject.Hints[ItemEnum.DNA16]}#-#{seedObject.Hints[ItemEnum.DNA17]}#-#{seedObject.Hints[ItemEnum.DNA33]}"
             pic[50, 0] = bgLogDNA
             lbl[51] = "Golden Temple"
             txt[51, 0] = "{seedObject.Hints[ItemEnum.DNA2]}#-#{seedObject.Hints[ItemEnum.DNA3]}#-#{seedObject.Hints[ItemEnum.DNA4]}#-#{seedObject.Hints[ItemEnum.DNA5]}"
