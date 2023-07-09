@@ -33,6 +33,10 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("starting_location")]
     public StartingLocationObject StartingLocation;
+    
+    [JsonInclude]
+    [JsonPropertyName("hints")]
+    public Dictionary<ItemEnum, string> Hints = new Dictionary<ItemEnum, string>();
 }
 
 public class DoorLock
@@ -85,6 +89,16 @@ public enum DoorLockType
     SerrisDead,
     [EnumMember(Value = "Genesis Door")]
     GenesisDead,
+    [EnumMember(Value = "Queen Door")]
+    QueenDead,
+    [EnumMember(Value = "A5 Activation Tower Door")]
+    EMPActivated,
+    [EnumMember(Value = "Golden Temple EMP Activated Door")]
+    EMPA1,
+    [EnumMember(Value = "Hydro Station EMP Activated Door")]
+    EMPA2,
+    [EnumMember(Value = "Industrial Complex EMP Activated Door")]
+    EMPA3,
     
 }
 

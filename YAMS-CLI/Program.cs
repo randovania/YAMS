@@ -58,6 +58,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             }
             var decompileContext = new GlobalDecompileContext(gmData, false);
 
+            
             void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
             {
                 var codeText = Decompiler.Decompile(code, decompileContext);
@@ -119,9 +120,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             }
 
             // Import new Sprites
-            // TODO: add a bunch of sprites that'll be added into the future
             Dictionary<string, int> nameToPageItemDict = new Dictionary<string, int>();
-            const int pageDimension = 512;
+            const int pageDimension = 1024;
             int lastUsedX = 0, lastUsedY = 0, currentShelfHeight = 0;
             var newTexturePage = new Image<Rgba32>(pageDimension, pageDimension);
             var utTexturePage = new UndertaleEmbeddedTexture();
@@ -197,6 +197,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Backgrounds.ByName("bgGUIMetCountBG1").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
             gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
             gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2ELM"]];
+            gmData.Backgrounds.ByName("bgLogImg44B").Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogIce"]];
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA"]]});
+            
             
             gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissile"]]});
             gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]]});
@@ -225,6 +228,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTorizo"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSerris"]]});
             gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorGenesis"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorQueen"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPActivated"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA1"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA2"]]});
+            gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA3"]]});
             
             // New sprites for door animation
             gmData.Sprites.ByName("sDoorA5").Textures.Clear();
@@ -237,7 +245,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_7"]]});
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_8"]]});
             gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_9"]]});
-
+            
             gmData.Sprites.Add(new UndertaleSprite()
             {
                 Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16, 
@@ -368,6 +376,48 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             });
             
+            // New sprites for dna septogg
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sWisdomSeptogg"), Height = 35, Width = 47, MarginLeft = 14, MarginRight = 32, MarginBottom = 11, MarginTop = 6, OriginX = 23, OriginY = 35,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_4"]] },
+                }
+            });
+            
+            // Create new wisdom septogg object
+            var oWisdomSeptogg = new UndertaleGameObject()
+            {
+                Name = gmData.Strings.MakeString("oWisdomSeptogg"),
+                Sprite = gmData.Sprites.ByName("sWisdomSeptogg"),
+                Depth = 90
+            };
+            var wisdomSeptoggCreate = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oWisdomSeptogg_Create_0") };
+            SubstituteGMLCode(wisdomSeptoggCreate, "image_speed = 0.1666; origY = y; timer = 0;");
+            gmData.Code.Add(wisdomSeptoggCreate);
+            var wisdomSeptoggCreateList = oWisdomSeptogg.Events[0];
+            var wisdomSeptoggAction = new UndertaleGameObject.EventAction();
+            wisdomSeptoggAction.CodeId = wisdomSeptoggCreate;
+            var wisdomSeptoggEvent = new UndertaleGameObject.Event();
+            wisdomSeptoggEvent.EventSubtype = 0;
+            wisdomSeptoggEvent.Actions.Add(wisdomSeptoggAction);
+            wisdomSeptoggCreateList.Add(wisdomSeptoggEvent);
+            var wisdomSeptoggStep = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oWisdomSeptogg_Step_0") };
+            SubstituteGMLCode(wisdomSeptoggStep, "y = origY + (sin((timer) * 0.08) * 2); timer++; if (timer > 9990) timer = 0;");
+            gmData.Code.Add(wisdomSeptoggStep);
+            var wisdomSeptoggStepList = oWisdomSeptogg.Events[3];
+            wisdomSeptoggAction = new UndertaleGameObject.EventAction();
+            wisdomSeptoggAction.CodeId = wisdomSeptoggStep;
+            wisdomSeptoggEvent = new UndertaleGameObject.Event();
+            wisdomSeptoggEvent.EventSubtype = 0;
+            wisdomSeptoggEvent.Actions.Add(wisdomSeptoggAction);
+            wisdomSeptoggStepList.Add(wisdomSeptoggEvent);
+            gmData.GameObjects.Add(oWisdomSeptogg);
+            
             var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
             
             // Fix power grip sprite
@@ -468,13 +518,52 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             doorCollisionList.Add(varDoorEvent);
             
             // TODO: make boss doors also openable by missiles/bombs at one point
-            // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19)
+            // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
+            // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24)
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (global.event[200] && lock == 13)" +
                                                                                                 "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
                                                                                                 "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
-                                                                                                "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)");
+                                                                                                "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)" +
+                                                                                                "|| (global.event[303] && lock == 20) || (global.event[250] && lock == 21)" +
+                                                                                                "|| (global.event[57] && lock == 22) || (global.event[110] && lock == 23)" +
+                                                                                                "|| (global.event[163] && lock == 24)");
 
-            // TODO: emp devices unlock all doors automatically! needs to be fixeed!
+            // Fix Emp devices unlocking all doors automatically!
+            string empBatteryCellCondition = "false";
+            foreach (var doorID in new uint[] {108539, 111778, 115149, 133836, 133903, 133914, 133911, 134711, 134426, 135330})
+            {
+                if (!seedObject.DoorLocks.ContainsKey(doorID))
+                    empBatteryCellCondition += $" || id == {doorID}";
+            }
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), """
+            with (oDoor)
+                event_user(3)
+            """,
+            $"with (oDoor) {{ if ({empBatteryCellCondition}) event_user(3) }}");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_1"), """
+                with (oDoor)
+                    lock = 0
+            """,
+                $"with (oDoor) {{ if ({empBatteryCellCondition}) lock = 0 }}");
+
+            string a5ActivateCondition = "false";
+            foreach (var doorID in new uint[] {133732, 133731})
+            {
+                if (!seedObject.DoorLocks.ContainsKey(doorID))
+                    a5ActivateCondition += $" || id == {doorID}";
+            }
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0"), """
+                    with (oDoor)
+                        event_user(3)
+            """,
+                $"with (oDoor) {{ if ({a5ActivateCondition}) event_user(3) }}");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Alarm_0"), """
+                with (oDoor)
+                    lock = 0
+            """,
+                $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
+            
+                
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -1104,7 +1193,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
             PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-                                                "global.a3Block = 0;");
+                                                "global.a3Block = 0; global.softlockPrevention = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -1836,6 +1925,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             DoorLockType.TorizoDead => "lock = 17; originalLock = lock; event = -1;",
                             DoorLockType.SerrisDead => "lock = 18; originalLock = lock; event = -1;",
                             DoorLockType.GenesisDead => "lock = 19; originalLock = lock; event = -1;",
+                            DoorLockType.QueenDead => "lock = 20; originalLock = lock; event = -1;",
+                            DoorLockType.EMPActivated => "lock = 21; originalLock = lock; event = -1;",
+                            DoorLockType.EMPA1 => "lock = 22; originalLock = lock; event = -1;",
+                            DoorLockType.EMPA2 => "lock = 23; originalLock = lock; event = -1;",
+                            DoorLockType.EMPA3 => "lock = 24; originalLock = lock; event = -1;",
                             _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                         };
                         
@@ -2038,18 +2132,111 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a3h03_5279_Create"), "if ((oControl.mod_randomgamebool == 1 || oControl.mod_splitrandom == 1) && global.hasBombs == 0 && global.ptanks == 0)",
                 "if (!global.a3Block)");
             
-            // TODO: sotflock prevention blocks
+            // Softlock prevention blocks
+            if (seedObject.Patches.SoftlockPrevention)
+                ReplaceGMLInCode(characterVarsCode, "global.softlockPrevention = 0", "global.softlockPrevention = 1;");
+
             // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
-            // a bunch of tiles in gml_RoomCC_rm_a5c08 - speed booster blocks near a5 activation
-            // a bunch of tiles in a5c22 - screw blocks before screw attack
-            // a few tiles in a5c31 - crumble blocks before ice chamber
-            // a bunch of tiles in a5a03 - crumble blocks near gravity pit
-            // a bunch of blocks in rm_a5a06 - bomb blocks right before gravity chamber
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a3b08_Create"), """
+                if (oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1)
+                {
+                    with (121234)
+                        instance_destroy()
+                    with (121235)
+                        instance_destroy()
+                    with (121236)
+                        instance_destroy()
+                }
+                else if (global.item[2] == 1 || global.item[6] == 1 || global.hasHijump == 1)
+                {
+                    with (121234)
+                        instance_destroy()
+                    with (121235)
+                        instance_destroy()
+                    with (121236)
+                        instance_destroy()
+                }
+                else
+                {
+                    with (121151)
+                        instance_destroy()
+                    tile_layer_delete_at(-105, 848, 192)
+                }
+            """, """
+            if (global.softlockPrevention)
+            {
+                with (121151)
+                    instance_destroy()
+                tile_layer_delete_at(-105, 848, 192)
+            }
+            else
+            {
+                with (121234)
+                    instance_destroy()
+                with (121235)
+                    instance_destroy()
+                with (121236)
+                    instance_destroy()
+            }
+            """);
+            
+            // speed booster blocks near a5 activation
+            foreach (var gameObject in gmData.Rooms.ByName("rm_a5c08").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
+            {
+                // Y 32 is the top row of speed blocks
+                if (gameObject.Y == 32)
+                    ReplaceGMLInCode(gameObject.CreationCode, """
+                if (oControl.mod_randomgamebool == 1 && global.hasSpeedbooster == 0)
+                    instance_destroy()
+                """, "");
+                
+                // Y 80 is the bottom row of speed blocks
+                if (gameObject.Y == 80) 
+                    AppendGMLInCode(gameObject.CreationCode, "if (global.softlockPrevention) instance_destroy();");
+            }
+
+            // screw blocks in bullet hell room
+            foreach (var gameObject in gmData.Rooms.ByName("rm_a5c22").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockScrew"))
+            {
+                if (gameObject.X == 48 || gameObject.X == 64)
+                    ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 268 && global.screwattack == 0 && global.item[scr_itemchange(8)] == 1",
+                        "global.softlockPrevention");
+            }
+            
+            // Crumble blocks before Ice chamber
+            foreach (var gameObject in gmData.Rooms.ByName("rm_a5c31").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
+            {
+                ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 277 && global.ibeam == 0 && global.item[scr_itemchange(11)] == 1",
+                        "global.softlockPrevention");
+            }
+            
+            // Crumble blocks in gravity area one way room
+            foreach (var gameObject in gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
+            {
+                if (gameObject.X == 96 || gameObject.X == 112)
+                    ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 298 && (global.hasGravity == 0 || global.hasSpacejump == 0)",
+                        "global.softlockPrevention");
+            }
+            
+            foreach (var gameObject in gmData.Rooms.ByName("rm_a5a06").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockBombChain"))
+            {
+                // Top bomb block
+                if (gameObject.Y == 64)
+                    ReplaceGMLInCode(gameObject.CreationCode, """
+                if (oControl.mod_randomgamebool == 1 && oControl.mod_previous_room == 301 && global.hasGravity == 0 && global.item[oControl.mod_gravity] == 1 && global.ptanks == 0)
+                    instance_destroy()
+                else
+                """, "");
+                
+                // Bottom bomb block
+                if (gameObject.Y == 176)
+                    AppendGMLInCode(gameObject.CreationCode, "if (global.softlockPrevention) instance_destroy();");
+            }
+            
             
             // A4 exterior top, always remove the bomb blocks when coming from that entrance
             foreach (string codeName in new[] {"gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create"})
-                ReplaceGMLInCode(gmData.Code.ByName(codeName), "oControl.mod_previous_room == 214 && global.spiderball == 0", 
-                    "oCharacter.x > 300 && oCharacter.x < 500");
+                ReplaceGMLInCode(gmData.Code.ByName(codeName), "oControl.mod_previous_room == 214 && global.spiderball == 0", "global.targetx == 416");
             
             // The bomb block puzzle in the room before varia dont need to be done anymore because it's already now covered by "dont regen bomb blocks" option
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",
@@ -2173,6 +2360,138 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // For room rando, go through each door and modify where it leads to
             // TODO: Implement this whenever room rando gets done.
             
+            
+            //Hints
+            // Ice Beam Hints
+            // Make log in lab always appear
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a7b04A_Create"), "oControl.chozomessage >= 10", "true");
+            // Change text to be hint
+            AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[ItemEnum.Ice]}\"; pic[44, 0] = bgLogImg44B");
+            // Remove second scanning
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h01_Create"), "scan_log(44, get_text(\"Misc\", \"Translation\"), 180, 1)", "if (false) {}");
+            
+            // Septogg hints
+            // Prep work:
+            // Increase log array size to 100
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_sv6_add_logs"), "repeat (50)", "repeat (100)");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_sv6_get_logs"), "repeat (50)", "repeat (100)");
+            // Replace reset lists with simplified new array range
+            SubstituteGMLCode(gmData.Code.ByName("gml_Script_reset_logs"), """
+            var i = 99
+            repeat (100)
+            {
+                global.log[i] = 0
+                i -= 1
+            }
+            i = 7
+            repeat (8)
+            {
+                global.trooperlog[i] = 0
+                i -= 1
+            }
+            global.log[0] = 1
+            global.log[1] = 1
+            global.log[4] = 1
+            global.log[5] = 1
+            global.log[10] = 1
+            global.log[20] = 1
+            global.log[30] = 1
+            """);
+            //Another array extension	
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_reset_logs_list"), """
+            i = 49
+            repeat (50)
+            """, """
+            i = 99
+            repeat (100)
+            """);
+            //Add 7 new Hint logs to the new category 5
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_create_log_category"), "dlognum = 0", """
+            if (argument0 == 5)
+            {
+                clognum = 7
+                min_log = 50
+            }
+            dlognum = 0
+            """);
+            //add categories
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLogScreen_Create_0"), "create_log_category(category)", """
+            if (global.gotolog >= 50 && global.gotolog < 60)
+                category = 5
+            create_log_category(category)
+            """);
+            //This stuff is for the menu. The array thing might not be needed, but did it anyway, increasing by the same amount as the global.log arrays.
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0"), """
+            i = 59
+            repeat (60)
+            """, """
+            i = 109
+            repeat (110)
+            """);
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0"), "event_user(0)", """
+            j += 1
+            create_log_label(cat[5])
+            create_log_entry(50)
+            create_log_entry(51)
+            create_log_entry(52)
+            create_log_entry(53)
+            create_log_entry(54)
+            create_log_entry(55)
+            create_log_entry(56)
+            event_user(0)
+            """);
+            //Defines the new septogg hint entries
+            AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"""
+            cat[5] = "DNA Hints"
+            lbl[50] = "Main Caves"
+            txt[50, 0] = "{seedObject.Hints[ItemEnum.DNA1]}#-#{seedObject.Hints[ItemEnum.DNA15]}#-#{seedObject.Hints[ItemEnum.DNA16]}#-#{seedObject.Hints[ItemEnum.DNA33]}"
+            pic[50, 0] = bgLogDNA
+            lbl[51] = "Golden Temple"
+            txt[51, 0] = "{seedObject.Hints[ItemEnum.DNA2]}#-#{seedObject.Hints[ItemEnum.DNA3]}#-#{seedObject.Hints[ItemEnum.DNA4]}#-#{seedObject.Hints[ItemEnum.DNA5]}"
+            pic[51, 0] = bgLogDNA
+            lbl[52] = "Hydro Station"
+            txt[52, 0] = "{seedObject.Hints[ItemEnum.DNA6]}#-#{seedObject.Hints[ItemEnum.DNA7]}#-#{seedObject.Hints[ItemEnum.DNA8]}#-#{seedObject.Hints[ItemEnum.DNA9]}#-#{seedObject.Hints[ItemEnum.DNA10]}#-#{seedObject.Hints[ItemEnum.DNA11]}#-#{seedObject.Hints[ItemEnum.DNA12]}#-#{seedObject.Hints[ItemEnum.DNA24]}" 
+            pic[52, 0] = bgLogDNA
+            lbl[53] = "Industrial Complex"
+            txt[53, 0] = "{seedObject.Hints[ItemEnum.DNA13]}#-#{seedObject.Hints[ItemEnum.DNA14]}#-#{seedObject.Hints[ItemEnum.DNA25]}#-#{seedObject.Hints[ItemEnum.DNA26]}#-#{seedObject.Hints[ItemEnum.DNA27]}#-#{seedObject.Hints[ItemEnum.DNA28]}#-#{seedObject.Hints[ItemEnum.DNA29]}#-#{seedObject.Hints[ItemEnum.DNA30]}#-#{seedObject.Hints[ItemEnum.DNA31]}#-#{seedObject.Hints[ItemEnum.DNA32]}"
+            pic[53, 0] = bgLogDNA
+            lbl[54] = "The Tower"
+            txt[54, 0] = "{seedObject.Hints[ItemEnum.DNA34]}#-#{seedObject.Hints[ItemEnum.DNA35]}#-#{seedObject.Hints[ItemEnum.DNA36]}#-#{seedObject.Hints[ItemEnum.DNA39]}#-#{seedObject.Hints[ItemEnum.DNA40]}#-#{seedObject.Hints[ItemEnum.DNA41]}"
+            pic[54, 0] = bgLogDNA
+            lbl[55] = "Distribution Center"
+            txt[55, 0] = "{seedObject.Hints[ItemEnum.DNA18]}#-#{seedObject.Hints[ItemEnum.DNA19]}#-#{seedObject.Hints[ItemEnum.DNA20]}#-#{seedObject.Hints[ItemEnum.DNA21]}#-#{seedObject.Hints[ItemEnum.DNA22]}#-#{seedObject.Hints[ItemEnum.DNA37]}#-#{seedObject.Hints[ItemEnum.DNA38]}#-#{seedObject.Hints[ItemEnum.DNA42]}"
+            pic[55, 0] = bgLogDNA
+            lbl[56] = "The Nest"
+            txt[56, 0] = "{seedObject.Hints[ItemEnum.DNA23]}#-#{seedObject.Hints[ItemEnum.DNA43]}#-#{seedObject.Hints[ItemEnum.DNA44]}#-#{seedObject.Hints[ItemEnum.DNA45]}#-#{seedObject.Hints[ItemEnum.DNA46]}"
+            pic[56, 0] = bgLogDNA
+            """);
+
+            // Add wisdom septoggs into rooms
+            // A0
+            gmData.Rooms.ByName("rm_a0h15").GameObjects.Add(CreateRoomObject(118, 216, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h15_Create"), "create_log_trigger(0, 50, 118, 216, -35, 1)");
+            // A1
+            gmData.Rooms.ByName("rm_a1b02").GameObjects.Add(CreateRoomObject(144, 670, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a1b02_Create"), "create_log_trigger(0, 51, 144, 670, -35, 1)");
+            // A2
+            gmData.Rooms.ByName("rm_a2c05").GameObjects.Add(CreateRoomObject(115, 310, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a2c05_Create"), "create_log_trigger(0, 52, 115, 310, -35, 1)");
+            // A3
+            gmData.Rooms.ByName("rm_a3b10").GameObjects.Add(CreateRoomObject(768, 396, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3b10_Create"), "create_log_trigger(0, 53, 768, 396, -35, 1)");
+            // A4
+            gmData.Rooms.ByName("rm_a4h03").GameObjects.Add(CreateRoomObject(88, 523, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4h03_Create"), "create_log_trigger(0, 54, 88, 523, -35, 1)");
+            // A5
+            gmData.Rooms.ByName("rm_a5c17").GameObjects.Add(CreateRoomObject(246, 670, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a5c17_Create"), "create_log_trigger(0, 55, 246, 670, -35, 1)");
+            // A6
+            gmData.Rooms.ByName("rm_a6b02").GameObjects.Add(CreateRoomObject(240, 400, oWisdomSeptogg));
+            AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a6b02_Create"), "create_log_trigger(0, 56, 240, 400, -35, 1)");
+            
+            // TODO: rewrite log rendering to have color
+            
+            // TODO: the event to clear turbines in a2 water turbines should be *in* the room itself, not the accompanying rooms
             
             // Write back to disk
             using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
