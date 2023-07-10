@@ -478,7 +478,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0"), "lock = 0", "lock = lock;");
             
             // Fix tester being fought in darkness / proboscums being disabled on not activated tower
-            PrependGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10"), "global.darkness = 0;");
+            PrependGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10"), 
+                "global.darkness = 0; with (oLightEngine) instance_destroy(); with (oFlashlight64); instance_destroy()");
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oProboscum_Create_0"), "active = true; image_index = 0;");
 
             // Fix tester events sharing an event with tower activated - moved tester to 207
