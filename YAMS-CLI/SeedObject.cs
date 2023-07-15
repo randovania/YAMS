@@ -156,7 +156,7 @@ public class GamePatches
     public bool A3EntranceBlocks;
     
     [JsonInclude]
-    [JsonPropertyName("screw_pipe_blocks")]
+    [JsonPropertyName("screw_blocks")]
     public bool ScrewPipeBlocks;
     
 }
@@ -313,7 +313,7 @@ public enum ItemEnum
     Spiderball,
     [EnumMember(Value = "Spring Ball")]
     Springball,
-    [EnumMember(Value = "Hi-Jump")]
+    [EnumMember(Value = "Hi-Jump Boots")]
     Hijump,
     [EnumMember(Value = "Varia Suit")]
     Varia,

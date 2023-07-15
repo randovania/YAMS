@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Reflection.PortableExecutable;
+﻿using System.Globalization;
 using System.Text.Json;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
@@ -13,12 +11,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // TODO: use jes' patch to make beams not despawn instantly
-            
-            // TODO: implement hints for DNA
-            
             // TODO: when starting at thoth, make PB blocks disabled when you go down
             
+            // TODO: import jes tester display to make tester fight better
+
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
             const uint A2WaterTurbineLeftDoorID = 400002;
@@ -28,9 +24,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/example.json"));
             
-            // TODO: lots of code cleanup
-            
-            // TODO: lots of sanity checking
+            // TODO: lots of code cleanup and sanity checking 
             
             // TODO: make insanity save stations enabled again by using jes' code
             
@@ -198,7 +192,18 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
             gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2ELM"]];
             gmData.Backgrounds.ByName("bgLogImg44B").Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogIce"]];
-            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA0"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA1"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA1"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA2"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA2"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA3"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA3"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA4"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA4"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA5"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA5"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA6"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA6"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA7"]]});
+            
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpHideout"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpHideout"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpDepthsEntrance"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpDepthsEntrance"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpDepthsExit"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpDepthsExit"]]});
+            gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpWaterfall"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpWaterfall"]]});
             
             
             gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissile"]]});
@@ -264,14 +269,82 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 Name = gmData.Strings.MakeString("sItemUnknown"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
                 Textures =
                 {
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_1"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_2"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_3"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_4"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_5"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_6"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_7"]] },
-                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_8"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemShinyUnknown"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_8"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemShinyScrewAttack"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_9"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_10"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_11"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_12"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_13"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_14"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_15"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_16"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_17"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_18"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemShinyIceBeam"), Height = 16, Width = 16, 
+                MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyIceBeam_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyIceBeam_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyIceBeam_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyIceBeam_4"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sItemShinyHijump"), Height = 16, Width = 16, 
+                MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyHijump_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyHijump_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyHijump_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyHijump_4"]] },
                 }
             });
             
@@ -441,6 +514,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Fix varia cutscene
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0"), "bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
             
+            // Make beams not instantly despawn when out of screen
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBeam_Step_0"), 
+                "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
+                "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
+
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
             ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
@@ -474,7 +552,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
             
             // Fix Tower activation unlocking right door for door lock rando
-            if (!seedObject.DoorLocks.ContainsKey(127890))
+            if (seedObject.DoorLocks.ContainsKey(127890))
                 ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0"), "lock = 0", "lock = lock;");
             
             // Fix tester being fought in darkness / proboscums being disabled on not activated tower
@@ -565,6 +643,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
             
                 
+            
             
             // Fix plasma chamber having a missile door instead of normal after tester dead
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -880,18 +959,21 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 // Hideout
                 var hideoutPipeRoom = gmData.Rooms.ByName("rm_a6a11");
-                var pipeTileset = gmData.Backgrounds.ByName("tlWarp");
+                var hideoutPipeTileset = gmData.Backgrounds.ByName("tlWarpHideout");
+                var depthsEntrancePipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsEntrance");
+                var depthsExitPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsExit");
+                var waterfallsPipeTileset = gmData.Backgrounds.ByName("tlWarpWaterfall");
                 var pipeBGTileset = gmData.Backgrounds.ByName("tlWarpPipes");
                 var solidObject = gmData.GameObjects.ByName("oSolid1");
                 var pipeObject = gmData.GameObjects.ByName("oWarpPipeTrigger");
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, 100, pipeTileset, 0, 48, 48, 48));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, -101, pipeTileset, 32, 0));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 176, -101, pipeTileset, 48, 32));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 176, -101, pipeTileset, 16, 0));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 192, -101, pipeTileset, 0, 32));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 208, -101, pipeTileset, 32, 16));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 208, -101, pipeTileset, 48, 48));
-                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 208, -101, pipeTileset, 16, 16));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, 100, hideoutPipeTileset, 0, 48, 48, 48));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, -101, hideoutPipeTileset, 32, 0));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 176, -101, hideoutPipeTileset, 48, 32));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 176, -101, hideoutPipeTileset, 16, 0));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 192, -101, hideoutPipeTileset, 0, 32));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 208, -101, hideoutPipeTileset, 32, 16));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 208, -101, hideoutPipeTileset, 48, 48));
+                hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 208, -101, hideoutPipeTileset, 16, 16));
                 hideoutPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
 
                 hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 176, solidObject, null, 3));
@@ -906,14 +988,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
                 // Nest
                 var nestPipeRoom = gmData.Rooms.ByName("rm_a6b03");
-                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, 100, pipeTileset, 0, 48, 48, 48));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, -101, pipeTileset, 0, 0));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 368, -101, pipeTileset, 48, 32));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 368, -101, pipeTileset, 48, 0));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 384, -101, pipeTileset, 16, 32));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 400, -101, pipeTileset, 0, 16));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 400, -101, pipeTileset, 48, 48));
-                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 400, -101, pipeTileset, 48, 16));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, 100, depthsEntrancePipeTileset, 0, 48, 48, 48));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, -101, depthsEntrancePipeTileset, 0, 0));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 368, -101, depthsEntrancePipeTileset, 48, 32));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 368, -101, depthsEntrancePipeTileset, 48, 0));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 384, -101, depthsEntrancePipeTileset, 16, 32));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(192, 400, -101, depthsEntrancePipeTileset, 0, 16));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(208, 400, -101, depthsEntrancePipeTileset, 48, 48));
+                nestPipeRoom.Tiles.Add(CreateRoomTile(224, 400, -101, depthsEntrancePipeTileset, 48, 16));
                 //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
 
                 nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 368, solidObject, null, 3));
@@ -930,14 +1012,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 // Add shortcut between Depths and Waterfalls
                 // Depths
                 var depthsPipeRoom = gmData.Rooms.ByName("rm_a6b11");
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, 100, pipeTileset, 0, 48, 48, 48));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, -101, pipeTileset, 32, 0));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 160, -101, pipeTileset, 48, 32));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 160, -101, pipeTileset, 16, 0));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 176, -101, pipeTileset, 0, 32));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 192, -101, pipeTileset, 32, 16));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 192, -101, pipeTileset, 48, 48));
-                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 192, -101, pipeTileset, 16, 16));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, 100, depthsExitPipeTileset, 0, 48, 48, 48));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, -101, depthsExitPipeTileset, 32, 0));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 160, -101, depthsExitPipeTileset, 48, 32));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 160, -101, depthsExitPipeTileset, 16, 0));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 176, -101, depthsExitPipeTileset, 0, 32));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 192, -101, depthsExitPipeTileset, 32, 16));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 192, -101, depthsExitPipeTileset, 48, 48));
+                depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 192, -101, depthsExitPipeTileset, 16, 16));
                 //depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 80, 100, pipeBGTileset, 0, 32, 32, 96));
 
                 // Clean up some tiles/collision
@@ -958,14 +1040,14 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
                 // Waterfalls
                 var waterfallsPipeRoom = gmData.Rooms.ByName("rm_a7a07");
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, 100, pipeTileset, 0, 48, 48, 48));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, -101, pipeTileset, 0, 0));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 176, -101, pipeTileset, 48, 32));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 176, -101, pipeTileset, 48, 0));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 192, -101, pipeTileset, 16, 32));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 208, -101, pipeTileset, 0, 16));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 208, -101, pipeTileset, 48, 48));
-                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 208, -101, pipeTileset, 48, 16));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, 100, waterfallsPipeTileset, 0, 48, 48, 48));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, -101, waterfallsPipeTileset, 0, 0));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 176, -101, waterfallsPipeTileset, 48, 32));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 176, -101, waterfallsPipeTileset, 48, 0));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 192, -101, waterfallsPipeTileset, 16, 32));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 208, -101, waterfallsPipeTileset, 0, 16));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 208, -101, waterfallsPipeTileset, 48, 48));
+                waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 208, -101, waterfallsPipeTileset, 48, 16));
                 //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
 
                 // Clean up some tiles/collision
@@ -996,12 +1078,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: see if it's possible to shorten save animation - it is, fix character step event first
             // gml_Script_characterStepEvent -> 
             /*
-                if (cutsceneSkip) {
+                if (!cutsceneSkip) {
              *  instance_create(x, y, oSaveFX)
                 instance_create(x, y, oSaveSparks)
                 }
                 ...
-                if ((statetime == 230 && !cutsceneSkip) || (statetime == 10  cutsceneskip))
+                if ((statetime == 230 && !cutsceneSkip) || (statetime == 10 && cutsceneskip))
              */
             
             // Make metroids drop an item onto you on death and increase music timer to not cause issues
@@ -1190,8 +1272,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: change samus arm cannon to different sprite, when no missile launcher. This requires delving into state machine tho and that is *pain*
             // For that, also make her not arm the cannon if you have missile launcher but no missiles
+            // ALTERNATIVE: if missile equipped, but no launcher, make EMP effect display that usually appears in gravity area
             
-            // TODO: make new variables for the rest of used events like breaking blocks etc.
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
             PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
                                                 "global.a3Block = 0; global.softlockPrevention = 0;");
@@ -2358,11 +2440,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             draw_set_halign(fa_left)
             """);
 
-            // For room rando, go through each door and modify where it leads to
-            // TODO: Implement this whenever room rando gets done.
+            // For the future, with room rando, go through each door and modify where it leads to
             
-            
-            //Hints
+            // Hints
             // Ice Beam Hints
             // Make log in lab always appear
             ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a7b04A_Create"), "oControl.chozomessage >= 10", "true");
@@ -2429,42 +2509,60 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             i = 109
             repeat (110)
             """);
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0"), "event_user(0)", """
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0"), """
             j += 1
-            create_log_label(cat[5])
-            create_log_entry(50)
-            create_log_entry(51)
-            create_log_entry(52)
-            create_log_entry(53)
-            create_log_entry(54)
-            create_log_entry(55)
-            create_log_entry(56)
-            event_user(0)
+            create_log_label(cat[4])
+            create_log_entry(41)
+            create_log_entry(42)
+            create_log_entry(43)
+            create_log_entry(45)
+            """, """
+            if (global.log[41] > 0 || global.log[42] > 0 || global.log[43] > 0 || global.log[45] > 0)
+            {
+                j += 1
+                create_log_label(cat[4])
+                create_log_entry(41)
+                create_log_entry(42)
+                create_log_entry(43)
+                create_log_entry(45)
+            }
+            if (global.log[50] > 0 || global.log[51] > 0 || global.log[52] > 0 || global.log[53] > 0 || global.log[54] > 0 || global.log[55] > 0 || global.log[56] > 0)
+            {
+                j += 1
+                create_log_label(cat[5])
+                create_log_entry(50)
+                create_log_entry(51)
+                create_log_entry(52)
+                create_log_entry(53)
+                create_log_entry(54)
+                create_log_entry(55)
+                create_log_entry(56)
+            }
             """);
             //Defines the new septogg hint entries
             AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"""
             cat[5] = "DNA Hints"
             lbl[50] = "Main Caves"
             txt[50, 0] = "{seedObject.Hints[ItemEnum.DNA1]}#-#{seedObject.Hints[ItemEnum.DNA15]}#-#{seedObject.Hints[ItemEnum.DNA16]}#-#{seedObject.Hints[ItemEnum.DNA17]}#-#{seedObject.Hints[ItemEnum.DNA33]}"
-            pic[50, 0] = bgLogDNA
+            pic[50, 0] = bgLogDNA0
             lbl[51] = "Golden Temple"
             txt[51, 0] = "{seedObject.Hints[ItemEnum.DNA2]}#-#{seedObject.Hints[ItemEnum.DNA3]}#-#{seedObject.Hints[ItemEnum.DNA4]}#-#{seedObject.Hints[ItemEnum.DNA5]}"
-            pic[51, 0] = bgLogDNA
+            pic[51, 0] = bgLogDNA1
             lbl[52] = "Hydro Station"
             txt[52, 0] = "{seedObject.Hints[ItemEnum.DNA6]}#-#{seedObject.Hints[ItemEnum.DNA7]}#-#{seedObject.Hints[ItemEnum.DNA8]}#-#{seedObject.Hints[ItemEnum.DNA9]}#-#{seedObject.Hints[ItemEnum.DNA10]}#-#{seedObject.Hints[ItemEnum.DNA11]}#-#{seedObject.Hints[ItemEnum.DNA12]}#-#{seedObject.Hints[ItemEnum.DNA24]}" 
-            pic[52, 0] = bgLogDNA
+            pic[52, 0] = bgLogDNA2
             lbl[53] = "Industrial Complex"
             txt[53, 0] = "{seedObject.Hints[ItemEnum.DNA13]}#-#{seedObject.Hints[ItemEnum.DNA14]}#-#{seedObject.Hints[ItemEnum.DNA25]}#-#{seedObject.Hints[ItemEnum.DNA26]}#-#{seedObject.Hints[ItemEnum.DNA27]}#-#{seedObject.Hints[ItemEnum.DNA28]}#-#{seedObject.Hints[ItemEnum.DNA29]}#-#{seedObject.Hints[ItemEnum.DNA30]}#-#{seedObject.Hints[ItemEnum.DNA31]}#-#{seedObject.Hints[ItemEnum.DNA32]}"
-            pic[53, 0] = bgLogDNA
+            pic[53, 0] = bgLogDNA3
             lbl[54] = "The Tower"
             txt[54, 0] = "{seedObject.Hints[ItemEnum.DNA34]}#-#{seedObject.Hints[ItemEnum.DNA35]}#-#{seedObject.Hints[ItemEnum.DNA36]}#-#{seedObject.Hints[ItemEnum.DNA39]}#-#{seedObject.Hints[ItemEnum.DNA40]}#-#{seedObject.Hints[ItemEnum.DNA41]}"
-            pic[54, 0] = bgLogDNA
+            pic[54, 0] = bgLogDNA4
             lbl[55] = "Distribution Center"
             txt[55, 0] = "{seedObject.Hints[ItemEnum.DNA18]}#-#{seedObject.Hints[ItemEnum.DNA19]}#-#{seedObject.Hints[ItemEnum.DNA20]}#-#{seedObject.Hints[ItemEnum.DNA21]}#-#{seedObject.Hints[ItemEnum.DNA22]}#-#{seedObject.Hints[ItemEnum.DNA37]}#-#{seedObject.Hints[ItemEnum.DNA38]}#-#{seedObject.Hints[ItemEnum.DNA42]}"
-            pic[55, 0] = bgLogDNA
+            pic[55, 0] = bgLogDNA5
             lbl[56] = "The Nest"
             txt[56, 0] = "{seedObject.Hints[ItemEnum.DNA23]}#-#{seedObject.Hints[ItemEnum.DNA43]}#-#{seedObject.Hints[ItemEnum.DNA44]}#-#{seedObject.Hints[ItemEnum.DNA45]}#-#{seedObject.Hints[ItemEnum.DNA46]}"
-            pic[56, 0] = bgLogDNA
+            pic[56, 0] = bgLogDNA6
             """);
 
             // Add wisdom septoggs into rooms
