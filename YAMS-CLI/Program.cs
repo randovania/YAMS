@@ -11,7 +11,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // TODO: when starting at thoth, make PB blocks disabled when you go down
+            
             
             // TODO: import jes tester display to make tester fight better
 
@@ -27,6 +27,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: lots of code cleanup and sanity checking 
             
             // TODO: make insanity save stations enabled again by using jes' code
+            
+            // TODO: add missile/super drops in spots where you can get sotflocked via ammo (ice, a3 entrance maybe more)
             
             // Read 1.5.x data
             var debug = true;
@@ -2000,7 +2002,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                             DoorLockType.Bomb => "lock = 10; originalLock = lock; event = -1;",
                             DoorLockType.Spider => "lock = 11; originalLock = lock; event = -1;",
                             DoorLockType.Screw => "lock = 12; originalLock = lock; event = -1;",
-                            // TODO: implement new door types here
                             DoorLockType.TowerEnabled => "lock = 13; originalLock = lock; event = -1;",
                             DoorLockType.TesterDead => "lock = 14; originalLock = lock; event = -1;",
                             DoorLockType.GuardianDead => "lock = 15; originalLock = lock; event = -1;",
@@ -2327,6 +2328,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4759_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && global.hasGravity == 0)",
                 "if (false)");
             
+            // When going down from thoth, make PB blocks disabled
+            PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h13_Create"), "if (global.targety == 0) {global.event[176] = 1; with (oBlockPBChain) event_user(0); }");
             
             // Stop Bomb blocks from respawning
             if (seedObject.Patches.RespawnBombBlocks)
