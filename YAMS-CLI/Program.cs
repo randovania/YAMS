@@ -15,6 +15,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: import jes tester display to make tester fight better
 
+            // TODO: on start, make all rooms with items on them visible by default
+            
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
             const uint A2WaterTurbineLeftDoorID = 400002;
@@ -29,6 +31,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // TODO: make insanity save stations enabled again by using jes' code
             
             // TODO: add missile/super drops in spots where you can get sotflocked via ammo (ice, a3 entrance maybe more)
+            
+            // TODO: revamp doors to serris arena logic
             
             // Read 1.5.x data
             var debug = true;
@@ -268,7 +272,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             gmData.Sprites.Add(new UndertaleSprite()
             {
-                Name = gmData.Strings.MakeString("sItemUnknown"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
                 Textures =
                 {
                     new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_1"]] },
@@ -280,7 +284,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             gmData.Sprites.Add(new UndertaleSprite()
             {
-                Name = gmData.Strings.MakeString("sItemShinyUnknown"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Name = gmData.Strings.MakeString("sItemShinyNothing"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
                 Textures =
                 {
                     new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_1"]] },
