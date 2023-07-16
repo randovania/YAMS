@@ -75,29 +75,29 @@ public enum DoorLockType
     Spider,
     [EnumMember(Value = "Screw Attack Door")]
     Screw,
-    [EnumMember(Value = "Tower Activated Door")]
+    [EnumMember(Value = "Tower Energy Restored Door")]
     TowerEnabled,
-    [EnumMember(Value = "After Tester Door")]
+    [EnumMember(Value = "Tester-Locked Door")]
     TesterDead,
-    [EnumMember(Value = "Guardian Door")]
+    [EnumMember(Value = "Guardian-Locked Door")]
     GuardianDead,
-    [EnumMember(Value = "Arachnus Door")]
+    [EnumMember(Value = "Arachnus-Locked Door")]
     ArachnusDead,
-    [EnumMember(Value = "Torizo Door")]
+    [EnumMember(Value = "Torizo-Locked Door")]
     TorizoDead,
-    [EnumMember(Value = "Serris Soul Door")]
+    [EnumMember(Value = "Serris-Locked Door")]
     SerrisDead,
-    [EnumMember(Value = "Genesis Door")]
+    [EnumMember(Value = "Genesis-Locked Door")]
     GenesisDead,
-    [EnumMember(Value = "Queen Door")]
+    [EnumMember(Value = "Queen-Locked Door")]
     QueenDead,
-    [EnumMember(Value = "A5 Activation Tower Door")]
+    [EnumMember(Value = "Distribution Center Energy Restored Door")]
     EMPActivated,
-    [EnumMember(Value = "Golden Temple EMP Activated Door")]
+    [EnumMember(Value = "Golden Temple EMP Door")]
     EMPA1,
-    [EnumMember(Value = "Hydro Station EMP Activated Door")]
+    [EnumMember(Value = "Hydro Station EMP Door")]
     EMPA2,
-    [EnumMember(Value = "Industrial Complex EMP Activated Door")]
+    [EnumMember(Value = "Industrial Complex EMP Door")]
     EMPA3,
     
 }
