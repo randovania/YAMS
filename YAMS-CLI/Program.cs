@@ -272,6 +272,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             gmData.Sprites.Add(new UndertaleSprite()
             {
+                // TODO: sprite is offset by a bit
                 Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
                 Textures =
                 {
@@ -520,6 +521,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBeam_Step_0"), 
                 "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
                 "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
+                
+            //No more Out of Bounds oSmallsplash crashes
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSmallSplash_Step_0"), "if (global.watertype == 0)", "if (global.watertype == 0 && instance_exists(oWater))");
 
             // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
             var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
@@ -2035,6 +2039,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 var gmObject = gmData.GameObjects.ByName(pickupName);
                 gmObject.Sprite = gmData.Sprites.ByName(pickup.SpriteDetails.Name);
+                if (gmObject.Sprite is null)
+                    throw new NotSupportedException($"The sprite for {pickupName} ({gmObject.Name.Content}) cannot be null!");
                 // First 0 is for creation event
                 var createCode = gmObject.Events[0][0].Actions[0].CodeId;
                 AppendGMLInCode(createCode, $"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\";" +
