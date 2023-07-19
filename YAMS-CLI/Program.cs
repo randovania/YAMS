@@ -602,16 +602,19 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             varDoorEvent.Actions.Add(varDoorAction);
             doorCollisionList.Add(varDoorEvent);
             
-            // TODO: make boss doors also openable by missiles/bombs at one point
             // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
             // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24)
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (global.event[200] && lock == 13)" +
-                                                                                                "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
-                                                                                                "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
-                                                                                                "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)" +
-                                                                                                "|| (global.event[303] && lock == 20) || (global.event[250] && lock == 21)" +
-                                                                                                "|| (global.event[57] && lock == 22) || (global.event[110] && lock == 23)" +
-                                                                                                "|| (global.event[163] && lock == 24)");
+            var newDoorReplacementText = "(lock == 0) || (global.event[200] && lock == 13)" +
+                                         "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
+                                         "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
+                                         "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)" +
+                                         "|| (global.event[303] && lock == 20) || (global.event[250] && lock == 21)" +
+                                         "|| (global.event[57] && lock == 22) || (global.event[110] && lock == 23)" +
+                                         "|| (global.event[163] && lock == 24)";
+            // beams, missile explosion, pbomb explosion, bomb explosion
+            foreach (var codeName in new[] {"gml_Object_oDoor_Collision_439", "gml_Object_oDoor_Collision_438", "gml_Object_oDoor_Collision_437", "gml_Object_oDoor_Collision_435"})
+                ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
+            
 
             // Fix Emp devices unlocking all doors automatically!
             string empBatteryCellCondition = "false";
@@ -657,9 +660,11 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Fix skreek street not actually having skreeks
             PrependGMLInCode(gmData.Code.ByName("gml_Script_scr_skreeks_destroy"), "exit");
             
-            // Rename "fusion" difficulty to expert, in order to be less confusing
+            // Rename "fusion" difficulty to brutal, in order to be less confusing
             foreach (var codeName in new[] { "gml_Object_oMenuSaveSlot_Other_10", "gml_Object_oSlotMenu_Fusion_Create_0" })
                 ReplaceGMLInCode(gmData.Code.ByName(codeName), @"get_text(""Title-Additions"", ""GameSlot_NewGame_Fusion"")", "\"Brutal\"");
+            // TODO: with fusion mode, every difficulty will be marked as brutal. kinda weird to fix, because i'd need a new variable for it to track whether you're on brutal that should only be set on brutal
+            // also relevant: gml_Object_oGameSelMenu_Other_12
             
             // Add doors to gfs thoth bridge
             var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
@@ -1014,6 +1019,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
                 gmData.Code.Add(nestPipeCode);
                 nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode));
+                
+                // Change slope to solid to prevent oob issue
+                nestPipeRoom.GameObjects.First(o => o.X == 176 && o.Y == 416).ObjectDefinition = solidObject;
 
                 // Add shortcut between Depths and Waterfalls
                 // Depths
@@ -1104,9 +1112,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
 
             // Make new global.lavastate 11 that requires 46 dna to be collected
             SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
-            
-            //TODO: screw blocks new bg2 overgrown alley
-            // TODO: with fusion mode, every difficulty will be marked as brutal
             
             // Check lavastate at labs
             var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
@@ -1819,7 +1824,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 switch (item)
                 {
-                    // TODO: what if more than 100 energy per tank? should cap?
                     case ItemEnum.EnergyTank:
                         ReplaceGMLInCode(characterVarsCode, "global.etanks = 0", $"global.etanks = {quantity};");
                         ReplaceGMLInCode(characterVarsCode, $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1}",
@@ -2175,6 +2179,12 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             int drawEndIndex = drawGuiText.IndexOf("draw_set_font(global.guifont2)");
             var etankSnippet = drawGuiText.Substring(drawStartIndex, drawEndIndex - drawStartIndex);
             ReplaceGMLInCode(drawGuiCode, etankSnippet, $$"""
+            var isHealthPerTankOverHundo = {{(seedObject.Patches.EnergyPerTank > 100).ToString().ToLower()}}
+            if (isHealthPerTankOverHundo)
+            {
+                xoff += 12
+                etankxoff += 12
+            }
             for (var i = 1; i<= 30; i++ )
             {
               if (global.etanks < i) break;
@@ -2415,9 +2425,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             // Drill cutscene - event 172 to 3
             AppendGMLInCode(characterVarsCode, "global.event[172] = global.skipCutscenes * 3");
             // 1 Orb cutscene
-            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(768, 48, oSolid2x2); block2.material = 3;}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(768, 48, oSolid2x2); block2.material = 3; with (oA1MovingPlatform2) with (myblock) instance_destroy()}");
             // 3 Orb cutscene
-            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3}");
+            AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3; with (oA1MovingPlatform) with (myblock) instance_destroy()}");
             // Fix audio for the orb cutscenes
             AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
             
