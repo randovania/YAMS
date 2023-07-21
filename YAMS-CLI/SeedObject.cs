@@ -156,6 +156,10 @@ public class GamePatches
     public bool A3EntranceBlocks;
     
     [JsonInclude]
+    [JsonPropertyName("show_unexplored_map")]
+    public bool ShowUnexploredMap;
+    
+    [JsonInclude]
     [JsonPropertyName("screw_blocks")]
     public bool ScrewPipeBlocks;
     

@@ -15,7 +15,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // TODO: import jes tester display to make tester fight better
 
-            // TODO: on start, make all rooms with items on them visible by default
+            
             
             const uint ThothBridgeLeftDoorID = 400000;
             const uint ThothBridgeRightDoorID = 400001;
@@ -375,6 +375,75 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_15"]]});
             gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_16"]]});
 
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sMapBlockUnexplored"), Height = 8, Width = 8,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapBlockUnexplored"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapBlockUnexplored"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapBlockUnexplored"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapBlockUnexplored"]] },
+                }
+            });
+            
+            gmData.Sprites.Add(new UndertaleSprite()
+            {
+                Name = gmData.Strings.MakeString("sMapCornerUnexplored"), Height = 8, Width = 8,
+                Textures =
+                {
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[0].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[1].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[2].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[3].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[4].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[5].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[6].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[7].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[8].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[9].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[10].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[11].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[12].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[13].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[14].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[15].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.Sprites.ByName("sMapCorner").Textures[16].Texture },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_0"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_0"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_1"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_0"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_1"]] },
+                    
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_5"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_2"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_3"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_4"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_5"]] },
+                    
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_9"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_9"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_6"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_7"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_8"]] },
+                    new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_9"]] },
+                }
+            });
+            
             gmData.Sprites.Add(new UndertaleSprite()
             {
                 Name = gmData.Strings.MakeString("sItemMissileLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -970,10 +1039,10 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             {
                 // Hideout
                 var hideoutPipeRoom = gmData.Rooms.ByName("rm_a6a11");
-                var hideoutPipeTileset = gmData.Backgrounds.ByName("tlWarpHideout");
-                var depthsEntrancePipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsEntrance");
-                var depthsExitPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsExit");
-                var waterfallsPipeTileset = gmData.Backgrounds.ByName("tlWarpWaterfall");
+                var hideoutPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsEntrance");
+                var depthsEntrancePipeTileset = gmData.Backgrounds.ByName("tlWarpHideout");
+                var depthsExitPipeTileset = gmData.Backgrounds.ByName("tlWarpWaterfall");
+                var waterfallsPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsExit");
                 var pipeBGTileset = gmData.Backgrounds.ByName("tlWarpPipes");
                 var solidObject = gmData.GameObjects.ByName("oSolid1");
                 var pipeObject = gmData.GameObjects.ByName("oWarpPipeTrigger");
@@ -1287,7 +1356,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             
             // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
             PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-                                                "global.a3Block = 0; global.softlockPrevention = 0;");
+                                                "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0;");
             
             // Set geothermal reactor to always be exploded
             AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -2367,6 +2436,46 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                 }
             }
 
+            // On start, make all rooms show being "unexplored" similar to primes/super
+            // Replaces all mentions of sMapBlock and sMapCorner with local variables.
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "sMapBlock", "blockSprite");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "sMapCorner", "cornerSprite");
+
+            // Redefine the sprite variables to the Unexplored sprites, if map tile hasn't been revealed to player.
+            if (seedObject.Patches.ShowUnexploredMap)
+                ReplaceGMLInCode(characterVarsCode, "global.unexploredMap = 0", "global.unexploredMap = 1;");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument8 > 0)", """
+            //variables for swapping map color and corner sprites
+            var blockSprite, cornerSprite;
+
+            //default sprites
+            blockSprite = sMapBlock;
+            cornerSprite = sMapCorner;
+
+            //Don't draw if map tile is a fast travel pipe
+            if (argument7 != "H" && argument7 != "V" && argument7 != "C")
+            {
+                //Sprite variables changed to unexplored variants if map not revealed
+                if (argument8 == 0 && global.unexploredMap)
+                {
+                    blockSprite = sMapBlockUnexplored;
+                    cornerSprite = sMapCornerUnexplored;
+                }
+            }
+            """);
+            // Don't ever draw the debug pipe tiles
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), """
+            if (argument7 == "H")
+                draw_sprite(sMapSP, 12, argument0, argument1)
+            if (argument7 == "V")
+                draw_sprite(sMapSP, 13, argument0, argument1)
+            if (argument7 == "C")
+                draw_sprite(sMapSP, 14, argument0, argument1)
+            """, "");
+            // Also show item pickups and TODO: metroids
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
+            
             // Skip most cutscenes when enabled
             if (seedObject.Patches.SkipCutscenes)
             {
