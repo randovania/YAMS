@@ -58,7 +58,12 @@ public class Patcher
         }
         var decompileContext = new GlobalDecompileContext(gmData, false);
 
-            
+
+        string GetGMLCode(UndertaleCode code)
+        {
+            return Decompiler.Decompile(code, decompileContext);
+        }
+        
         void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
         {
             var codeText = Decompiler.Decompile(code, decompileContext);
@@ -742,6 +747,9 @@ public class Patcher
             if (!seedObject.DoorLocks.ContainsKey(doorID))
                 empBatteryCellCondition += $" || id == {doorID}";
         }
+        Console.WriteLine("Hi chat!");
+        Console.WriteLine(GetGMLCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0")));
+        Console.WriteLine("bye chat");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), """
             with (oDoor)
                 event_user(3)
