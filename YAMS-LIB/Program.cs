@@ -748,7 +748,7 @@ public class Patcher
                 empBatteryCellCondition += $" || id == {doorID}";
         }
         Console.WriteLine("Hi chat!");
-        Console.WriteLine(GetGMLCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0")));
+        File.WriteAllText("./weirdDoorBug.txt", GetGMLCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0")));
         Console.WriteLine("bye chat");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), """
             with (oDoor)
