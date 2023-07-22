@@ -46,9 +46,9 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             else
             {
                 Console.WriteLine("Please enter the full path to your 1.5.5 data.win");
-                am2rPath = Console.ReadLine();
+                am2rPath = Console.ReadLine()?.Trim('"');;
                 Console.WriteLine("Please enter the output path where you want the randomized game to be");
-                outputAm2rPath = Console.ReadLine();
+                outputAm2rPath = Console.ReadLine()?.Trim('"');;
             }
             var gmData = new UndertaleData();
             
@@ -164,9 +164,6 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
             }
 
             // Replace A4 doors
-            //spriteImage.Mutate(i =>
-            //    i.Crop(new Rectangle(firstSprite.Texture.SourceX, firstSprite.Texture.SourceY, firstSprite.Texture.SourceWidth, firstSprite.Texture.SourceHeight)));
-            // image.Mutate(i => i.DrawImage(spriteImage, new Point(firstSprite.Texture.TargetX, firstSprite.Texture.TargetY), 1));
             {
                 var a4DoorTex = gmData.TexturePageItems[nameToPageItemDict["newA4Doors"]];
                 var a4DoorImage = Image.Load(a4DoorTex.TexturePage.TextureData.TextureBlob);
@@ -192,7 +189,7 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     a4Tex2.TexturePage.TextureData.TextureBlob = ms.ToArray();
                 }
             }
-            
+
             gmData.Backgrounds.ByName("bg_MapBottom2").Texture = gmData.TexturePageItems[nameToPageItemDict["bg_MapBottom2"]];
             gmData.Backgrounds.ByName("bgGUIMetCountBG1").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
             gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
@@ -533,6 +530,59 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_4"]] },
                 }
             });
+            
+            // Put these into a function, with hue shift degrees as param
+            
+            // Hue shift etanks
+            /*
+            var foo = 0;
+            foreach (var textureEntry in gmData.Sprites.ByName("sGUIETank").Textures)
+            {
+                if (foo == 0)
+                {
+                    foo++;
+                    continue;
+                }
+                var texture = textureEntry.Texture;
+                    var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
+                    var j = 06;
+                    texturePage.Mutate(im => im.Hue(j, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
+
+                    /*using (var ms = new MemoryStream())
+                    {
+                        texturePage.Save(ms, PngFormat.Instance);
+                        texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                    }
+            }
+            /*
+            // Hue shift health numbers
+            foreach (var textureEntry in gmData.Sprites.ByName("sGUIFont1").Textures.Concat(gmData.Sprites.ByName("sGUIFont1A").Textures))
+            {
+                var texture = textureEntry.Texture;
+                var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
+                texturePage.Mutate(i => i.Hue(120, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
+                
+                using (var ms = new MemoryStream())
+                {
+                    texturePage.Save(ms, PngFormat.Instance);
+                    texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                }
+            }
+            
+            // Hue shift dna icon
+            foreach (var bg in new List<UndertaleBackground>(){gmData.Backgrounds.ByName("bgGUIMetCountBG1"), gmData.Backgrounds.ByName("bgGUIMetCountBG2"), gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM")})
+            {
+                var texture = bg.Texture;
+                var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
+                texturePage.Mutate(i => i.Hue(30, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
+                texturePage.Save("/tmp/foo" + bg.Name.Content + ".png", new PngEncoder());
+                using (var ms = new MemoryStream())
+                {
+                    texturePage.Save(ms, PngFormat.Instance);
+                    texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                }
+            }
+            */
             
             // Create new wisdom septogg object
             var oWisdomSeptogg = new UndertaleGameObject()
@@ -2461,6 +2511,8 @@ namespace YAMS_CLI // Note: actual namespace depends on the project name.
                     blockSprite = sMapBlockUnexplored;
                     cornerSprite = sMapCornerUnexplored;
                 }
+                else if (argument8 == 0 && !global.unexploredMap)
+                    exit;
             }
             """);
             // Don't ever draw the debug pipe tiles
