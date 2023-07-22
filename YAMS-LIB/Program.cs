@@ -747,9 +747,6 @@ public class Patcher
             if (!seedObject.DoorLocks.ContainsKey(doorID))
                 empBatteryCellCondition += $" || id == {doorID}";
         }
-        Console.WriteLine("Hi chat!");
-        File.WriteAllText("./weirdDoorBug.txt", GetGMLCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0")));
-        Console.WriteLine("bye chat");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), """
             with (oDoor)
                 event_user(3)
