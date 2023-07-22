@@ -9,10 +9,8 @@ namespace YAMS_LIB;
 
 public class Patcher
 {
-    public static void Main(string[] args)
+    public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
-            
-            
         // TODO: import jes tester display to make tester fight better
 
             
@@ -24,7 +22,7 @@ public class Patcher
         // Change this to not have to deal with floating point madness
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             
-        var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/example.json"));
+        var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(jsonPath));
             
         // TODO: lots of code cleanup and sanity checking 
             
@@ -35,21 +33,6 @@ public class Patcher
         // TODO: revamp doors to serris arena logic
             
         // Read 1.5.x data
-        var debug = true;
-        string am2rPath = "";
-        string outputAm2rPath = "";
-        if (debug)
-        {
-            am2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx_older";
-            outputAm2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx";
-        }
-        else
-        {
-            Console.WriteLine("Please enter the full path to your 1.5.5 data.win");
-            am2rPath = Console.ReadLine()?.Trim('"');;
-            Console.WriteLine("Please enter the output path where you want the randomized game to be");
-            outputAm2rPath = Console.ReadLine()?.Trim('"');;
-        }
         var gmData = new UndertaleData();
             
         using (FileStream fs = new FileInfo(am2rPath).OpenRead())
@@ -2566,6 +2549,7 @@ public class Patcher
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oEggTrigger_Create_0"), """
             if (global.skipCutscenes)
             {
+                global.event[302] = 1
                 global.monstersleft = 9
                 if (global.difficulty == 2)
                     global.monstersleft = 16
@@ -2631,6 +2615,8 @@ public class Patcher
         // Ice Beam Hints
         // Make log in lab always appear
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a7b04A_Create"), "oControl.chozomessage >= 10", "true");
+        // Fix hint dissappearing when visiting room right after baby scan
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oChozoLogMarker_Step_0"), "instance_exists(oNotification)", "instance_exists(oNotification) && oNotification.log == 1");
         // Change text to be hint
         AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[ItemEnum.Ice]}\"; pic[44, 0] = bgLogImg44B");
         // Remove second scanning
