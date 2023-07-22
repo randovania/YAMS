@@ -2,7 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UndertaleModLib", "UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj", "{70489ACD-AE2A-4ACF-9185-459443DFB958}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMS-CLI", "YAMS-CLI\YAMS-CLI.csproj", "{6324D408-0EDC-4FF0-BC8B-6FA25682ABA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMS-LIB", "YAMS-LIB\YAMS-LIB.csproj", "{6324D408-0EDC-4FF0-BC8B-6FA25682ABA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMS-CLI", "YAMS-CLI\YAMS-CLI.csproj", "{FA35C27E-C6AB-4CCF-912E-17452EE393D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +20,9 @@ Global
 		{6324D408-0EDC-4FF0-BC8B-6FA25682ABA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6324D408-0EDC-4FF0-BC8B-6FA25682ABA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6324D408-0EDC-4FF0-BC8B-6FA25682ABA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA35C27E-C6AB-4CCF-912E-17452EE393D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA35C27E-C6AB-4CCF-912E-17452EE393D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA35C27E-C6AB-4CCF-912E-17452EE393D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA35C27E-C6AB-4CCF-912E-17452EE393D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
