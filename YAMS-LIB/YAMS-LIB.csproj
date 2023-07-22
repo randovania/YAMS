@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Sprites" />
-        <Content Include="Sprites/**">
+        <Folder Include="sprites\" />
+        <Content Include="sprites/**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
         </Content>
@@ -23,12 +23,6 @@
     <ItemGroup>
       <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
       <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="example.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
 </Project>

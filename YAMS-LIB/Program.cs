@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Reflection;
 using System.Text.Json;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
@@ -115,7 +116,7 @@ public class Patcher
         var utTexturePage = new UndertaleEmbeddedTexture();
         utTexturePage.TextureHeight = utTexturePage.TextureWidth = pageDimension;
         gmData.EmbeddedTextures.Add(utTexturePage);
-        foreach (var filePath in Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "/Sprites"))
+        foreach (var filePath in Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites"))
         {
             var sprite = Image.Load(filePath);
             currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
