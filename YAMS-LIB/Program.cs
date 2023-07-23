@@ -2533,7 +2533,7 @@ public class Patcher
         //Force all breakables (except the hidden super blocks) to be visible
         // TODO: put this behind a cosmetic check
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oSolid_Alarm_5"), "if (sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
-                                                                         "{ event_user(1); visible = true: }");
+                                                                         "{ event_user(1); visible = true; }");
         
         // Skip most cutscenes when enabled
         if (seedObject.Patches.SkipCutscenes)
