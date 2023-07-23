@@ -116,36 +116,48 @@ public class Patcher
         var utTexturePage = new UndertaleEmbeddedTexture();
         utTexturePage.TextureHeight = utTexturePage.TextureWidth = pageDimension;
         gmData.EmbeddedTextures.Add(utTexturePage);
-        foreach (var filePath in Directory.GetFiles(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites"))
+
+        void AddAllSpritesFromDir(string dirPath)
         {
-            var sprite = Image.Load(filePath);
-            currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
-            if ((lastUsedX + sprite.Width) > pageDimension)
+            // Recursively add sprites from subdirs
+            foreach (string subDir in Directory.GetDirectories(dirPath))
             {
-                lastUsedX = 0;
-                lastUsedY += currentShelfHeight;
-                currentShelfHeight = sprite.Height + 1; // One pixel padding
-
-                if (sprite.Width > pageDimension)
-                    throw new NotSupportedException($"Currently a sprite ({filePath}) is bigger than the max size of a {pageDimension} texture page!");
+                AddAllSpritesFromDir(subDir);
             }
+            
+            foreach (var filePath in Directory.GetFiles(dirPath))
+            {
+                var sprite = Image.Load(filePath);
+                currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
+                if ((lastUsedX + sprite.Width) > pageDimension)
+                {
+                    lastUsedX = 0;
+                    lastUsedY += currentShelfHeight;
+                    currentShelfHeight = sprite.Height + 1; // One pixel padding
 
-            if ((lastUsedY + sprite.Height) > pageDimension)
-                throw new NotSupportedException($"Currently all the sprites would be above a {pageDimension} texture page!");
+                    if (sprite.Width > pageDimension)
+                        throw new NotSupportedException($"Currently a sprite ({filePath}) is bigger than the max size of a {pageDimension} texture page!");
+                }
 
-            int xCoord = lastUsedX;
-            int yCoord = lastUsedY;
-            newTexturePage.Mutate(i => i.DrawImage(sprite, new Point(xCoord, yCoord), 1));
-            var pageItem = new UndertaleTexturePageItem();
-            pageItem.SourceX = (ushort)xCoord;
-            pageItem.SourceY = (ushort)yCoord;
-            pageItem.SourceWidth = pageItem.TargetWidth = pageItem.BoundingWidth = (ushort)sprite.Width;
-            pageItem.SourceHeight = pageItem.TargetHeight = pageItem.BoundingHeight = (ushort)sprite.Height;
-            pageItem.TexturePage = utTexturePage;
-            gmData.TexturePageItems.Add(pageItem);
-            lastUsedX += sprite.Width + 1; //One pixel padding
-            nameToPageItemDict.Add(Path.GetFileNameWithoutExtension(filePath), gmData.TexturePageItems.Count-1);
+                if ((lastUsedY + sprite.Height) > pageDimension)
+                    throw new NotSupportedException($"Currently all the sprites would be above a {pageDimension} texture page!");
+
+                int xCoord = lastUsedX;
+                int yCoord = lastUsedY;
+                newTexturePage.Mutate(i => i.DrawImage(sprite, new Point(xCoord, yCoord), 1));
+                var pageItem = new UndertaleTexturePageItem();
+                pageItem.SourceX = (ushort)xCoord;
+                pageItem.SourceY = (ushort)yCoord;
+                pageItem.SourceWidth = pageItem.TargetWidth = pageItem.BoundingWidth = (ushort)sprite.Width;
+                pageItem.SourceHeight = pageItem.TargetHeight = pageItem.BoundingHeight = (ushort)sprite.Height;
+                pageItem.TexturePage = utTexturePage;
+                gmData.TexturePageItems.Add(pageItem);
+                lastUsedX += sprite.Width + 1; //One pixel padding
+                nameToPageItemDict.Add(Path.GetFileNameWithoutExtension(filePath), gmData.TexturePageItems.Count - 1);
+            }
         }
+
+        AddAllSpritesFromDir(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites");
         using (var ms = new MemoryStream())
         {
             newTexturePage.Save(ms, PngFormat.Instance);
