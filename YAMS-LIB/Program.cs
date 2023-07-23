@@ -93,7 +93,7 @@ public class Patcher
             };
         }
 
-        UndertaleRoom.GameObject CreateRoomObject(int x, int y, UndertaleGameObject gameObject, UndertaleCode creationCode = null, int scaleX = 1, int scaleY = 1, uint? id = null)
+        UndertaleRoom.GameObject CreateRoomObject(int x, int y, UndertaleGameObject gameObject, UndertaleCode? creationCode = null, int scaleX = 1, int scaleY = 1, uint? id = null)
         {
             id ??= gmData.GeneralInfo.LastObj++;
             return new UndertaleRoom.GameObject()
@@ -2529,6 +2529,12 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
             
+        
+        //Force all breakables (except the hidden super blocks) to be visible
+        // TODO: put this behind a cosmetic check
+        AppendGMLInCode(gmData.Code.ByName("gml_Object_oSolid_Alarm_5"), "if (sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
+                                                                         "{ event_user(1); visible = true: }");
+        
         // Skip most cutscenes when enabled
         if (seedObject.Patches.SkipCutscenes)
         {
