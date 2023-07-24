@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using UndertaleModLib;
@@ -2636,6 +2635,7 @@ public class Patcher
             draw_cool_text(160, 10, "{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})", c_black, c_white, c_white, 1)
             draw_set_halign(fa_left)
             """);
+        // TODO: display rdv+patcher version
 
         // For the future, with room rando, go through each door and modify where it leads to
             
