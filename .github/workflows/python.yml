@@ -85,7 +85,7 @@ jobs:
         shell: bash
 
       - name: run pytest
-        run: python -m pytest --skip-if-missing yams_py_tests
+        run: python -m pytest yams_py_tests
 
   pypi:
     runs-on: 'ubuntu-latest'
