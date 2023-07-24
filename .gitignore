@@ -399,5 +399,5 @@ FodyWeavers.xsd
 .idea/
 
 # Built python package
-yams-py/dist
-yams-py/yams_py.egg-info
+dist/
+yams_py.egg-info/
