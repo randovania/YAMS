@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using UndertaleModLib;
@@ -10,7 +11,15 @@ namespace YAMS_LIB;
 
 public class Patcher
 {
-    public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "";
+    private static string CreateVersionString()
+    {
+        Version? assembly = Assembly.GetExecutingAssembly().GetName().Version;
+        if (assembly is null) return "";
+
+        return $"{assembly.Major}.{assembly.Minor}.{assembly.Build}";
+    }
+
+    public static string Version = CreateVersionString();
     
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
