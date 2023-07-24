@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Callable
 
 # TODO: revise this to be cleaner. Following things to keep in mind here
 # 1. AFAIK the DLLs must be in path before loading the CLR. test whether that's truly the case
@@ -21,7 +22,7 @@ import clr
 clr.AddReference("YAMS-LIB")
 from YAMS_LIB import Patcher
 
-
+# TODO: ADD TESTS!!!
 def patch_game(
     input_path: Path,
     output_path: Path,
@@ -35,7 +36,7 @@ def patch_game(
 
     # Get data.win path. Both of these *need* to be strings, as otherwise patcher won't accept them.
     output_data_win: str = os.fspath(
-        self._prepare_environment_and_get_data_win_path(tempdir.name)
+        _prepare_environment_and_get_data_win_path(tempdir.name)
     )
     input_data_win: str = shutil.move(output_data_win, output_data_win + "_orig")
     input_data_win_path = Path(input_data_win)
@@ -66,7 +67,7 @@ def patch_game(
     shutil.rmtree(tempdir.name)
 
 
-def _prepare_environment_and_get_data_win_path(self, folder: str) -> Path:
+def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
     current_platform = platform.system()
     folderPath = Path(folder)
     if current_platform == "Windows":
