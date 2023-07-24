@@ -10,12 +10,20 @@ namespace YAMS_LIB;
 
 public class Patcher
 {
+    private static string CreateVersionString()
+    {
+        Version? assembly = Assembly.GetExecutingAssembly().GetName().Version;
+        if (assembly is null) return "";
+
+        return $"{assembly.Major}.{assembly.Minor}.{assembly.Build}";
+    }
+
+    public static string Version = CreateVersionString();
+    
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
         // TODO: import jes tester display to make tester fight better
 
-            
-            
         const uint ThothBridgeLeftDoorID = 400000;
         const uint ThothBridgeRightDoorID = 400001;
         const uint A2WaterTurbineLeftDoorID = 400002;
@@ -2627,6 +2635,7 @@ public class Patcher
             draw_cool_text(160, 10, "{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})", c_black, c_white, c_white, 1)
             draw_set_halign(fa_left)
             """);
+        // TODO: display rdv+patcher version
 
         // For the future, with room rando, go through each door and modify where it leads to
             
