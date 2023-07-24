@@ -403,4 +403,4 @@ venv
 
 # Built python package
 dist/
-yams_py.egg-info/
+am2r_yams.egg-info/

@@ -34,7 +34,7 @@ jobs:
         run: python -m pip install --upgrade pip setuptools build
 
       - name: Build YAMS-Lib into proper directory
-        run: dotnet publish YAMS-LIB -c Release -o yams_py/yams
+        run: dotnet publish YAMS-LIB -c Release -o am2r_yams/yams
 
       - name: build
         run: PYTHONWARNINGS=error python -m build
@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: remove code outside of wheel
-        run: rm -rf yams_py
+        run: rm -rf am2r_yams
         shell: bash
 
       - name: Set up Python
