@@ -16,3 +16,10 @@ updates:
       interval: "daily"
     labels:
       - "dependencies"
+      
+  — package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
