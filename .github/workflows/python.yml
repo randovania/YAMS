@@ -80,6 +80,10 @@ jobs:
       - name: Install Python packages
         run: python -m pip install --upgrade pip
 
+      - name: install built wheel
+        run: python -m pip install "$(ls dist/*.whl)[test]"
+        shell: bash
+
       - name: run pytest
         run: python -m pytest --skip-if-missing yams_py_tests
 
