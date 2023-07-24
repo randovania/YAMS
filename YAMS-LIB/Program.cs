@@ -10,12 +10,12 @@ namespace YAMS_LIB;
 
 public class Patcher
 {
+    public static string Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "";
+    
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
         // TODO: import jes tester display to make tester fight better
 
-            
-            
         const uint ThothBridgeLeftDoorID = 400000;
         const uint ThothBridgeRightDoorID = 400001;
         const uint A2WaterTurbineLeftDoorID = 400002;

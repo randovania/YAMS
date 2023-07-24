@@ -22,6 +22,11 @@ import clr
 clr.AddReference("YAMS-LIB")
 from YAMS_LIB import Patcher
 
+
+def get_lib_version() -> str:
+    return Patcher.Version
+
+
 # TODO: ADD TESTS!!!
 def patch_game(
     input_path: Path,
@@ -65,6 +70,8 @@ def patch_game(
     progress_update("Moving to output directory...", 0.8)
     shutil.copytree(tempdir.name, output_path, dirs_exist_ok=True)
     shutil.rmtree(tempdir.name)
+
+    progress_update("Exporting finished!", 1)
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
