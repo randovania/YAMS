@@ -23,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
@@ -35,9 +35,6 @@ jobs:
 
       - name: Build YAMS-Lib into proper directory
         run: dotnet publish YAMS-LIB -c Release -o yams_py/yams
-
-      - name: Print debugging whoooo
-        run: echo "root" && ls ./ && echo "intended dir" && ls yams_py/yams && echo "python" && ls yams_py
 
       - name: build
         run: PYTHONWARNINGS=error python -m build
