@@ -7,73 +7,88 @@ import sys
 import tempfile
 from pathlib import Path
 
-# TODO: revise this.
+# TODO: revise this to be cleaner. Following things to keep in mind here
+# 1. AFAIK the DLLs must be in path before loading the CLR. test whether that's truly the case
+# 2. the CLR should only loaded *once*. I.e importing this module multiple times shouldnt cause exceptions of trying to load it multiple times.
+# 3. Figure out how to deal with non-system dotnet installations
 yams_path = os.fspath(Path(__file__).with_name(name="yams"))
 sys.path.append(yams_path)
 from pythonnet import load
+
 load("coreclr")
 import clr
+
 clr.AddReference("YAMS-LIB")
 from YAMS_LIB import Patcher
 
 
-def patch_game(input_path, output_path, patch_data):
+def patch_game(
+    input_path: Path,
+    output_path: Path,
+    patch_data: dict,
+    progress_update: Callable[[str, float], None],
+):
     # Copy to input dir to temp dir first to do operations there
-    progress_update("Copying to temporary path...", -1)
+    progress_update("Copying to temporary path...", 0)
     tempdir = tempfile.TemporaryDirectory()
     shutil.copytree(input_path, tempdir.name, dirs_exist_ok=True)
 
     # Get data.win path. Both of these *need* to be strings, as otherwise patcher won't accept them.
-    output_data_win_path: str = os.fspath(self._get_data_win_path(tempdir.name))
-    input_data_win_path: str = shutil.move(output_data_win_path, output_data_win_path + "_orig")
+    output_data_win: str = os.fspath(
+        self._prepare_environment_and_get_data_win_path(tempdir.name)
+    )
+    input_data_win: str = shutil.move(output_data_win, output_data_win + "_orig")
+    input_data_win_path = Path(input_data_win)
+
+    # TODO: do some check on whether input is valid? on patcher side probably.
 
     # Temp write patch_data into json file for yams later
-    progress_update("Creating json file...", -1)
-    json_file = tempfile.NamedTemporaryFile(mode='w+', delete=False)
-    json_file.write(json.dumps(patch_data))
-    json_file.close()
+    progress_update("Creating json file...", 0.3)
+    json_file: str = os.fspath(input_data_win_path.parent.joinpath("yams-data.json"))
+    with open(json_file, "w+") as f:
+        f.write(json.dumps(patch_data))
 
     # AM2RLauncher installations usually have a profile.xml file. For less confusion, remove it if it exists
-    if Path.exists(Path(tempdir.name).joinpath("profile.xml")):
-        Path.unlink(Path(tempdir.name).joinpath("profile.xml"))
+    profile_xml_path = Path(tempdir.name).joinpath("profile.xml")
+    if profile_xml_path.exists():
+        profile_xml_path.unlink()
 
-    # TODO: this is where we'd do some customization options like music shuffler or samus palettes
+    # TODO: this is where we'd call the patcher to do some customization options like music shuffler or samus palettes
 
     # Patch data.win
-    progress_update("Patching data file...", -1)
-    Patcher.Main(input_data_win_path, output_data_win_path, json_file.name)
+    progress_update("Patching data file...", 0.6)
+    Patcher.Main(input_data_win, output_data_win, json_file)
 
     # Move temp dir to output dir and get rid of it. Also delete original data.win
-    Path.unlink(Path(input_data_win_path))
-    progress_update("Moving to output directory...", -1)
+    input_data_win_path.unlink()
+    progress_update("Moving to output directory...", 0.8)
     shutil.copytree(tempdir.name, output_path, dirs_exist_ok=True)
     shutil.rmtree(tempdir.name)
 
 
-def _get_data_win_path(self, folder: str) -> Path:
+def _prepare_environment_and_get_data_win_path(self, folder: str) -> Path:
     current_platform = platform.system()
+    folderPath = Path(folder)
     if current_platform == "Windows":
-        return Path(folder).joinpath("data.win")
+        return folderPath.joinpath("data.win")
 
     elif current_platform == "Linux":
         # Linux can have the game packed in an AppImage. If it exists, extract it first
-        # Also extraction for some reason only does it into CWD, so we temporarily change it
-        appimage = Path(folder).joinpath("AM2R.AppImage")
-        if Path.exists(appimage):
-            cwd = Path.cwd()
-            os.chdir(folder)
-            subprocess.run([appimage, "--appimage-extract"])
-            os.chdir(cwd)
-            Path.unlink(appimage)
+        # Also extraction for some reason only does it into CWD with no way to change it, so we specify it.
+        appimage = folderPath.joinpath("AM2R.AppImage")
+        if appimage.exists():
+            subprocess.run([appimage, "--appimage-extract"], cwd=folder)
+            appimage.unlink()
             # shutil doesn't support moving a directory like this, so I copy + delete
-            shutil.copytree(Path(folder).joinpath("squashfs-root"), folder, dirs_exist_ok=True)
-            shutil.rmtree(Path(folder).joinpath("squashfs-root"))
-            return Path(folder).joinpath("usr", "bin","assets", "game.unx")
+            squashfsPath = folderPath.joinpath("squashfs-root")
+            shutil.copytree(squashfsPath, folder, dirs_exist_ok=True)
+            shutil.rmtree(squashfsPath)
+            return folderPath.joinpath("usr", "bin", "assets", "game.unx")
         else:
-            return Path(folder).joinpath("assets","game.unx")
+            return folderPath.joinpath("assets", "game.unx")
 
     elif current_platform == "Darwin":
-        return Path(folder).joinpath("AM2R.app","Contents","Resources","game.ios")
+        return folderPath.joinpath("AM2R.app", "Contents", "Resources", "game.ios")
 
     else:
         raise ValueError(f"Unknown system: {platform.system()}")
