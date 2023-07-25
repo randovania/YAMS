@@ -29,7 +29,7 @@ class Patcher:
 
     def __exit__(self, *args):
         # Unload dotnet runtime and references
-        del AM2R_Patcher
+        del YAMS_LIB
         unload()
         del clr
 
