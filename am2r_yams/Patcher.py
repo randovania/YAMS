@@ -29,7 +29,7 @@ class Patcher:
 
     def __exit__(self, *args):
         # Unload dotnet runtime and references
-        del Patcher
+        del CS_Patcher
         unload()
         del clr
 

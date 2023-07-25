@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from importlib.metadata import version
-from am2r_yams import Patcher
+from am2r_yams.Patcher import Patcher
 
 
 def test_correct_versions():
