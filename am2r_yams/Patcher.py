@@ -25,16 +25,16 @@ class Patcher:
         import clr
 
         clr.AddReference("YAMS-LIB")
-        from YAMS_LIB import Patcher as CS_Patcher
+        from YAMS_LIB import Patcher as AM2R_Patcher
 
     def __exit__(self, *args):
         # Unload dotnet runtime and references
-        del CS_Patcher
+        del AM2R_Patcher
         unload()
         del clr
 
     def get_lib_version() -> str:
-        return CS_Patcher.Version
+        return AM2R_Patcher.Version
 
     # TODO: ADD TESTS!!!
     def patch_game(
@@ -74,7 +74,7 @@ class Patcher:
 
         # Patch data.win
         progress_update("Patching data file...", 0.6)
-        CS_Patcher.Main(input_data_win, output_data_win, json_file)
+        AM2R_Patcher.Main(input_data_win, output_data_win, json_file)
 
         # Move temp dir to output dir and get rid of it. Also delete original data.win
         input_data_win_path.unlink()
