@@ -194,11 +194,19 @@ public class ConfigurationIdentifier
 {
     [JsonInclude]
     [JsonPropertyName("hash")]
-    public string Hash = "";
+    public string Hash = "Quack";
     
     [JsonInclude]
     [JsonPropertyName("word_hash")]
-    public string WordHash = "";
+    public string WordHash = "Have fun";
+    
+    [JsonInclude]
+    [JsonPropertyName("randovania_version")]
+    public string RDVVersion = "Randovania";
+    
+    [JsonInclude]
+    [JsonPropertyName("patcher_version")]
+    public string PatcherVersion = "YAMS";
 }
 
 
