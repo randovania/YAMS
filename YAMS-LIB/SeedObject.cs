@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace YAMS_LIB;
 
+// TODO: There are lots of horrible names in here
 public class SeedObject
 {
     [JsonInclude]
@@ -37,6 +38,10 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("hints")]
     public Dictionary<ItemEnum, string> Hints = new Dictionary<ItemEnum, string>();
+    
+    [JsonInclude]
+    [JsonPropertyName("cosmetics")]
+    public GameCosmetics Cosmetics;
 }
 
 public class DoorLock
@@ -102,6 +107,30 @@ public enum DoorLockType
     
 }
 
+public class GameCosmetics
+{
+    [JsonInclude]
+    [JsonPropertyName("show_unexplored_map")]
+    public bool ShowUnexploredMap;
+    
+    [JsonInclude]
+    [JsonPropertyName("unveiled_blocks")]
+    public bool UnveilBlocks;
+    
+    [JsonInclude]
+    [JsonPropertyName("health_hud_rotation")]
+    public int HealthHUDRotation;
+    
+    [JsonInclude]
+    [JsonPropertyName("etank_hud_rotation")]
+    public int EtankHUDRotation;
+    
+    [JsonInclude]
+    [JsonPropertyName("dna_hud_rotation")]
+    public int DNAHUDRotation;
+    
+}
+
 public class GamePatches
 {
     [JsonInclude]
@@ -154,10 +183,6 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("a3_entrance_blocks")]
     public bool A3EntranceBlocks;
-    
-    [JsonInclude]
-    [JsonPropertyName("show_unexplored_map")]
-    public bool ShowUnexploredMap;
     
     [JsonInclude]
     [JsonPropertyName("screw_blocks")]
