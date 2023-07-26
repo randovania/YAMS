@@ -539,60 +539,46 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_4"]] },
             }
         });
-            
-        // Put these into a function, with hue shift degrees as param
-            
-        // Hue shift etanks
-        /*
-        var foo = 0;
-        foreach (var textureEntry in gmData.Sprites.ByName("sGUIETank").Textures)
+        
+        void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
         {
-            if (foo == 0)
-            {
-                foo++;
-                continue;
-            }
-            var texture = textureEntry.Texture;
-                var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
-                var j = 06;
-                texturePage.Mutate(im => im.Hue(j, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
-
-                /*using (var ms = new MemoryStream())
-                {
-                    texturePage.Save(ms, PngFormat.Instance);
-                    texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
-                }
-        }
-        /*
-        // Hue shift health numbers
-        foreach (var textureEntry in gmData.Sprites.ByName("sGUIFont1").Textures.Concat(gmData.Sprites.ByName("sGUIFont1A").Textures))
-        {
-            var texture = textureEntry.Texture;
             var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
-            texturePage.Mutate(i => i.Hue(120, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
-            
-            using (var ms = new MemoryStream())
-            {
-                texturePage.Save(ms, PngFormat.Instance);
-                texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
-            }
+            texturePage.Mutate(im => im.Hue(rotation, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
+
+            using var ms = new MemoryStream();
+            texturePage.Save(ms, PngFormat.Instance);
+            texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
         }
         
-        // Hue shift dna icon
-        foreach (var bg in new List<UndertaleBackground>(){gmData.Backgrounds.ByName("bgGUIMetCountBG1"), gmData.Backgrounds.ByName("bgGUIMetCountBG2"), gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM")})
+        // Hue shift etanks
+        if (seedObject.Cosmetics.EtankHUDRotation != 0)
         {
-            var texture = bg.Texture;
-            var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
-            texturePage.Mutate(i => i.Hue(30, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
-            texturePage.Save("/tmp/foo" + bg.Name.Content + ".png", new PngEncoder());
-            using (var ms = new MemoryStream())
+            foreach (var textureEntry in gmData.Sprites.ByName("sGUIETank").Textures)
             {
-                texturePage.Save(ms, PngFormat.Instance);
-                texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.EtankHUDRotation, textureEntry.Texture);
             }
         }
-        */
-            
+
+        // Hue shift health numbers
+        if (seedObject.Cosmetics.HealthHUDRotation != 0)
+        {
+            foreach (var textureEntry in gmData.Sprites.ByName("sGUIFont1").Textures.Concat(gmData.Sprites.ByName("sGUIFont1A").Textures))
+            {
+                RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.HealthHUDRotation, textureEntry.Texture);
+            }
+        }
+
+        // Hue shift dna icon
+        if (seedObject.Cosmetics.DNAHUDRotation != 0)
+        {
+            foreach (var bg in new List<UndertaleBackground>()
+                         { gmData.Backgrounds.ByName("bgGUIMetCountBG1"), gmData.Backgrounds.ByName("bgGUIMetCountBG2"), gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM") })
+            {
+                RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.DNAHUDRotation, bg.Texture);
+            }
+        }
+
+
         // Create new wisdom septogg object
         var oWisdomSeptogg = new UndertaleGameObject()
         {
@@ -1415,7 +1401,7 @@ public class Patcher
             
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-                                            "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0;");
+                                            "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0;");
             
         // Set geothermal reactor to always be exploded
         AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -2501,7 +2487,7 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "sMapCorner", "cornerSprite");
 
         // Redefine the sprite variables to the Unexplored sprites, if map tile hasn't been revealed to player.
-        if (seedObject.Patches.ShowUnexploredMap)
+        if (seedObject.Cosmetics.ShowUnexploredMap)
             ReplaceGMLInCode(characterVarsCode, "global.unexploredMap = 0", "global.unexploredMap = 1;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument8 > 0)", """
             //variables for swapping map color and corner sprites
@@ -2538,9 +2524,10 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
             
         
-        //Force all breakables (except the hidden super blocks) to be visible
-        // TODO: put this behind a cosmetic check
-        AppendGMLInCode(gmData.Code.ByName("gml_Object_oSolid_Alarm_5"), "if (sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
+        // Force all breakables (except the hidden super blocks) to be visible
+        if (seedObject.Cosmetics.UnveilBlocks)
+            ReplaceGMLInCode(characterVarsCode, "global.unveilBlocks = 0", "global.unveilBlocks = 1");
+        AppendGMLInCode(gmData.Code.ByName("gml_Object_oSolid_Alarm_5"), "if (global.unveilBlocks && sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
                                                                          "{ event_user(1); visible = true; }");
         
         // Skip most cutscenes when enabled
