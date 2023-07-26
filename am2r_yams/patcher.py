@@ -7,6 +7,7 @@ import sys
 import tempfile
 from pathlib import Path
 from typing import Callable
+from contextlib import contextmanager
 
 # TODO: revise this to be cleaner. Following things to keep in mind here
 # 1. AFAIK the DLLs must be in path before loading the CLR. test whether that's truly the case.
@@ -18,26 +19,16 @@ from pythonnet import load, unload
 
 
 # TODO: add docstrings for methods when not in alpha and has stableish API
-class Patcher:
-    def __enter__(self):
-        # Load dotnet runtime
-        load("coreclr")
-        import clr
+class Wrapper:
+    def __init__(self, lib):
+        self.csharp_patcher = lib
 
-        clr.AddReference("YAMS-LIB")
-        from YAMS_LIB import Patcher as AM2R_Patcher
-
-    def __exit__(self, *args):
-        # Unload dotnet runtime and references
-        del YAMS_LIB
-        unload()
-        del clr
-
-    def get_lib_version() -> str:
-        return AM2R_Patcher.Version
+    def get_csharp_version(self) -> str:
+        return self.csharp_patcher.Version
 
     # TODO: ADD TESTS!!!
     def patch_game(
+        self,
         input_path: Path,
         output_path: Path,
         patch_data: dict,
@@ -74,7 +65,7 @@ class Patcher:
 
         # Patch data.win
         progress_update("Patching data file...", 0.6)
-        AM2R_Patcher.Main(input_data_win, output_data_win, json_file)
+        self.csharp_patcher.Main(input_data_win, output_data_win, json_file)
 
         # Move temp dir to output dir and get rid of it. Also delete original data.win
         input_data_win_path.unlink()
@@ -83,6 +74,24 @@ class Patcher:
         shutil.rmtree(tempdir.name)
 
         progress_update("Exporting finished!", 1)
+
+
+@contextmanager
+def load_wrapper() -> Wrapper:
+    try:
+        # Load dotnet runtime
+        load("coreclr")
+        import clr
+
+        clr.AddReference("YAMS-LIB")
+        from YAMS_LIB import Patcher as CSharp_Patcher
+
+        yield Wrapper(CSharp_Patcher)
+    finally:
+        # Unload dotnet runtime and references
+        del CSharp_Patcher
+        unload()
+        del clr
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:

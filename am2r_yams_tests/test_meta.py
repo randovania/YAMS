@@ -1,13 +1,12 @@
 import re
 from pathlib import Path
 from importlib.metadata import version
-from am2r_yams.Patcher import Patcher
-
+import am2r_yams
 
 def test_correct_versions():
     cs_version = ""
-    with Patcher() as p:
-        cs_version = p.get_lib_version()
+    with am2r_yams.load_wrapper() as w:
+        cs_version = w.get_csharp_version()
     python_version = version("am2r_yams")
 
     assert cs_version != ""
