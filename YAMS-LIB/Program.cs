@@ -2602,7 +2602,7 @@ public class Patcher
         // item collect cutscene - should be moved to quick item pickups
 
         // Go through every room's creation code, and set popup_text(room_name)
-        // TODO: make this an cosmetic option
+        // TODO: make this an gameplay patching option
         foreach ((var internalName, var room) in seedObject.RoomObjects)
         {
             var roomName = room.DisplayName;
@@ -2619,10 +2619,10 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Draw_0"), $"""
             draw_set_font(global.fontGUI2)
             draw_set_halign(fa_center)
-            draw_cool_text(160, 10, "{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})", c_black, c_white, c_white, 1)
+            draw_cool_text(160, 5, "{seedObject.Identifier.RDVVersion} - {seedObject.Identifier.PatcherVersion}", c_black, c_white, c_white, 1)
+            draw_cool_text(160, 15, "{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})", c_black, c_white, c_white, 1)
             draw_set_halign(fa_left)
             """);
-        // TODO: display rdv+patcher version
 
         // For the future, with room rando, go through each door and modify where it leads to
             
