@@ -2459,7 +2459,7 @@ public class Patcher
             "if (false)");
             
         // When going down from thoth, make PB blocks disabled
-        PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h13_Create"), "if (global.targety == 0) {global.event[176] = 1; with (oBlockPBChain) event_user(0); }");
+        PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h13_Create"), "if (global.targety == 16) {global.event[176] = 1; with (oBlockPBombChain) event_user(0); }");
             
         // Stop Bomb blocks from respawning
         if (seedObject.Patches.RespawnBombBlocks)
