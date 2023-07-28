@@ -766,7 +766,11 @@ public class Patcher
             $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
             
                 
-            
+        //Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors
+        PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a08_Create"), "if (global.targety > 240) { with (oA2SmallTurbine) instance_destroy(); global.event[101] = 4; }");
+        //Remove setting of turbine event from adjacent rooms
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a09_Create"), "global.event[101] = 4", "");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a19_Create"), "global.event[101] = 4", "");
             
         // Fix plasma chamber having a missile door instead of normal after tester dead
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
@@ -2775,9 +2779,7 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a6b02_Create"), "create_log_trigger(0, 56, 240, 400, -35, 1)");
             
         // TODO: rewrite log rendering to have color
-            
-        // TODO: the event to clear turbines in a2 water turbines should be *in* the room itself, not the accompanying rooms
-            
+        
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
         {
