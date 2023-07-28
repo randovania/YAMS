@@ -2523,10 +2523,55 @@ public class Patcher
             if (argument7 == "C")
                 draw_sprite(sMapSP, 14, argument0, argument1)
             """, "");
-        // Also show item pickups and TODO: metroids
+        // Also show item pickups and metroids
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
-            
+        //Add "M" condition to Metroid alive icon check
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument8 == 10)", """if (argument8 == 10 || (argument7 == "M" && global.unexploredMap))""");
+        //Draw metroid alive icon on undiscovered map
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_init_map"), """
+        global.map[14, 34] = "10111M0"
+        global.map[15, 29] = "10111M0"
+        global.map[18, 50] = "10101M0"
+        global.map[19, 24] = "00112M0"
+        global.map[21, 15] = "10111M0"
+        global.map[25, 27] = "10122M0"
+        global.map[25, 36] = "10112M0"
+        global.map[25, 42] = "10112M0"
+        global.map[25, 47] = "10101M0"
+        global.map[27, 31] = "11101M0"
+        global.map[30, 17] = "10112M0"
+        global.map[30, 24] = "11002M0"
+        global.map[30, 26] = "11002M0"
+        global.map[35, 19] = "11103M0"
+        global.map[35, 23] = "21103M0"
+        global.map[35, 31] = "11103M0"
+        global.map[37, 33] = "11012M0"
+        global.map[41, 28] = "11102M0"
+        global.map[42, 21] = "10102M0"
+        global.map[42, 37] = "11102M0"
+        global.map[43, 24] = "10103M0"
+        global.map[49, 38] = "01101M0"
+        global.map[54, 16] = "10112M0"
+        global.map[54, 27] = "10102M0"
+        global.map[58, 25] = "10112M0"
+        global.map[58, 28] = "12102M0"
+        global.map[58, 31] = "00102M0"
+        global.map[59, 38] = "11001M0"
+        global.map[60, 16] = "11102M0"
+        global.map[60, 25] = "11122M0"
+        global.map[63, 15] = "11102M0"
+        global.map[64, 33] = "01112M0"
+        global.map[64, 47] = "10103M0"
+        global.map[65, 24] = "01013M0"
+        global.map[67, 25] = "10103M0"
+        global.map[67, 45] = "10013M0"
+        global.map[68, 46] = "01103M0"
+        global.map[69, 9] = "11102M0"
+        global.map[71, 48] = "11003M0"
+        global.map[73, 24] = "11102M0"
+        global.map[73, 31] = "11102M0"
+        """);
         
         // Force all breakables (except the hidden super blocks) to be visible
         if (seedObject.Cosmetics.UnveilBlocks)
