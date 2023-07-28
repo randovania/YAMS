@@ -88,10 +88,8 @@ def load_wrapper() -> Wrapper:
 
         yield Wrapper(CSharp_Patcher)
     finally:
-        # Unload dotnet runtime and references
-        del CSharp_Patcher
+        # Unload dotnet runtime
         unload()
-        del clr
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
