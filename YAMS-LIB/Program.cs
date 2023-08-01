@@ -639,6 +639,10 @@ public class Patcher
         //No more Out of Bounds oSmallsplash crashes
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSmallSplash_Step_0"), "if (global.watertype == 0)", "if (global.watertype == 0 && instance_exists(oWater))");
 
+        // Killing queen should not lock you out of the rest of the game
+        AppendGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h01_3762_Create"), "instance_destroy()");
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h01_Create"), "tile_layer_delete(-119)");
+        
         // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
         var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
         ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
@@ -781,8 +785,8 @@ public class Patcher
         // Rename "fusion" difficulty to brutal, in order to be less confusing
         foreach (var codeName in new[] { "gml_Object_oMenuSaveSlot_Other_10", "gml_Object_oSlotMenu_Fusion_Create_0" })
             ReplaceGMLInCode(gmData.Code.ByName(codeName), @"get_text(""Title-Additions"", ""GameSlot_NewGame_Fusion"")", "\"Brutal\"");
-        // TODO: with fusion mode, every difficulty will be marked as brutal. kinda weird to fix, because i'd need a new variable for it to track whether you're on brutal that should only be set on brutal
-        // also relevant: gml_Object_oGameSelMenu_Other_12
+        // Implement a fix, where every save shows "Brutal" as the difficulty when global.mod_fusion is enabled
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "if (oControl.mod_fusion == 1)", "if (oControl.mod_diffmult == 4)");
             
         // Add doors to gfs thoth bridge
         var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
@@ -2053,6 +2057,53 @@ public class Patcher
             global.map[35, 45] = "0101300"
             """);
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "&& itemid == 253", "&& false");
+        // Removes map tiles of the inaccessible A4 basement/Reactor Core/Power Plant.
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_init_map"), """
+        // Remove A4 reactor core map tiles
+        // Upper left
+        i = 31
+        repeat (4)
+        {
+            j = 43
+            repeat (3)
+            {
+                global.map[i, j] = "0"
+                j++
+            }
+            i++
+        }
+
+        // Mid section
+        global.map[36, 44] = "0"
+        global.map[36, 45] = "0"
+        global.map[36, 46] = "0"
+        global.map[37, 46] = "0"
+
+        i = 34
+        repeat (4)
+        {
+            j = 47
+            repeat (6)
+            {
+                global.map[i, j] = "0"
+                j++
+            }
+            i++
+        }
+
+        // Below A6
+        i = 31
+        repeat (8)
+        {
+            j = 54
+            repeat (6)
+            {
+                global.map[i, j] = "0"
+                j++
+            }
+            i++
+        }
+        """);
             
             
         // Make items spawned from metroids not change map
