@@ -574,7 +574,7 @@ public class Patcher
         if (seedObject.Cosmetics.DNAHUDRotation != 0)
         {
             foreach (var bg in new List<UndertaleBackground>()
-                         { gmData.Backgrounds.ByName("bgGUIMetCountBG1"), gmData.Backgrounds.ByName("bgGUIMetCountBG2"), gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM") })
+                         { gmData.Backgrounds.ByName("bgGUIMetCountBG1"), gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM") })
             {
                 RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.DNAHUDRotation, bg.Texture);
             }
@@ -2717,9 +2717,6 @@ public class Patcher
             
         // Set fusion mode value
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0", $"mod_fusion = {(seedObject.Patches.FusionMode ? 1 : 0)}");
-        
-        //Implement a fix, where every save shows "Brutal" as the difficulty when global.mod_fusion is enabled
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "if (oControl.mod_fusion == 1)", "if (oControl.mod_diffmult == 4)");
         
         // Display Seed hash
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Draw_0"), $"""
