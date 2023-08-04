@@ -62,8 +62,8 @@ public enum DoorLockType
     SuperMissile,
     [EnumMember(Value = "Power Bomb Door")]
     PBomb,
-    [EnumMember(Value = "Locked Door")]
-    Locked,
+    [EnumMember(Value = "Temporarily Locked Door")]
+    TempLocked,
     [EnumMember(Value = "Charge Beam Door")]
     Charge,
     [EnumMember(Value = "Wave Beam Door")]
@@ -104,7 +104,8 @@ public enum DoorLockType
     EMPA2,
     [EnumMember(Value = "Industrial Complex EMP Door")]
     EMPA3,
-    
+    [EnumMember(Value = "Locked Door")]
+    Locked,
 }
 
 public class GameCosmetics
