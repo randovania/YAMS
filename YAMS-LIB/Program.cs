@@ -38,9 +38,7 @@ public class Patcher
         // TODO: make insanity save stations enabled again by using jes' code
             
         // TODO: add missile/super drops in spots where you can get sotflocked via ammo (ice, a3 entrance maybe more)
-            
-        // TODO: revamp doors to serris arena logic
-            
+        
         // Read 1.5.x data
         var gmData = new UndertaleData();
             
@@ -204,6 +202,7 @@ public class Patcher
         gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
         gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2ELM"]];
         gmData.Backgrounds.ByName("bgLogImg44B").Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogIce"]];
+        // TODO: replace this background with new septogg image
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA0"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA0"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA1"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA1"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA2"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA2"]]});
@@ -227,7 +226,7 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5Locks").Textures[1].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorMissile"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[2].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSuper"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[3].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorPBomb"]];
-        gmData.Sprites.ByName("sDoorA5Locks").Textures[4].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorLocked"]];
+        gmData.Sprites.ByName("sDoorA5Locks").Textures[4].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTempLocked"]];
             
         // Add new sprites for doors
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorChargeBeam"]]});
@@ -250,6 +249,7 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA1"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA2"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA3"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorLocked"]]});
             
         // New sprites for door animation
         gmData.Sprites.ByName("sDoorA5").Textures.Clear();
@@ -381,6 +381,8 @@ public class Patcher
         gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_15"]]});
         gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_16"]]});
 
+        gmData.Sprites.ByName("sMapSP").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sMapHint"]]});
+        
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sMapBlockUnexplored"), Height = 8, Width = 8,
@@ -721,7 +723,7 @@ public class Patcher
         doorCollisionList.Add(varDoorEvent);
             
         // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
-        // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24)
+        // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24). perma locked is 25 and never set here as being openable.
         var newDoorReplacementText = "(lock == 0) || (global.event[200] && lock == 13)" +
                                      "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
                                      "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
@@ -2170,7 +2172,7 @@ public class Patcher
                         DoorLockType.Missile => $"lock = 1; originalLock = lock; event = {doorEventIndex};",
                         DoorLockType.SuperMissile => $"lock = 2; originalLock = lock; event = {doorEventIndex};",
                         DoorLockType.PBomb => $"lock = 3; originalLock = lock; event = {doorEventIndex};",
-                        DoorLockType.Locked => $"lock = 4; originalLock = lock; event = -1;",
+                        DoorLockType.TempLocked => $"lock = 4; originalLock = lock; event = -1;",
                         DoorLockType.Charge => $"lock = 5; originalLock = lock; event = -1;",
                         DoorLockType.Wave => $"lock = 6; originalLock = lock; event = -1;",
                         DoorLockType.Spazer => $"lock = 7; originalLock = lock; event = -1;",
@@ -2191,6 +2193,7 @@ public class Patcher
                         DoorLockType.EMPA1 => "lock = 22; originalLock = lock; event = -1;",
                         DoorLockType.EMPA2 => "lock = 23; originalLock = lock; event = -1;",
                         DoorLockType.EMPA3 => "lock = 24; originalLock = lock; event = -1;",
+                        DoorLockType.Locked => "lock = 25; originalLock = lock; event = -1;",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                     };
                         
@@ -2856,8 +2859,8 @@ public class Patcher
 
         // Add wisdom septoggs into rooms
         // A0
-        gmData.Rooms.ByName("rm_a0h15").GameObjects.Add(CreateRoomObject(118, 216, oWisdomSeptogg));
-        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h15_Create"), "create_log_trigger(0, 50, 118, 216, -35, 1)");
+        gmData.Rooms.ByName("rm_a0h13").GameObjects.Add(CreateRoomObject(55, 194, oWisdomSeptogg));
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h13_Create"), "create_log_trigger(0, 50, 55, 194, -35, 1)");
         // A1
         gmData.Rooms.ByName("rm_a1b02").GameObjects.Add(CreateRoomObject(144, 670, oWisdomSeptogg));
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a1b02_Create"), "create_log_trigger(0, 51, 144, 670, -35, 1)");
@@ -2877,6 +2880,33 @@ public class Patcher
         gmData.Rooms.ByName("rm_a6b02").GameObjects.Add(CreateRoomObject(240, 400, oWisdomSeptogg));
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a6b02_Create"), "create_log_trigger(0, 56, 240, 400, -35, 1)");
             
+        // Add hint icons to minimap
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"W\") draw_sprite(sMapSP, 15, argument0, argument1)");
+
+        // A0
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_09"), "global.map[41, 24] = \"2201100\"", "global.map[41, 24] = \"22011W0\"");
+        
+        // A1
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_12"), "global.map[58, 16] = \"0212200\"", "global.map[58, 16] = \"02122W0\"");
+
+        // A2
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), "global.map[24, 26] = \"0101200\"", "global.map[24, 26] = \"01012W0\"");
+        
+        // A3
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_14"), "global.map[63, 28] = \"0011200\"", "global.map[63, 28] = \"00112W0\"");
+        
+        // A4
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_05"), "global.map[32, 29] = \"0021200\"", "global.map[32, 29] = \"00212W0\"");
+
+        // A5
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_16"), "global.map[69, 45] = \"0112300\"", "global.map[69, 45] = \"01123W0\"");
+        
+        // A6
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), "global.map[20, 40] = \"0112100\"", "global.map[20, 40] = \"01121W0\"");
+        
+        // Ice
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), "global.map[8, 22] = \"1210300\"", "global.map[8, 22] = \"12103W0\"");
+        
         // TODO: rewrite log rendering to have color
         
         // Write back to disk
