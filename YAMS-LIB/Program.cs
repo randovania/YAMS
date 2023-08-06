@@ -2580,6 +2580,8 @@ public class Patcher
         // Also show item pickups and metroids
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
+        // Add hint icons to minimap
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"W\") draw_sprite(sMapSP, 15, argument0, argument1)");
         //Add "M" condition to Metroid alive icon check
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument8 == 10)", """if (argument8 == 10 || (argument7 == "M" && global.unexploredMap))""");
         //Draw metroid alive icon on undiscovered map
@@ -2876,10 +2878,7 @@ public class Patcher
         // A6
         gmData.Rooms.ByName("rm_a6b02").GameObjects.Add(CreateRoomObject(240, 400, oWisdomSeptogg));
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a6b02_Create"), "create_log_trigger(0, 56, 240, 400, -35, 1)");
-            
-        // Add hint icons to minimap
-        AppendGMLInCode(gmData.Code.ByName("gml_Script_draw_mapblock"), "if (argument7 == \"W\") draw_sprite(sMapSP, 15, argument0, argument1)");
-
+        
         // A0
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_09"), "global.map[41, 24] = \"2201100\"", "global.map[41, 24] = \"22011W0\"");
         
