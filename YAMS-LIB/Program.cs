@@ -2381,7 +2381,7 @@ public class Patcher
         {
             foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
                 ReplaceGMLInCode(go.CreationCode, "oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1", 
-                    "global.hasBombs && global.septoggHelpers", true);
+                    "!global.septoggHelpers", true);
         }
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h25_4105_Create"), "else if (global.hasBombs == 1 || global.hasSpiderball == 1 || global.hasSpacejump == 1)",
             "else if (!global.septoggHelpers)");
