@@ -2394,7 +2394,16 @@ public class Patcher
         // Screw blocks before normal pipe rooms
         foreach (var codeName in new[] {"gml_Room_rm_a1a06_Create", "gml_Room_rm_a2a08_Create", "gml_Room_rm_a2a09_Create", "gml_Room_rm_a2a12_Create", "gml_Room_rm_a3a04_Create", "gml_Room_rm_a4h01_Create", "gml_Room_rm_a4a01_Create"})
             AppendGMLInCode(gmData.Code.ByName(codeName), "if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");
-        // a bunch of tiles in a5c13 - screw blocks before pipe hub
+        foreach (var roomName in new[] {"rm_a1a06", "rm_a3a04", "rm_a4a01"})
+        {
+            foreach (var gameObject in gmData.Rooms.ByName(roomName).GameObjects.Where(g => g.ObjectDefinition.Name.Content == "oBlockScrew"))
+            {
+                if (gameObject.CreationCode is null) continue;
+                
+                ReplaceGMLInCode(gameObject.CreationCode, "instance_destroy()", "while (false) {}");
+            }
+        }
+        // A bunch of tiles in a5c13 - screw blocks before pipe hub
         for (int i = 39; i <= 44; i++)
             SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) instance_destroy();");            
             
