@@ -202,7 +202,6 @@ public class Patcher
         gmData.Backgrounds.ByName("bgGUIMetCountBG2").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2"]];
         gmData.Backgrounds.ByName("bgGUIMetCountBG2ELM").Texture = gmData.TexturePageItems[nameToPageItemDict["bgGUIMetCountBG2ELM"]];
         gmData.Backgrounds.ByName("bgLogImg44B").Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogIce"]];
-        // TODO: replace this background with new septogg image
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA0"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA0"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA1"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA1"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA2"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA2"]]});
@@ -790,6 +789,11 @@ public class Patcher
         // Implement a fix, where every save shows "Brutal" as the difficulty when global.mod_fusion is enabled
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "if (oControl.mod_fusion == 1)", "if (oControl.mod_diffmult == 4)");
             
+        // Make the popup text display during the pause for item acquisitions for less awkwardness
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItemCutscene_Create_0"), "sfx_play(sndMessage)",
+            "popup_text(global.itmtext1); sfx_play(sndMessage);");
+        
+        
         // Add doors to gfs thoth bridge
         var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
         var thothRightDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothRightDoor_Create") };
@@ -1410,7 +1414,7 @@ public class Patcher
         // ALTERNATIVE: if missile equipped, but no launcher, make EMP effect display that usually appears in gravity area
             
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-        PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
+        PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
                                             "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0;");
             
         // Set geothermal reactor to always be exploded
@@ -1440,8 +1444,8 @@ public class Patcher
         global.firstMissileCollected = 1;
     }
 """);
-        ReplaceGMLInCode(missileCharacterEvent, "popup_text(get_text(\"Notifications\", \"MissileTank\"))", "popup_text(text1)");
-            
+        ReplaceGMLInCode(missileCharacterEvent, "popup_text(get_text(\"Notifications\", \"MissileTank\"))", "");
+        
         var superMissileCharacterEvent = gmData.Code.ByName("gml_Script_scr_supermissile_character_event");
         ReplaceGMLInCode(superMissileCharacterEvent, """
     if (global.maxsmissiles == 0)
@@ -1452,7 +1456,7 @@ public class Patcher
         global.firstSMissileCollected = 1;
     }
 """);
-        ReplaceGMLInCode(superMissileCharacterEvent, "popup_text(get_text(\"Notifications\", \"SuperMissileTank\"))", "popup_text(text1)");
+        ReplaceGMLInCode(superMissileCharacterEvent, "popup_text(get_text(\"Notifications\", \"SuperMissileTank\"))", "");
             
         var pBombCharacterEvent = gmData.Code.ByName("gml_Script_scr_powerbomb_character_event");
         ReplaceGMLInCode(pBombCharacterEvent, """
@@ -1464,7 +1468,7 @@ public class Patcher
         global.firstPBombCollected = 1;
     }
 """);
-        ReplaceGMLInCode(pBombCharacterEvent, "popup_text(get_text(\"Notifications\", \"PowerBombTank\"))", "popup_text(text1)");
+        ReplaceGMLInCode(pBombCharacterEvent, "popup_text(get_text(\"Notifications\", \"PowerBombTank\"))", "");
             
         var eTankCharacterEvent = gmData.Code.ByName("gml_Script_scr_energytank_character_event");
         ReplaceGMLInCode(eTankCharacterEvent, """
@@ -1476,7 +1480,7 @@ public class Patcher
         global.firstETankCollected = 1;
     }
 """);
-        ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "popup_text(text1)");
+        ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "");
             
         // Decouple Major items from item locations
         PrependGMLInCode(characterVarsCode, "global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
@@ -2245,7 +2249,7 @@ public class Patcher
                 ItemEnum.Varia => """
                         event_inherited()
                         global.hasVaria = 1;
-                        global.SuitChange = 1;
+                        global.SuitChange = !global.skipItemFanfare;
                         if collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true)
                             global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
@@ -2265,7 +2269,7 @@ public class Patcher
                 ItemEnum.Gravity => """
                         event_inherited();
                         global.hasGravity = 1;
-                        global.SuitChange = 1;
+                        global.SuitChange = !global.skipItemFanfare;
                         if (collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true))
                             global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
@@ -2726,11 +2730,19 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
             
             
-        // TODO: make a seperate option for item cutscene skips
-        // Varia cutscene - should be moved to quick item pickups
-        // Gravity cutscene - should be moved to quick item pickups
-        // item collect cutscene - should be moved to quick item pickups
-
+        // Skip Item acquisition fanfares
+        if (seedObject.Patches.SkipItemFanfares)
+            ReplaceGMLInCode(characterVarsCode, "global.skipItemFanfare = 0", "global.skipItemFanfare = 1");
+        
+        // Put all items as type one
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (global.skipItemFanfare) itemtype = 1;");
+        
+        // Show popup text only when we skip the cutscene
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (itemtype == 1)", "if (global.skipItemFanfare)");
+        // Removes cutscenes for type 1's
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "display_itemmsg", "if (!global.skipItemFanfare) display_itemmsg");
+        
+        
         // Go through every room's creation code, and set popup_text(room_name)
         // TODO: make this an gameplay patching option
         foreach ((var internalName, var room) in seedObject.RoomObjects)

@@ -154,6 +154,10 @@ public class GamePatches
     public bool SkipCutscenes;
     
     [JsonInclude]
+    [JsonPropertyName("skip_item_cutscenes")]
+    public bool SkipItemFanfares;
+    
+    [JsonInclude]
     [JsonPropertyName("energy_per_tank")]
     public int EnergyPerTank;
     
