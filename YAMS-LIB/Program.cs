@@ -2629,6 +2629,22 @@ public class Patcher
         global.map[73, 31] = "11102M0"
         """);
         
+        // Fix BG3 surprise gamma map tile
+        SubstituteGMLCode(gmData.Code.ByName("gml_Object_oMGamma_Alarm_9"), """
+        myposx = floor((x / 320))
+        myposy = floor(((y - 8) / 240))
+        mapposx = (myposx + global.mapoffsetx)
+        mapposy = (myposy + global.mapoffsety)
+        if (myid == 20)
+        {
+            mapposx = 58
+            mapposy = 31
+        }
+        global.dmap[mapposx, mapposy] = 10
+        with (oControl)
+            event_user(2)
+        """);
+        
         // Force all breakables (except the hidden super blocks) to be visible
         if (seedObject.Cosmetics.UnveilBlocks)
             ReplaceGMLInCode(characterVarsCode, "global.unveilBlocks = 0", "global.unveilBlocks = 1");
