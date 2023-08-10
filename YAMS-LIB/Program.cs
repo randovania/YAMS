@@ -793,6 +793,31 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItemCutscene_Create_0"), "sfx_play(sndMessage)",
             "popup_text(global.itmtext1); sfx_play(sndMessage);");
         
+        // Fixes character step event for further modification
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
+            if (yVel < 0 && state == AIRBALL)
+            {
+                if (isCollisionUpRight() == 1 && kRight == 0)
+                    x -= ((1 + statetime < 2) + statetime < 4)
+                if (isCollisionUpLeft() == 1 && kLeft == 0)
+                    x += ((1 + statetime < 2) + statetime < 4)
+            }
+        """, """
+            if (yVel < 0 && state == AIRBALL)
+            {
+        		var st1, st2;
+        		st1 = 0
+        		st2 = 0
+        		if (statetime < 2)
+        			st1 = 1
+        		if (statetime < 4)
+        			st2 = 1
+        		if (isCollisionUpRight() == 1 && kRight == 0)
+                    x -= ((1 + st1) + st2)
+                if (isCollisionUpLeft() == 1 && kLeft == 0)
+                    x += ((1 + st1) + st2)
+            }
+        """);
         
         // Add doors to gfs thoth bridge
         var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
@@ -1217,17 +1242,6 @@ public class Patcher
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[16, 34] = ""1012100""", @"global.map[16, 34] = ""10121L0""");
         }
 
-        // TODO: see if it's possible to shorten save animation - it is, fix character step event first
-        // gml_Script_characterStepEvent -> 
-        /*
-            if (!cutsceneSkip) {
-         *  instance_create(x, y, oSaveFX)
-            instance_create(x, y, oSaveSparks)
-            }
-            ...
-            if ((statetime == 230 && !cutsceneSkip) || (statetime == 10 && cutsceneskip))
-         */
-            
         // Make metroids drop an item onto you on death and increase music timer to not cause issues
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
             "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[1] >= 0) alarm[1] = 120; }");
@@ -1567,12 +1581,12 @@ public class Patcher
         foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
                                                     c.Name.Content.Contains('4')) || c.Name.Content == "gml_Room_rm_a3b08_Create" || c.Name.Content == "gml_RoomCC_rm_a5c17_7779_Create"))
             ReplaceGMLInCode(code, "global.item[4]", "global.hasHijump");
+        
         // Varia
-        // TODO!!! gml_Script_characterStepEvent! needs fixing first, as otherwise it'll crash with current utmt setup
         var subscreenSuitDraw = gmData.Code.ByName("gml_Object_oSubScreenSuit_Draw_0");
         ReplaceGMLInCode(subscreenSuitDraw, "global.item[5]", "global.hasVaria");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[5] == 0", "!global.hasVaria");
-        foreach(var code in new[]{"gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown", "gml_Object_oQueenHead_Step_0"})
+        foreach(var code in new[]{"gml_Script_characterStepEvent", "gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown", "gml_Object_oQueenHead_Step_0"})
             ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[5]", "global.hasVaria");
             
         // Spacejump
@@ -2728,8 +2742,36 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3; with (oA1MovingPlatform) with (myblock) instance_destroy()}");
         // Fix audio for the orb cutscenes
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
-            
-            
+        // Shorten save animation
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
+            if (statetime == 1)
+            {
+                sfx_play(sndSave)
+                instance_create(x, y, oSaveFX)
+                instance_create(x, y, oSaveSparks)
+                popup_text(get_text("Notifications", "GameSaved"))
+                save_game(("save" + string((global.saveslot + 1))))
+                refill_heath_ammo()
+            }
+            if (statetime == 230)
+                state = IDLE
+        """, """
+            if (statetime == 1)
+            {
+                sfx_play(sndSave)
+                if (!global.skipCutscenes)
+                {
+                    instance_create(x, y, oSaveFX)
+                    instance_create(x, y, oSaveSparks)
+                }
+                popup_text(get_text("Notifications", "GameSaved"))
+                save_game(("save" + string((global.saveslot + 1))))
+                refill_heath_ammo()
+            }
+            if ((statetime == 230 && !global.skipCutscenes) || (statetime == 10 && global.skipCutscenes))
+                state = IDLE
+        """);
+
         // Skip Item acquisition fanfares
         if (seedObject.Patches.SkipItemFanfares)
             ReplaceGMLInCode(characterVarsCode, "global.skipItemFanfare = 0", "global.skipItemFanfare = 1");

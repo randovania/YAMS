@@ -1,15 +1,15 @@
 ﻿using System;
 using YAMS_LIB;
 
-var debug = false;
+var debug = true;
 string am2rPath = "";
 string outputAm2rPath = "";
 string jsonPath = "";
 if (debug)
 {
     am2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx_older";
-    outputAm2rPath = @"/home/narr/Dokumente/am2r 1.5.5/assets/game.unx";
-    jsonPath = @"/home/narr/Dokumente/gitRepos/YAMS/YAMS-LIB/example.json";
+    outputAm2rPath = @"/home/narr/Dokumente/am2r 1.5.5/output/assets/game.unx";
+    jsonPath = @"/home/narr/Dokumente/am2r 1.5.5/output/assets/yams-data.json";
 }
 else
 {
