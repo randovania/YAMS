@@ -176,6 +176,10 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("fusion_mode")]
     public bool FusionMode;
+
+    [JsonInclude] 
+    [JsonPropertyName("supers_on_missile_doors")]
+    public bool CanUseSupersOnMissileDoors = true;
     
     [JsonInclude]
     [JsonPropertyName("nest_pipes")]

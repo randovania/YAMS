@@ -1,7 +1,7 @@
 ﻿using System;
 using YAMS_LIB;
 
-var debug = true;
+var debug = false;
 string am2rPath = "";
 string outputAm2rPath = "";
 string jsonPath = "";
