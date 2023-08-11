@@ -698,6 +698,9 @@ public class Patcher
             SubstituteGMLCode(gmData.Code.ByName(codeName), "");
         SubstituteGMLCode(gmData.Code.ByName("gml_Object_oMonsterDoorControl_Alarm_0"), "if (instance_number(oMonster) > 0) { with (oDoor) lock = 4 }");
             
+        // Have option for missile doors to not open by supers
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_438"), "lock == 1", "((lock == 1 && !other.smissile) || (lock == 1 && other.smissile && global.canUseSupersOnMissileDoors))");
+        
         // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
                                                                                             "(lock == 6 && other.wbeam) || (lock == 7 && other.sbeam) || " +
@@ -1429,7 +1432,7 @@ public class Patcher
             
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-                                            "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0;");
+                                            "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
             
         // Set geothermal reactor to always be exploded
         AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
@@ -2808,7 +2811,10 @@ public class Patcher
             draw_set_halign(fa_left)
             """);
 
-        // For the future, with room rando, go through each door and modify where it leads to
+        // Set option on whether supers can destroy missile doors
+        ReplaceGMLInCode(characterVarsCode, "global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
+        
+        // TODO: For the future, with room rando, go through each door and modify where it leads to
             
         // Hints
         // Ice Beam Hints
