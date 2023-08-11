@@ -278,7 +278,7 @@ public class Patcher
         gmData.Sprites.Add(new UndertaleSprite()
         {
             // TODO: sprite is offset by a bit
-            Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
             Textures =
             {
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_1"]] },
