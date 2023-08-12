@@ -18,6 +18,10 @@ sys.path.append(yams_path)
 from pythonnet import load, unload
 
 
+class YamsException(Exception):
+    pass
+
+
 # TODO: add docstrings for methods when not in alpha and has stableish API
 class Wrapper:
     def __init__(self, lib):
@@ -78,6 +82,7 @@ class Wrapper:
 
 @contextmanager
 def load_wrapper() -> Wrapper:
+    exception_text = None
     try:
         # Load dotnet runtime
         load("coreclr")
@@ -87,9 +92,13 @@ def load_wrapper() -> Wrapper:
         from YAMS_LIB import Patcher as CSharp_Patcher
 
         yield Wrapper(CSharp_Patcher)
+    except Exception as e:
+        exception_text = str(e)
     finally:
         # Unload dotnet runtime
         unload()
+        if exception_text is not None:
+            raise YamsException(exception_text)
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
