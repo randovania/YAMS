@@ -27,6 +27,10 @@ public class Patcher
         const uint ThothBridgeLeftDoorID = 400000;
         const uint ThothBridgeRightDoorID = 400001;
         const uint A2WaterTurbineLeftDoorID = 400002;
+        const uint PipeInHideoutID = 400003;
+        const uint PipeInDepthsLowerID = 400004;
+        const uint PipeInDepthsUpperID = 400005;
+        const uint PipeInWaterfallsID = 400006;
             
         // Change this to not have to deal with floating point madness
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
@@ -1150,7 +1154,7 @@ public class Patcher
             var hideoutPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6a11_pipe_Create") };
             SubstituteGMLCode(hideoutPipeCode, "targetroom = 327; targetx = 216; targety = 400; direction = 90;");
             gmData.Code.Add(hideoutPipeCode);
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode));
+            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode, 1, 1, PipeInHideoutID));
             AppendGMLInCode(hideoutPipeRoom.CreationCodeId, "global.darkness = 0; mus_change(mus_get_main_song());");
 
             // Nest
@@ -1174,7 +1178,7 @@ public class Patcher
             var nestPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
             SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
             gmData.Code.Add(nestPipeCode);
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode));
+            nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode, 1, 1, PipeInDepthsLowerID));
                 
             // Change slope to solid to prevent oob issue
             nestPipeRoom.GameObjects.First(o => o.X == 176 && o.Y == 416).ObjectDefinition = solidObject;
@@ -1206,7 +1210,7 @@ public class Patcher
             var depthsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
             SubstituteGMLCode(depthsPipeCode, "targetroom = 348; targetx = 904; targety = 208; direction = 180;");
             gmData.Code.Add(depthsPipeCode);
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode));
+            depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode, 1, 1, PipeInDepthsUpperID));
 
             // Waterfalls
             var waterfallsPipeRoom = gmData.Rooms.ByName("rm_a7a07");
@@ -1234,7 +1238,7 @@ public class Patcher
             var waterfallsPipeCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7a07_pipe_Create") };
             SubstituteGMLCode(waterfallsPipeCode, "targetroom = 335; targetx = 104; targety = 192; direction = 0;");
             gmData.Code.Add(waterfallsPipeCode);
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode));
+            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode, 1, 1, PipeInWaterfallsID));
 
             AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
                 
@@ -2987,6 +2991,22 @@ public class Patcher
         
         // Ice
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), "global.map[8, 22] = \"1210300\"", "global.map[8, 22] = \"12103W0\"");
+        
+        // Pipe rando
+        // TODO: optimization could be made here, by letting rdv provide the room where the instance id is, thus not neeeding to crawl over every room.
+        foreach (var pipe in seedObject.PipeObjects)
+        {
+            foreach (var room in gmData.Rooms)
+            {
+                foreach (var gameObject in room.GameObjects)
+                {
+                    if (gameObject.InstanceID != pipe.Key) continue;
+
+                    AppendGMLInCode(gameObject.CreationCode, $"targetx = {pipe.Value.XPosition}; targety = {pipe.Value.YPosition}; targetroom = {pipe.Value.Room};");
+                }
+            }
+        }
+        
         
         // TODO: rewrite log rendering to have color
         

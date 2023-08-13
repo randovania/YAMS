@@ -26,6 +26,10 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("rooms")]
     public Dictionary<string, RoomObject> RoomObjects = new Dictionary<string, RoomObject>();
+    
+    [JsonInclude]
+    [JsonPropertyName("pipes")]
+    public Dictionary<uint, PipeObject> PipeObjects = new Dictionary<uint, PipeObject>();
 
     [JsonInclude]
     [JsonPropertyName("starting_items")]
@@ -437,4 +441,19 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("display_name")]
     public string DisplayName = "";
+}
+
+public class PipeObject
+{
+    [JsonInclude] 
+    [JsonPropertyName("dest_x")]
+    public int XPosition;
+
+    [JsonInclude] 
+    [JsonPropertyName("dest_y")]
+    public int YPosition;
+    
+    [JsonInclude] 
+    [JsonPropertyName("dest_room")]
+    public string Room = "";
 }
