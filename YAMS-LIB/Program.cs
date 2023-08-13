@@ -2994,6 +2994,7 @@ public class Patcher
         
         // Pipe rando
         // TODO: optimization could be made here, by letting rdv provide the room where the instance id is, thus not neeeding to crawl over every room.
+        // TODO: for this (And for entrance rando) i need to go through each room, and set the correct global.darkness and global.water value.
         foreach (var pipe in seedObject.PipeObjects)
         {
             foreach (var room in gmData.Rooms)
