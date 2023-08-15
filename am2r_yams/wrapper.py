@@ -18,6 +18,10 @@ sys.path.append(yams_path)
 from pythonnet import load, unload
 
 
+class YamsException(Exception):
+    pass
+
+
 # TODO: add docstrings for methods when not in alpha and has stableish API
 class Wrapper:
     def __init__(self, lib):
@@ -76,20 +80,27 @@ class Wrapper:
         progress_update("Exporting finished!", 1)
 
 
+def _load_cs_environment():
+    # Load dotnet runtime
+    load("coreclr")
+    import clr
+
+    clr.AddReference("YAMS-LIB")
+
+def _unload_cs_environment():
+    # Unload dotnet runtime
+    unload()
+
 @contextmanager
 def load_wrapper() -> Wrapper:
     try:
-        # Load dotnet runtime
-        load("coreclr")
-        import clr
-
-        clr.AddReference("YAMS-LIB")
+        _load_cs_environment()
         from YAMS_LIB import Patcher as CSharp_Patcher
-
         yield Wrapper(CSharp_Patcher)
+    except Exception as e:
+        raise YamsException(str(e)) from None
     finally:
-        # Unload dotnet runtime
-        unload()
+        _unload_cs_environment
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
