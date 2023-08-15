@@ -80,25 +80,27 @@ class Wrapper:
         progress_update("Exporting finished!", 1)
 
 
+def _load_cs_environment():
+    # Load dotnet runtime
+    load("coreclr")
+    import clr
+
+    clr.AddReference("YAMS-LIB")
+
+def _unload_cs_environment():
+    # Unload dotnet runtime
+    unload()
+
 @contextmanager
 def load_wrapper() -> Wrapper:
-    exception_text = None
     try:
-        # Load dotnet runtime
-        load("coreclr")
-        import clr
-
-        clr.AddReference("YAMS-LIB")
+        _load_cs_environment()
         from YAMS_LIB import Patcher as CSharp_Patcher
-
         yield Wrapper(CSharp_Patcher)
     except Exception as e:
-        exception_text = str(e)
+        raise YamsException(str(e)) from None
     finally:
-        # Unload dotnet runtime
-        unload()
-        if exception_text is not None:
-            raise YamsException(exception_text)
+        _unload_cs_environment
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:

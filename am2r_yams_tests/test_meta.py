@@ -3,36 +3,40 @@ from pathlib import Path
 from importlib.metadata import version
 from am2r_yams import load_wrapper, YamsException
 import pytest
-import multiprocessing
-from concurrent.futures import ProcessPoolExecutor
+from unittest.mock import patch
+from pythonnet import load, unload
 
-def _get_cs_version(pipe) -> str:
-        with load_wrapper() as w:
-            pipe.send(w.get_csharp_version())
+
+@pytest.fixture(scope="session", autouse=True)
+def _mock_load_unload():
+    with patch("am2r_yams.wrapper._load_cs_environment") as mocked_load:
+        with patch("am2r_yams.wrapper._unload_cs_environment") as mocked_unload:
+            load("coreclr")
+            import clr
+
+            clr.AddReference("YAMS-LIB")
+            from YAMS_LIB import Patcher as CSharp_Patcher
+
+            yield
+            unload()
 
 
 def test_correct_versions():
     cs_version = ""
-    receiving_pipe, output_pipe = multiprocessing.Pipe(True)
-    with ProcessPoolExecutor(max_workers=1) as executor:
-        future = executor.submit(_get_cs_version, output_pipe)
-        future.result()
-    cs_version = receiving_pipe.recv()
+    with load_wrapper() as w:
+        cs_version = w.get_csharp_version()
     python_version = version("am2r_yams")
 
     assert cs_version != ""
     assert cs_version == python_version
 
-def _throw_exception():
-    with load_wrapper() as w:
-        import System
-
-        raise System.Exception("Dummy Exception")
 
 def test_throw_correct_exception():
     with pytest.raises(Exception) as excinfo:
-        with ProcessPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_throw_exception)
-            future.result()
+        with load_wrapper() as w:
+            import System
+
+            raise System.Exception("Dummy Exception")
+
     assert excinfo.type is YamsException
     assert "Dummy Exception" == str(excinfo.value)
