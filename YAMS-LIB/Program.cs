@@ -582,6 +582,16 @@ public class Patcher
                 RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.DNAHUDRotation, bg.Texture);
             }
         }
+        
+        // Sabre's new skippy design for Skippy the Bot
+        if (seedObject.Patches.SabreSkippy)
+        {
+            foreach (var spriteName in new[] {"sAutoadP", "sAutoadPFang", "sAutoadPClaw"})
+            {
+                var sprite = gmData.Sprites.ByName(spriteName);
+                sprite.Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict[spriteName]];
+            }
+        }
 
 
         // Create new wisdom septogg object
