@@ -222,6 +222,9 @@ public class GamePatches
     [JsonPropertyName("screw_blocks")]
     public bool ScrewPipeBlocks;
     
+    [JsonInclude]
+    [JsonPropertyName("sabre_designed_skippy")]
+    public bool SabreSkippy;
 }
 
 public class ConfigurationIdentifier
