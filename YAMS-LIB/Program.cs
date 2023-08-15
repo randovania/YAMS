@@ -2827,7 +2827,7 @@ public class Patcher
         // Fix hint dissappearing when visiting room right after baby scan
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oChozoLogMarker_Step_0"), "instance_exists(oNotification)", "instance_exists(oNotification) && oNotification.log == 1");
         // Change text to be hint
-        AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[ItemEnum.Ice]}\"; pic[44, 0] = bgLogImg44B");
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[HintLocationEnum.ChozoLabs]}\"; pic[44, 0] = bgLogImg44B");
         // Remove second scanning
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h01_Create"), "scan_log(44, get_text(\"Misc\", \"Translation\"), 180, 1)", "if (false) {}");
             
@@ -2923,25 +2923,25 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"""
             cat[5] = "DNA Hints"
             lbl[50] = "Main Caves"
-            txt[50, 0] = "{seedObject.Hints[ItemEnum.DNA1]}#-#{seedObject.Hints[ItemEnum.DNA15]}#-#{seedObject.Hints[ItemEnum.DNA16]}#-#{seedObject.Hints[ItemEnum.DNA17]}#-#{seedObject.Hints[ItemEnum.DNA33]}"
+            txt[50, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA0]}"
             pic[50, 0] = bgLogDNA0
             lbl[51] = "Golden Temple"
-            txt[51, 0] = "{seedObject.Hints[ItemEnum.DNA2]}#-#{seedObject.Hints[ItemEnum.DNA3]}#-#{seedObject.Hints[ItemEnum.DNA4]}#-#{seedObject.Hints[ItemEnum.DNA5]}"
+            txt[51, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA1]}"
             pic[51, 0] = bgLogDNA1
             lbl[52] = "Hydro Station"
-            txt[52, 0] = "{seedObject.Hints[ItemEnum.DNA6]}#-#{seedObject.Hints[ItemEnum.DNA7]}#-#{seedObject.Hints[ItemEnum.DNA8]}#-#{seedObject.Hints[ItemEnum.DNA9]}#-#{seedObject.Hints[ItemEnum.DNA10]}#-#{seedObject.Hints[ItemEnum.DNA11]}#-#{seedObject.Hints[ItemEnum.DNA12]}#-#{seedObject.Hints[ItemEnum.DNA24]}" 
+            txt[52, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA2]}" 
             pic[52, 0] = bgLogDNA2
             lbl[53] = "Industrial Complex"
-            txt[53, 0] = "{seedObject.Hints[ItemEnum.DNA13]}#-#{seedObject.Hints[ItemEnum.DNA14]}#-#{seedObject.Hints[ItemEnum.DNA25]}#-#{seedObject.Hints[ItemEnum.DNA26]}#-#{seedObject.Hints[ItemEnum.DNA27]}#-#{seedObject.Hints[ItemEnum.DNA28]}#-#{seedObject.Hints[ItemEnum.DNA29]}#-#{seedObject.Hints[ItemEnum.DNA30]}#-#{seedObject.Hints[ItemEnum.DNA31]}#-#{seedObject.Hints[ItemEnum.DNA32]}"
+            txt[53, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA3]}"
             pic[53, 0] = bgLogDNA3
             lbl[54] = "The Tower"
-            txt[54, 0] = "{seedObject.Hints[ItemEnum.DNA34]}#-#{seedObject.Hints[ItemEnum.DNA35]}#-#{seedObject.Hints[ItemEnum.DNA36]}#-#{seedObject.Hints[ItemEnum.DNA39]}#-#{seedObject.Hints[ItemEnum.DNA40]}#-#{seedObject.Hints[ItemEnum.DNA41]}"
+            txt[54, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA4]}"
             pic[54, 0] = bgLogDNA4
             lbl[55] = "Distribution Center"
-            txt[55, 0] = "{seedObject.Hints[ItemEnum.DNA18]}#-#{seedObject.Hints[ItemEnum.DNA19]}#-#{seedObject.Hints[ItemEnum.DNA20]}#-#{seedObject.Hints[ItemEnum.DNA21]}#-#{seedObject.Hints[ItemEnum.DNA22]}#-#{seedObject.Hints[ItemEnum.DNA37]}#-#{seedObject.Hints[ItemEnum.DNA38]}#-#{seedObject.Hints[ItemEnum.DNA42]}"
+            txt[55, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA5]}"
             pic[55, 0] = bgLogDNA5
             lbl[56] = "The Nest"
-            txt[56, 0] = "{seedObject.Hints[ItemEnum.DNA23]}#-#{seedObject.Hints[ItemEnum.DNA43]}#-#{seedObject.Hints[ItemEnum.DNA44]}#-#{seedObject.Hints[ItemEnum.DNA45]}#-#{seedObject.Hints[ItemEnum.DNA46]}"
+            txt[56, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA6]}"
             pic[56, 0] = bgLogDNA6
             """);
 
@@ -2994,7 +2994,7 @@ public class Patcher
         
         // Pipe rando
         // TODO: optimization could be made here, by letting rdv provide the room where the instance id is, thus not neeeding to crawl over every room.
-        // TODO: for this (And for entrance rando) i need to go through each room, and set the correct global.darkness and global.water value.
+        // TODO: for this (And for entrance rando) i need to go through each room, and set the correct global.darkness, global.water and music value.
         foreach (var pipe in seedObject.PipeObjects)
         {
             foreach (var room in gmData.Rooms)

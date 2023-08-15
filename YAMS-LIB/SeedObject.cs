@@ -41,7 +41,7 @@ public class SeedObject
     
     [JsonInclude]
     [JsonPropertyName("hints")]
-    public Dictionary<ItemEnum, string> Hints = new Dictionary<ItemEnum, string>();
+    public Dictionary<HintLocationEnum, string> Hints = new Dictionary<HintLocationEnum, string>();
     
     [JsonInclude]
     [JsonPropertyName("cosmetics")]
@@ -110,6 +110,27 @@ public enum DoorLockType
     EMPA3,
     [EnumMember(Value = "Locked Door")]
     Locked,
+}
+
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+public enum HintLocationEnum
+{
+    [EnumMember(Value = "septogg_a0")]
+    SeptoggA0,
+    [EnumMember(Value = "septogg_a1")]
+    SeptoggA1,
+    [EnumMember(Value = "septogg_a2")]
+    SeptoggA2,
+    [EnumMember(Value = "septogg_a3")]
+    SeptoggA3,
+    [EnumMember(Value = "septogg_a4")]
+    SeptoggA4,
+    [EnumMember(Value = "septogg_a5")]
+    SeptoggA5,
+    [EnumMember(Value = "septogg_a6")]
+    SeptoggA6,
+    [EnumMember(Value = "chozo_labs")]
+    ChozoLabs,
 }
 
 public class GameCosmetics
@@ -229,6 +250,7 @@ public class StartingLocationObject
     [JsonPropertyName("save_room")]
     public int SaveRoom;
 }
+
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ItemEnum
