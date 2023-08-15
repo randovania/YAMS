@@ -1822,7 +1822,9 @@ public class Patcher
               global.shouldLoadFromStart = 0;  
             }
             """);
-            
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsReload_Step_0"), "instance_create(50, 92, oPauseMenuOptions)", 
+            "instance_create(50, 92, oPauseMenuOptions); global.shouldLoadFromStart = 0;");
+
         // Modify save scripts to load our new globals / stuff we modified
         var saveGlobalsCode = new UndertaleCode();
         saveGlobalsCode.Name = gmData.Strings.MakeString("gml_Script_sv6_add_newglobals");
