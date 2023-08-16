@@ -2276,21 +2276,24 @@ public class Patcher
             var createCode = gmObject.Events[0][0].Actions[0].CodeId;
             AppendGMLInCode(createCode, $"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\";" +
                                         $"btn1_name = \"\"; btn2_name = \"\";");
-                
+
             // First 4 is for Collision event
             var collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
             var collisionCodeToBe = pickup.ItemEffect switch
             {
                 ItemEnum.EnergyTank => "scr_energytank_character_event()",
-                ItemEnum.MissileExpansion => "scr_missile_character_event()",
+                ItemEnum.MissileExpansion => $"if (global.missileLauncher) {{ text1 = {seedObject.Patches.LockedMissileText.Header}; "+ 
+                                             $"text2 = {seedObject.Patches.LockedMissileText.Description} }} scr_missile_character_event()",
                 ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
-                                            "{{ global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles; }}",
-                ItemEnum.SuperMissileExpansion => "scr_supermissile_character_event()",
+                                            "{ global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles; }",
+                ItemEnum.SuperMissileExpansion => $"if (global.SMissileLauncher) {{ text1 = {seedObject.Patches.LockedSuperText.Header}; " +
+                                                  $"text2 = {seedObject.Patches.LockedSuperText.Description} }} scr_supermissile_character_event()",
                 ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
-                                                 "{{ global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles; }}",
-                ItemEnum.PBombExpansion=> "scr_powerbomb_character_event()",
+                                                 "{ global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles; }",
+                ItemEnum.PBombExpansion=> $"if (global.PBombLauncher) {{ text1 = {seedObject.Patches.LockedPBombText.Header}; " + 
+                                          $"text2 = {seedObject.Patches.LockedPBombText.Description} }} scr_powerbomb_character_event()",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
-                                          "{{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }}",
+                                          "{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }",
                 var x when x.ToString().StartsWith("DNA") => "event_inherited(); if (active) { global.dna++; check_areaclear(); }",
                 ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
                 ItemEnum.Powergrip =>"event_inherited(); if (active) {{ global.powergrip = 1; global.hasPowergrip = 1; }}",

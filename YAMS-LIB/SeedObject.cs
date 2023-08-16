@@ -237,6 +237,18 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("sabre_designed_skippy")]
     public bool SabreSkippy;
+    
+    [JsonInclude]
+    [JsonPropertyName("locked_missile_text")]
+    public TextDetails LockedMissileText;
+    
+    [JsonInclude]
+    [JsonPropertyName("locked_super_text")]
+    public TextDetails LockedSuperText;
+    
+    [JsonInclude]
+    [JsonPropertyName("locked_pb_text")]
+    public TextDetails LockedPBombText;
 }
 
 public class ConfigurationIdentifier
