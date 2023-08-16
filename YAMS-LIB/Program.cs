@@ -796,6 +796,9 @@ public class Patcher
             
         // Fix plasma chamber having a missile door instead of normal after tester dead
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
+        
+        // Fix lab log not displaying progress bar
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a7b04A_Create"), "create_log_trigger(0, 44, 440, 111, 0, 0)", "create_log_trigger(0, 44, 438, 111, -60, 1)");
             
         // Fix skreek street not actually having skreeks
         PrependGMLInCode(gmData.Code.ByName("gml_Script_scr_skreeks_destroy"), "exit");
