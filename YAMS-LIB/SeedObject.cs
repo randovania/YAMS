@@ -108,6 +108,18 @@ public enum DoorLockType
     EMPA2,
     [EnumMember(Value = "Industrial Complex EMP Door")]
     EMPA3,
+    [EnumMember(Value = "Distribution Center EMP Ball Introduction EMP Door")]
+    EMPA5Tutorial,
+    [EnumMember(Value = "Distribution Center Robot Home EMP Door")]
+    EMPA5RobotHome,
+    [EnumMember(Value = "Distribution Center Energy Distribution Tower East EMP Door")]
+    EMPA5NearZeta,
+    [EnumMember(Value = "Distribution Center Bullet Hell Room Access EMP Door")]
+    EMPA5BulletHell,
+    [EnumMember(Value = "Distribution Center Pipe Hub Access EMP Door")]
+    EMPA5PipeHub,
+    [EnumMember(Value = "Distribution Center Exterior East Access EMP Door")]
+    EMPA5RightExterior,
     [EnumMember(Value = "Locked Door")]
     Locked,
 }

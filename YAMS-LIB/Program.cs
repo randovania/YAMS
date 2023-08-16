@@ -252,6 +252,12 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA1"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA2"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorEMPA3"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPNearTotem"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPRobotHome"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPNearSave"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPNearBulletHell"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPNearPipeHub"]]});
+        gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPRightExterior"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorLocked"]]});
             
         // New sprites for door animation
@@ -739,14 +745,17 @@ public class Patcher
         doorCollisionList.Add(varDoorEvent);
             
         // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
-        // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24). perma locked is 25 and never set here as being openable.
+        // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24), emp tutorial (25), emp robot home (26), emp near zeta (27),
+        // emp near bullet hell (28), emp near pipe hub (29), emp near right exterior (30).
+        // perma locked is doesnt have a number and is never set here as being openable.
         var newDoorReplacementText = "(lock == 0) || (global.event[200] && lock == 13)" +
                                      "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
                                      "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
                                      "|| (global.event[261] && lock == 18) || (global.event[307] && lock == 19)" +
                                      "|| (global.event[303] && lock == 20) || (global.event[250] && lock == 21)" +
                                      "|| (global.event[57] && lock == 22) || (global.event[110] && lock == 23)" +
-                                     "|| (global.event[163] && lock == 24)";
+                                     "|| (global.event[163] && lock == 24) || (global.event[251] && lock == 25) || (global.event[252] && lock == 26) || (global.event[253] && lock == 27)" +
+                                     "|| (global.event[256] && lock == 28) || (global.event[254] && lock == 29) || (global.event[253] && lock == 30)";
         // beams, missile explosion, pbomb explosion, bomb explosion
         foreach (var codeName in new[] {"gml_Object_oDoor_Collision_439", "gml_Object_oDoor_Collision_438", "gml_Object_oDoor_Collision_437", "gml_Object_oDoor_Collision_435"})
             ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
@@ -2233,7 +2242,13 @@ public class Patcher
                         DoorLockType.EMPA1 => "lock = 22; originalLock = lock; event = -1;",
                         DoorLockType.EMPA2 => "lock = 23; originalLock = lock; event = -1;",
                         DoorLockType.EMPA3 => "lock = 24; originalLock = lock; event = -1;",
-                        DoorLockType.Locked => "lock = 25; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5Tutorial => "lock = 25; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5RobotHome => "lock = 26; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5NearZeta => "lock = 27; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5BulletHell => "lock = 28; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5PipeHub => "lock = 29; originalLock = lock; event = -1;",
+                        DoorLockType.EMPA5RightExterior => "lock = 30; originalLock = lock; event = -1;",
+                        DoorLockType.Locked => "lock = 99; originalLock = lock; event = -1;",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                     };
                         
