@@ -2282,24 +2282,24 @@ public class Patcher
             var collisionCodeToBe = pickup.ItemEffect switch
             {
                 ItemEnum.EnergyTank => "scr_energytank_character_event()",
-                ItemEnum.MissileExpansion => $"if (global.missileLauncher) {{ text1 = {seedObject.Patches.LockedMissileText.Header}; "+ 
-                                             $"text2 = {seedObject.Patches.LockedMissileText.Description} }} scr_missile_character_event()",
+                ItemEnum.MissileExpansion => $"if (global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; "+ 
+                                             $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} scr_missile_character_event()",
                 ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
                                             "{ global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles; }",
-                ItemEnum.SuperMissileExpansion => $"if (global.SMissileLauncher) {{ text1 = {seedObject.Patches.LockedSuperText.Header}; " +
-                                                  $"text2 = {seedObject.Patches.LockedSuperText.Description} }} scr_supermissile_character_event()",
+                ItemEnum.SuperMissileExpansion => $"if (global.SMissileLauncher) {{ text1 = \"{seedObject.Patches.LockedSuperText.Header}\"; " +
+                                                  $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} scr_supermissile_character_event()",
                 ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
                                                  "{ global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles; }",
-                ItemEnum.PBombExpansion=> $"if (global.PBombLauncher) {{ text1 = {seedObject.Patches.LockedPBombText.Header}; " + 
-                                          $"text2 = {seedObject.Patches.LockedPBombText.Description} }} scr_powerbomb_character_event()",
+                ItemEnum.PBombExpansion=> $"if (global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " + 
+                                          $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} scr_powerbomb_character_event()",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                           "{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }",
                 var x when x.ToString().StartsWith("DNA") => "event_inherited(); if (active) { global.dna++; check_areaclear(); }",
-                ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) {{ global.bomb = 1; global.hasBombs = 1; }}",
-                ItemEnum.Powergrip =>"event_inherited(); if (active) {{ global.powergrip = 1; global.hasPowergrip = 1; }}",
-                ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) {{ global.spiderball = 1; global.hasSpiderball = 1; }}",
-                ItemEnum.Springball => "btn1_name = \"Jump\"; event_inherited(); if (active) {{ global.jumpball = 1; global.hasJumpball = 1; }}",
-                ItemEnum.Screwattack => "event_inherited(); if (active) {{ global.screwattack = 1; global.hasScrewattack = 1; }} with (oCharacter) sfx_stop(spinjump_sound);",
+                ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) { global.bomb = 1; global.hasBombs = 1; }",
+                ItemEnum.Powergrip =>"event_inherited(); if (active) { global.powergrip = 1; global.hasPowergrip = 1; }",
+                ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) { global.spiderball = 1; global.hasSpiderball = 1; }",
+                ItemEnum.Springball => "btn1_name = \"Jump\"; event_inherited(); if (active) { global.jumpball = 1; global.hasJumpball = 1; }",
+                ItemEnum.Screwattack => "event_inherited(); if (active) { global.screwattack = 1; global.hasScrewattack = 1; } with (oCharacter) sfx_stop(spinjump_sound);",
                 ItemEnum.Varia => """
                         event_inherited()
                         global.hasVaria = 1;
