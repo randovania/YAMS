@@ -145,6 +145,17 @@ public enum HintLocationEnum
     ChozoLabs,
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+public enum RoomNameHudEnum
+{
+    [EnumMember(Value = "NEVER")]
+    Never,
+    [EnumMember(Value = "WITH_FADE")]
+    OnEntry,
+    [EnumMember(Value = "ALWAYS")]
+    Always,
+}
+
 public class GameCosmetics
 {
     [JsonInclude]
@@ -167,6 +178,9 @@ public class GameCosmetics
     [JsonPropertyName("dna_hud_rotation")]
     public int DNAHUDRotation;
     
+    [JsonInclude]
+    [JsonPropertyName("room_names_on_hud")]
+    public RoomNameHudEnum RoomNameHud;
 }
 
 public class GamePatches
