@@ -2282,15 +2282,15 @@ public class Patcher
             var collisionCodeToBe = pickup.ItemEffect switch
             {
                 ItemEnum.EnergyTank => "scr_energytank_character_event()",
-                ItemEnum.MissileExpansion => $"if (global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; "+ 
+                ItemEnum.MissileExpansion => $"if (!global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; "+ 
                                              $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} scr_missile_character_event()",
                 ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
                                             "{ global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles; }",
-                ItemEnum.SuperMissileExpansion => $"if (global.SMissileLauncher) {{ text1 = \"{seedObject.Patches.LockedSuperText.Header}\"; " +
+                ItemEnum.SuperMissileExpansion => $"if (!global.SMissileLauncher) {{ text1 = \"{seedObject.Patches.LockedSuperText.Header}\"; " +
                                                   $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} scr_supermissile_character_event()",
                 ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
                                                  "{ global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles; }",
-                ItemEnum.PBombExpansion=> $"if (global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " + 
+                ItemEnum.PBombExpansion=> $"if (!global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " + 
                                           $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} scr_powerbomb_character_event()",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                           "{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }",
