@@ -58,7 +58,7 @@ class Wrapper:
             input_data_win_path.parent.joinpath("yams-data.json")
         )
         with open(json_file, "w+") as f:
-            f.write(json.dumps(patch_data))
+            f.write(json.dumps(patch_data, indent=2))
 
         # AM2RLauncher installations usually have a profile.xml file. For less confusion, remove it if it exists
         profile_xml_path = Path(tempdir.name).joinpath("profile.xml")
