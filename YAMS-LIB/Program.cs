@@ -2248,7 +2248,7 @@ public class Patcher
                         DoorLockType.EMPA5BulletHell => "lock = 28; originalLock = lock; event = -1;",
                         DoorLockType.EMPA5PipeHub => "lock = 29; originalLock = lock; event = -1;",
                         DoorLockType.EMPA5RightExterior => "lock = 30; originalLock = lock; event = -1;",
-                        DoorLockType.Locked => "lock = 99; originalLock = lock; event = -1;",
+                        DoorLockType.Locked => "lock = 31; originalLock = lock; event = -1;",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                     };
                         
