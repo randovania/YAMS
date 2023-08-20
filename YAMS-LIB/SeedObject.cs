@@ -504,6 +504,14 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("display_name")]
     public string DisplayName = "";
+    
+    [JsonInclude]
+    [JsonPropertyName("region_name")]
+    public string RegionName = "";
+    
+    [JsonInclude]
+    [JsonPropertyName("minimap_data")]
+    public List<Coordinate> MinimapData = new List<Coordinate>();
 }
 
 public class PipeObject
@@ -519,4 +527,15 @@ public class PipeObject
     [JsonInclude] 
     [JsonPropertyName("dest_room")]
     public string Room = "";
+}
+
+public struct Coordinate
+{
+    [JsonInclude] 
+    [JsonPropertyName("x")]
+    public int X;
+
+    [JsonInclude] 
+    [JsonPropertyName("y")]
+    public int Y;
 }

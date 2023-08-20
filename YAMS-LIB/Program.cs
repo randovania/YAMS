@@ -1277,10 +1277,10 @@ public class Patcher
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[19, 34] = ""1010100""", @"global.map[19, 34] = ""1010400""");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[20, 34] = ""1210100""", @"global.map[20, 34] = ""1210400""");
             // Waterfalls
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[7, 34] = ""1012200""", @"global.map[7, 34] = ""10104R0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[7, 34] = ""1012200""", @"global.map[7, 34] = ""1012400""");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_17"), @"global.map[8, 34] = ""1010200""", @"global.map[8, 34] = ""1010400""");
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[9, 34] = ""1010200""", @"global.map[9, 34] = ""10104R0""");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[10, 34] = ""1210200""", @"global.map[10, 34] = ""10104R0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[10, 34] = ""1210200""", @"global.map[10, 34] = ""1210400""");
         }
 
         // Make metroids drop an item onto you on death and increase music timer to not cause issues
@@ -3169,7 +3169,45 @@ public class Patcher
             }
         }
         
-        
+        // Add patch to see room names on minimap
+        string DSMapCoordRoomname = "room_names_coords = ds_map_create();";
+        foreach ((string key, RoomObject value) in seedObject.RoomObjects)
+        {
+            foreach (Coordinate coord in value.MinimapData)
+            {
+                DSMapCoordRoomname += $"ds_map_add(room_names_coords, \"{coord.X}|{coord.Y}\", \"{value.RegionName} - {value.DisplayName}\");\n";
+            }
+        }
+        AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), DSMapCoordRoomname);
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0"), """
+            draw_text((view_xview[0] + 161), ((view_yview[0] + 30) - rectoffset), maptext)
+            draw_set_color(c_white)
+            draw_text((view_xview[0] + 160), ((view_yview[0] + 29) - rectoffset), maptext)
+        ""","""
+            draw_set_font(global.fontMenuSmall2)
+            var titleText = maptext;
+            if (instance_exists(oMapCursor) && oMapCursor.active && oMapCursor.state == 1)
+            {
+                titleText = ds_map_find_value(room_names_coords, string(global.mapmarkerx) + "|" + string(global.mapmarkery));
+                if (titleText == undefined)
+                    titleText = maptext;
+            }
+            draw_text((view_xview[0] + 161), ((view_yview[0] + 29) - rectoffset), titleText);
+            draw_set_color(c_white);
+            draw_text((view_xview[0] + 160), ((view_yview[0] + 28) - rectoffset), titleText);
+        """);
+        var ssFGDestroyCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oSS_Fg_Destroy_0") };
+        SubstituteGMLCode(ssFGDestroyCode, "ds_map_destroy(room_names_coords)");
+        gmData.Code.Add(ssFGDestroyCode);
+        var ssFGCollisionList = gmData.GameObjects.ByName("oSS_Fg").Events[1];
+        var ssFGAction = new UndertaleGameObject.EventAction();
+        ssFGAction.CodeId = ssFGDestroyCode;
+        var ssFGEvent = new UndertaleGameObject.Event();
+        ssFGEvent.EventSubtype = 0;
+        ssFGEvent.Actions.Add(ssFGAction);
+        ssFGCollisionList.Add(ssFGEvent);
+
+
         // TODO: rewrite log rendering to have color
         
         // Write back to disk
