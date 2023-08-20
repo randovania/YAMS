@@ -1264,11 +1264,23 @@ public class Patcher
 
             AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
                 
-            // Modify minimap for new pipes in nest and waterfalls too
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), @"global.map[21, 53] = ""1210100""", @"global.map[21, 53] = ""12101U0""");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), @"global.map[21, 45] = ""0112100""", @"global.map[21, 45] = ""01121D0""");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[9, 34] = ""1010200""", @"global.map[9, 34] = ""10102R0""");
-            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[16, 34] = ""1012100""", @"global.map[16, 34] = ""10121L0""");
+            // Modify minimap for new pipes and purple in nest and waterfalls too
+            // Hideout
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), @"global.map[21, 53] = ""1210100""", @"global.map[21, 53] = ""12104U0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[20, 53] = ""1012100""", @"global.map[20, 53] = ""1012400""");
+            // Depths lower
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), "global.map[21, 44] = \"1102100\"\nglobal.map[21, 45] = \"0112100\"", "global.map[21, 44] = \"1102400\"\nglobal.map[21, 45] = \"01124D0\"");
+            // Depths upper
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[16, 34] = ""1012100""", @"global.map[16, 34] = ""10124L0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[17, 34] = ""1010100""", @"global.map[17, 34] = ""1010400""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[18, 34] = ""1020100""", @"global.map[18, 34] = ""1020400""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[19, 34] = ""1010100""", @"global.map[19, 34] = ""1010400""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), @"global.map[20, 34] = ""1210100""", @"global.map[20, 34] = ""1210400""");
+            // Waterfalls
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[7, 34] = ""1012200""", @"global.map[7, 34] = ""10104R0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_17"), @"global.map[8, 34] = ""1010200""", @"global.map[8, 34] = ""1010400""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), @"global.map[9, 34] = ""1010200""", @"global.map[9, 34] = ""10104R0""");
+            ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_02"), @"global.map[10, 34] = ""1210200""", @"global.map[10, 34] = ""10104R0""");
         }
 
         // Make metroids drop an item onto you on death and increase music timer to not cause issues
