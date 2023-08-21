@@ -761,7 +761,7 @@ public class Patcher
                                      "|| (global.event[303] && lock == 20) || (global.event[250] && lock == 21)" +
                                      "|| (global.event[57] && lock == 22) || (global.event[110] && lock == 23)" +
                                      "|| (global.event[163] && lock == 24) || (global.event[251] && lock == 25) || (global.event[252] && lock == 26) || (global.event[253] && lock == 27)" +
-                                     "|| (global.event[256] && lock == 28) || (global.event[254] && lock == 29) || (global.event[253] && lock == 30)";
+                                     "|| (global.event[256] && lock == 28) || (global.event[254] && lock == 29) || (global.event[262] && lock == 30)";
         // beams, missile explosion, pbomb explosion, bomb explosion
         foreach (var codeName in new[] {"gml_Object_oDoor_Collision_439", "gml_Object_oDoor_Collision_438", "gml_Object_oDoor_Collision_437", "gml_Object_oDoor_Collision_435"})
             ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
