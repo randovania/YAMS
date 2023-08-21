@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
@@ -2843,10 +2844,11 @@ public class Patcher
         
         
         // Patch to add room name display near health
-        string roomNameDSMapString = "";
+        StringBuilder roomNameDSMapBuilder = new StringBuilder();
         foreach ((var roomName, var roomData) in seedObject.RoomObjects)
-            roomNameDSMapString += $"ds_map_add(roomNames, \"{roomName}\", \"{roomData.DisplayName}\");\n";
-
+            roomNameDSMapBuilder.Append($"ds_map_add(roomNames, \"{roomName}\", \"{roomData.DisplayName}\");\n");
+        string roomNameDSMapString = roomNameDSMapBuilder.ToString();
+        
         var roomNameHudCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oRoomNameHUD_Create_0") };
         SubstituteGMLCode(roomNameHudCC, $"""
         rnh_surface = surface_create((320 + oControl.widescreen_space), 240)
@@ -3176,14 +3178,15 @@ public class Patcher
         }
         
         // Add patch to see room names on minimap
-        string DSMapCoordRoomname = "room_names_coords = ds_map_create();";
+        StringBuilder dsMapCordBuilder = new StringBuilder("room_names_coords = ds_map_create()");
         foreach ((string key, RoomObject value) in seedObject.RoomObjects)
         {
             foreach (Coordinate coord in value.MinimapData)
             {
-                DSMapCoordRoomname += $"ds_map_add(room_names_coords, \"{coord.X}|{coord.Y}\", \"{value.RegionName} - {value.DisplayName}\");\n";
+                dsMapCordBuilder.Append($"ds_map_add(room_names_coords, \"{coord.X}|{coord.Y}\", \"{value.RegionName} - {value.DisplayName}\");\n");
             }
         }
+        string DSMapCoordRoomname = dsMapCordBuilder.ToString();
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), DSMapCoordRoomname);
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0"), """
             draw_text((view_xview[0] + 161), ((view_yview[0] + 30) - rectoffset), maptext)
