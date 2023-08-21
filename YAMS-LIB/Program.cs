@@ -61,8 +61,13 @@ public class Patcher
         void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
         {
             var codeText = Decompiler.Decompile(code, decompileContext);
-            if (!codeText.Contains(textToReplace) && !ignoreErrors)
+            if (!codeText.Contains(textToReplace))
+            {
+                if (ignoreErrors)
+                    return;
+                
                 throw new ApplicationException($"The text \"{textToReplace}\" was not found in \"{code.Name.Content}\"!");
+            }
             codeText = codeText.Replace(textToReplace, replacementText);
             code.ReplaceGML(codeText, gmData);
         }
