@@ -2977,7 +2977,8 @@ public class Patcher
             """);
 
         // Set option on whether supers can destroy missile doors
-        ReplaceGMLInCode(characterVarsCode, "global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
+        if (seedObject.Patches.CanUseSupersOnMissileDoors)
+            ReplaceGMLInCode(characterVarsCode, "global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
         
         // TODO: For the future, with room rando, go through each door and modify where it leads to
             
