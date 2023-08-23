@@ -2337,6 +2337,9 @@ public class Patcher
                         event_inherited()
                         global.hasVaria = 1;
                         global.SuitChange = !global.skipItemFanfare;
+                        // If any Metroid exists, force suit cutscene to be off
+                        if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
+                            global.SuitChange = 0;
                         if collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true)
                             global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
@@ -2357,6 +2360,9 @@ public class Patcher
                         event_inherited();
                         global.hasGravity = 1;
                         global.SuitChange = !global.skipItemFanfare;
+                        // If any Metroid exists, force suit cutscene to be off
+                        if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
+                            global.SuitChange = 0;
                         if (collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true))
                             global.SuitChange = 0;
                         if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
