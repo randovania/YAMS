@@ -684,7 +684,7 @@ public class Patcher
             
         // Make doors automatically free their event when passing through them!...
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)", 
-            "{ event_user(2); if(event > 0 && lock < 4) global.event[event] = 1; }");
+            "{ event_user(2); if(event > 0 && lock < 5) global.event[event] = 1; }");
         // ...But don't make them automatically opened for non-ammo doors!
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "lock = 0", "if (lock < 4) lock = 0;");
             
