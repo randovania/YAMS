@@ -931,6 +931,10 @@ public class Patcher
             ScaleY = 1,
             CreationCode = thothRightDoorCC
         });
+        
+        // Make doors appear in front, so you can see them in door lock rando
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a03_Create"), "with (oDoor) depth = -200");
+        
             
         // Add door from water turbine station to hydro station exterior
         var waterTurbineDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_waterStationDoor_Create") };
