@@ -768,6 +768,10 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[207]");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[207] = 1;");
             
+        // Make Doors shine more in the dark
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLightEngine_Other_11"), "1, 0.4", "0.7, 1.4");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLightEngine_Other_11"), "1, -0.4", "0.7, -1.4");
+        
         // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
         foreach (var codeName in new[] {"gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create", 
                      "gml_RoomCC_rm_a7b06A_9421_Create", "gml_RoomCC_rm_a7b06A_9420_Create", "gml_RoomCC_rm_a7b07_9437_Create", "gml_RoomCC_rm_a7b07_9438_Create",
