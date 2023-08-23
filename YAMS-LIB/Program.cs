@@ -702,10 +702,11 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Create_0"), "originalLock = lock;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Other_13"), "lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
             
-        // Fix doors unlocking in arachnus/torizo/tester/genesis
+        // Fix doors unlocking in arachnus/torizo/tester/serris/genesis
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a04_Create"), "if (!global.event[103]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3a01_Create"), "if (!global.event[152]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4a05_Create"), "if (!global.event[207]) {with (oDoor) lock = 4;}");
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oErisBossTrigger_Other_10"), "with (oDoor) lock = 4;");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a11_Create"), "if (!global.event[307]) {with (oDoor) lock = 4;}");
             
         // Fix doors in tester to be always blue
