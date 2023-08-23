@@ -122,6 +122,8 @@ public enum DoorLockType
     EMPA5RightExterior,
     [EnumMember(Value = "Locked Door")]
     Locked,
+    [EnumMember(Value = "Hydro Station Water Turbine")]
+    A2WaterTurbine,
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
