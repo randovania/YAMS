@@ -53,6 +53,11 @@ public class Patcher
         }
         var decompileContext = new GlobalDecompileContext(gmData, false);
 
+        // Check for 1.5.5 before doing *anything*
+        var controlCreate = GetGMLCode(gmData.Code.ByName("gml_Object_oControl_Create_0"));
+        if (!controlCreate.Contains("global.am2r_version = \"V1.5.5\""))
+            throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
+        
 
         string GetGMLCode(UndertaleCode code)
         {
