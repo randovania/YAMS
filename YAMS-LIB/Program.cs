@@ -3280,6 +3280,7 @@ public class Patcher
             draw_text((view_xview[0] + 161), ((view_yview[0] + 29) - rectoffset), titleText);
             draw_set_color(c_white);
             draw_text((view_xview[0] + 160), ((view_yview[0] + 28) - rectoffset), titleText);
+            draw_set_font(global.fontGUI2)
         """);
         var ssFGDestroyCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oSS_Fg_Destroy_0") };
         SubstituteGMLCode(ssFGDestroyCode, "ds_map_destroy(room_names_coords)");
