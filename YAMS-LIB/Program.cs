@@ -717,6 +717,41 @@ public class Patcher
         // Fix doors in tester to be always blue
         foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
             SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
+        
+        // Make water turbine generic where it can be shuffled
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), "facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), """
+        if (global.event[101] > 0)
+            instance_destroy()
+        """, 
+            """
+        eventToSet = 101; 
+        if ((global.event[eventToSet] > 0) || (((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) 
+        {
+            wasAlreadyDestroyed = 1; 
+            instance_destroy();
+        }
+        """);
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), "wall = instance_create((x + 16), y, oSolid1x4)",
+            "wall = instance_create(x + (16 * facingDirection), y, oSolid1x4);");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Other_11"),
+        """
+        o = instance_create(x, y, oMoveWater)
+        o.targety = 1552
+        o.delay = 2
+        global.event[101] = 1
+        instance_create((x - 120), y, oBubbleSpawner)
+        """,
+        """
+        global.event[eventToSet] = 1;
+        if (room == rm_a2h02 && x == 912 && y == 1536)
+        {
+            o = instance_create(x, y, oMoveWater)
+            o.targety = 1552
+            o.delay = 2
+            instance_create((x - 120), y, oBubbleSpawner)
+        }
+        """);
             
         // Fix Tower activation unlocking right door for door lock rando
         if (seedObject.DoorLocks.ContainsKey(127890))
@@ -2238,7 +2273,7 @@ public class Patcher
                 {
                     if (gameObject.InstanceID != id) continue;
 
-                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor"))
+                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor") && gameObject.ObjectDefinition.Name.Content != "oA2BigTurbine")
                         throw new NotSupportedException($"The 'door' instance {id} is not actually a door!");
 
                     found = true;
@@ -2283,9 +2318,28 @@ public class Patcher
                         DoorLockType.EMPA5PipeHub => "lock = 29; originalLock = lock; event = -1;",
                         DoorLockType.EMPA5RightExterior => "lock = 30; originalLock = lock; event = -1;",
                         DoorLockType.Locked => "lock = 31; originalLock = lock; event = -1;",
+                        DoorLockType.A2WaterTurbine => $"eventToSet = {doorEventIndex}; " +
+                                                       $"if (global.event[eventToSet] > 0)" +
+                                                       $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}}",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                     };
+
+                    var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
+                    if (gameObject.ObjectDefinition == waterTurbineObject && doorLock.Lock != DoorLockType.A2WaterTurbine)
+                    {
+                        gameObject.ObjectDefinition = gmData.GameObjects.ByName("oDoor");
+                        gameObject.X -= (24 * (int)gameObject.ScaleX);
+                        gameObject.ScaleX *= -1;
+                    }
+
+                    if (doorLock.Lock == DoorLockType.A2WaterTurbine)
+                    {
+                        gameObject.ObjectDefinition = waterTurbineObject;
+                        gameObject.X += (24 * (int)gameObject.ScaleX);
+                        gameObject.ScaleX *= -1;
                         
+                    }
+
                     AppendGMLInCode(gameObject.CreationCode, codeText);
                     doorEventIndex++;
                     break;
