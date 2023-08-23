@@ -2327,9 +2327,14 @@ public class Patcher
                     var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
                     if (gameObject.ObjectDefinition == waterTurbineObject && doorLock.Lock != DoorLockType.A2WaterTurbine)
                     {
-                        gameObject.ObjectDefinition = gmData.GameObjects.ByName("oDoor");
-                        gameObject.X -= (24 * (int)gameObject.ScaleX);
+                        gameObject.ObjectDefinition = gmData.GameObjects.ByName("oDoorA5");
+                        gameObject.X += (24 * (int)gameObject.ScaleX);
                         gameObject.ScaleX *= -1;
+                        bool leftFacing = gameObject.ScaleX < 0;
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (leftFacing ? 8 : 24), gameObject.Y, -110, gmData.Backgrounds.ByName("tlDoor"), (leftFacing ? 0u : 32u), 0, 32, 64));
+                        var tilesToDelete = room.Tiles.Where((t => (t is { X: 912, Y: 1584, SourceX: 48, SourceY: 304 } or { X: 928, Y: 1536, SourceX: 96, SourceY: 304 }))).ToList();
+                        foreach (var tile in tilesToDelete)
+                            room.Tiles.Remove(tile);
                     }
 
                     if (doorLock.Lock == DoorLockType.A2WaterTurbine)
