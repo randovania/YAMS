@@ -728,6 +728,7 @@ public class Patcher
         eventToSet = 101; 
         if ((global.event[eventToSet] > 0) || (((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) 
         {
+            global.event[eventToSet] = 1;
             wasAlreadyDestroyed = 1; 
             instance_destroy();
         }
