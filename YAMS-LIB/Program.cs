@@ -822,7 +822,9 @@ public class Patcher
         foreach (var codeName in new[] {"gml_Object_oDoor_Collision_439", "gml_Object_oDoor_Collision_438", "gml_Object_oDoor_Collision_437", "gml_Object_oDoor_Collision_435"})
             ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
             
-
+        // Make EMP slots activate doors instantly, rather than having to wait 1.5 seconds
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), "alarm[0] = 90", "alarm[0] = 1");
+        
         // Fix Emp devices unlocking all doors automatically!
         string empBatteryCellCondition = "false";
         foreach (var doorID in new uint[] {108539, 111778, 115149, 133836, 133903, 133914, 133911, 134711, 134426, 135330})
