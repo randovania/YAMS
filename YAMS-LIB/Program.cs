@@ -726,7 +726,7 @@ public class Patcher
         """, 
             """
         eventToSet = 101; 
-        if ((global.event[eventToSet] > 0) || (((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) 
+        if ((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) 
         {
             global.event[eventToSet] = 1;
             wasAlreadyDestroyed = 1; 
@@ -734,7 +734,7 @@ public class Patcher
         }
         """);
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), "wall = instance_create((x + 16), y, oSolid1x4)",
-            "wall = instance_create(x + (16 * facingDirection), y, oSolid1x4);");
+            "var xWallOffset = 16; if (facingDirection == -1) xWallOffset = -32; wall = instance_create(x + xWallOffset, y, oSolid1x4);");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Other_11"),
         """
         o = instance_create(x, y, oMoveWater)
@@ -859,8 +859,17 @@ public class Patcher
             $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
             
                 
-        //Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors
-        PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a08_Create"), "if (global.targety > 240) { with (oA2SmallTurbine) instance_destroy(); global.event[101] = 4; }");
+        //Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors and to "water should be here" if entering from the top.
+        PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a08_Create"), """
+        if (global.targety == 160 && global.event[101] < 1)
+            global.event[101] = 1;
+        else if (global.targety > 240) 
+        { 
+            with (oA2SmallTurbine) 
+                instance_destroy(); 
+            global.event[101] = 4; 
+        }
+        """);
         //Remove setting of turbine event from adjacent rooms
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a09_Create"), "global.event[101] = 4", "");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a19_Create"), "global.event[101] = 4", "");
