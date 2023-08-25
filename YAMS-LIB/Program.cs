@@ -823,7 +823,7 @@ public class Patcher
             ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
             
         // Make EMP slots activate doors instantly, rather than having to wait 1.5 seconds
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0"), "alarm[0] = 90", "alarm[0] = 1");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBattery_Collision_187"), "alarm[0] = 90", "alarm[0] = 1");
         
         // Fix Emp devices unlocking all doors automatically!
         string empBatteryCellCondition = "false";
@@ -2338,7 +2338,9 @@ public class Patcher
                         DoorLockType.EMPA5PipeHub => "lock = 29; originalLock = lock; event = -1;",
                         DoorLockType.EMPA5RightExterior => "lock = 30; originalLock = lock; event = -1;",
                         DoorLockType.Locked => "lock = 31; originalLock = lock; event = -1;",
-                        DoorLockType.A2WaterTurbine => $"eventToSet = {doorEventIndex}; " +
+                        DoorLockType.A2WaterTurbine => $"eventToSet = {doorEventIndex};" +
+                                                       "if ((x+48) == room_width) instance_create(x+64, y, oSolid1x4)" +
+                                                       "else if ((x-48) == 0) instance_create(x-64, y, oSolid1x4)" +
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}}",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
