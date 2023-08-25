@@ -183,6 +183,10 @@ public class GameCosmetics
     [JsonInclude]
     [JsonPropertyName("room_names_on_hud")]
     public RoomNameHudEnum RoomNameHud;
+    
+    [JsonInclude]
+    [JsonPropertyName("music_shuffle")]
+    public Dictionary<string, string> MusicShuffleDict = new Dictionary<string, string>();
 }
 
 public class GamePatches

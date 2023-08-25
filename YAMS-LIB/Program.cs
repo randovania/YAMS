@@ -609,6 +609,9 @@ public class Patcher
                 sprite.Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict[spriteName]];
             }
         }
+        
+        // Shuffle Music
+        MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
 
 
         // Create new wisdom septogg object
