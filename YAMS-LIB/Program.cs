@@ -1842,6 +1842,8 @@ public class Patcher
         foreach (var room in gmData.Rooms.Where(r => r.Name.Content.StartsWith("rm_a")))
             AppendGMLInCode(room.CreationCodeId, "global.objdeactivate = 0");
             
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_start_new_game"), "global.targetx = global.save_x; global.targetx = global.save_y;");
+        
         // Make new game not hardcode separate starting values
         PrependGMLInCode(characterVarsCode, "global.startingSave = 0;");
         var startNewGame = gmData.Code.ByName("gml_Script_start_new_game");
