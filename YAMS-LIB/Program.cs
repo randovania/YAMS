@@ -2552,7 +2552,7 @@ public class Patcher
         if (seedObject.Patches.SeptoggHelpers)
             ReplaceGMLInCode(characterVarsCode, "global.septoggHelpers = 0", "global.septoggHelpers = 1");
         foreach (var code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_")))
-            PrependGMLInCode(code, "if (!global.septoggHelpers) return true;");
+            PrependGMLInCode(code, "if (!global.septoggHelpers) return true; else return false;");
             
         foreach (UndertaleRoom room in gmData.Rooms)
         {
@@ -2562,6 +2562,10 @@ public class Patcher
         }
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h25_4105_Create"), "else if (global.hasBombs == 1 || global.hasSpiderball == 1 || global.hasSpacejump == 1)",
             "else if (!global.septoggHelpers)");
+        // Make these septoggs always appear instead of only when coming from certain room
+        ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a13_5007_Create"), "&& oControl.mod_previous_room == 103", "");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a3a07_5533_Create"), "&& oControl.mod_previous_room == 136", "");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a5a05_8701_Create"), "&& oControl.mod_previous_room == 300", "");
             
             
         // Options to turn off the random room geometry changes!
@@ -2661,8 +2665,8 @@ public class Patcher
                     "global.softlockPrevention");
         }
             
-        // Crumble blocks before Ice chamber
-        foreach (var gameObject in gmData.Rooms.ByName("rm_a5c31").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
+        // Crumble blocks and shoot block before Ice chamber
+        foreach (var gameObject in gmData.Rooms.ByName("rm_a5c31").GameObjects.Where(o => o.ObjectDefinition.Name.Content is "oBlockStep" or "oBlockShoot"))
         {
             ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 277 && global.ibeam == 0 && global.item[scr_itemchange(11)] == 1",
                 "global.softlockPrevention");
