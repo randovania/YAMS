@@ -1549,7 +1549,7 @@ public class Patcher
         // ALTERNATIVE: if missile equipped, but no launcher, make EMP effect display that usually appears in gravity area
             
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
-        PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
+        PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipSaveCutscene = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
                                             "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
             
         // Set geothermal reactor to always be exploded
@@ -2912,7 +2912,10 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3; with (oA1MovingPlatform) with (myblock) instance_destroy()}");
         // Fix audio for the orb cutscenes
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
+        
         // Shorten save animation
+        if (seedObject.Patches.SkipSaveCutscene)
+            ReplaceGMLInCode(characterVarsCode, "global.skipSaveCutscene = 0", "global.skipSaveCutscene = 1");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
             if (statetime == 1)
             {
@@ -2929,7 +2932,7 @@ public class Patcher
             if (statetime == 1)
             {
                 sfx_play(sndSave)
-                if (!global.skipCutscenes)
+                if (!global.skipSaveCutscene)
                 {
                     instance_create(x, y, oSaveFX)
                     instance_create(x, y, oSaveSparks)
@@ -2938,7 +2941,7 @@ public class Patcher
                 save_game(("save" + string((global.saveslot + 1))))
                 refill_heath_ammo()
             }
-            if ((statetime == 230 && !global.skipCutscenes) || (statetime == 10 && global.skipCutscenes))
+            if ((statetime == 230 && !global.skipSaveCutscene) || (statetime == 10 && global.skipSaveCutscene))
                 state = IDLE
         """);
 

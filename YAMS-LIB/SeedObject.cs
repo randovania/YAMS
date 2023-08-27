@@ -211,6 +211,10 @@ public class GamePatches
     public bool SkipCutscenes;
     
     [JsonInclude]
+    [JsonPropertyName("skip_save_cutscene")]
+    public bool SkipSaveCutscene;
+    
+    [JsonInclude]
     [JsonPropertyName("skip_item_cutscenes")]
     public bool SkipItemFanfares;
     
