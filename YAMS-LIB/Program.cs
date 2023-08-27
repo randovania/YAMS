@@ -308,6 +308,18 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_4"]] },
             }
         });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemUnknown"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_4"]] },
+            }
+        });
             
         gmData.Sprites.Add(new UndertaleSprite()
         {
