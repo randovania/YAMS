@@ -2356,8 +2356,6 @@ public class Patcher
                         DoorLockType.EMPA5RightExterior => "lock = 30; originalLock = lock; event = -1;",
                         DoorLockType.Locked => "lock = 31; originalLock = lock; event = -1;",
                         DoorLockType.A2WaterTurbine => $"eventToSet = {doorEventIndex};" +
-                                                       "if ((x+48) == room_width) instance_create(x+64, y, oSolid1x4)" +
-                                                       "else if ((x-48) == 0) instance_create(x-64, y, oSolid1x4)" +
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}}",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
@@ -2381,6 +2379,10 @@ public class Patcher
                         gameObject.ObjectDefinition = waterTurbineObject;
                         gameObject.X += (24 * (int)gameObject.ScaleX);
                         gameObject.ScaleX *= -1;
+                        if ((gameObject.X - 48) == 0)
+                            room.GameObjects.Add(CreateRoomObject(gameObject.X-72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
+                        else if ((gameObject.X + 48) == room.Width)
+                            room.GameObjects.Add(CreateRoomObject(gameObject.X+72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
                         
                     }
 
