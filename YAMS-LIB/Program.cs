@@ -741,7 +741,8 @@ public class Patcher
         """, 
             """
         eventToSet = 101; 
-        if ((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) 
+        if (((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) ||
+            (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 0)) 
         {
             global.event[eventToSet] = 1;
             wasAlreadyDestroyed = 1; 
@@ -760,7 +761,7 @@ public class Patcher
         """,
         """
         global.event[eventToSet] = 1;
-        if (room == rm_a2h02 && x == 912 && y == 1536)
+        if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 0)
         {
             o = instance_create(x, y, oMoveWater)
             o.targety = 1552
@@ -3348,6 +3349,9 @@ public class Patcher
 
 
         // TODO: rewrite log rendering to have color
+        
+        
+        // Multiworld stuff
         
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
