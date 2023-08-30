@@ -2895,6 +2895,8 @@ public class Patcher
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oEggTrigger_Create_0"), """
             if (global.skipCutscenes)
             {
+                 if (oControl.mod_monstersextremecheck == 1)
+                    oControl.mod_monstersextreme = 1
                 global.event[302] = 1
                 global.monstersleft = 9
                 if (global.difficulty == 2)
