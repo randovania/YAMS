@@ -726,7 +726,7 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a04_Create"), "if (!global.event[103]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3a01_Create"), "if (!global.event[152]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4a05_Create"), "if (!global.event[207]) {with (oDoor) lock = 4;}");
-        AppendGMLInCode(gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0"), "with (oDoor) lock = 4;");
+        AppendGMLInCode(gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0"), "else { with (oDoor) lock = 4; }");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a11_Create"), "if (!global.event[307]) {with (oDoor) lock = 4;}");
             
         // Fix doors in tester to be always blue
