@@ -2929,6 +2929,10 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0"), "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3; with (oA1MovingPlatform) with (myblock) instance_destroy()}");
         // Fix audio for the orb cutscenes
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oMusicV2_Other_4"), "sfx_stop(sndStoneLoop)");
+        // Skip baby collected cutscene
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267"), "if (global.skipCutscenes) { global.event[304] = 1; instance_create(x, y, oHatchling); instance_destroy(); exit; }");
+        // Skip A5 activation cutscene to not have to wait a long time
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Collision_267"), "state = 1", "state = 1; if (global.skipCutscenes) {statetime = 119;}");
         
         // Shorten save animation
         if (seedObject.Patches.SkipSaveCutscene)
