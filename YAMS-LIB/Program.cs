@@ -2100,8 +2100,12 @@ public class Patcher
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
             
         // Set starting items
+        bool alreadyAddedMissiles = false;
+        bool alreadyAddedSupers = false;
+        bool alreadyAddedPBombs = false;
         foreach ((var item, var quantity) in seedObject.StartingItems)
         {
+            var finalQuantity = quantity;
             switch (item)
             {
                 case ItemEnum.EnergyTank:
@@ -2109,21 +2113,40 @@ public class Patcher
                     ReplaceGMLInCode(characterVarsCode, $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1}",
                         $"global.playerhealth = {(seedObject.Patches.EnergyPerTank + (seedObject.Patches.EnergyPerTank * quantity)-1)};");
                     break;
-                case ItemEnum.Missile:
-                    ReplaceGMLInCode(characterVarsCode, "global.missiles = 0", $"global.missiles = {quantity};");
-                    break;
-                case ItemEnum.SuperMissile:
-                    ReplaceGMLInCode(characterVarsCode, "global.smissiles = 0", $"global.smissiles = {quantity};");
-                    break;
-                case ItemEnum.PBomb:
-                    ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", $"global.pbombs = {quantity};");
-                    break;
-                    
                 case ItemEnum.LockedMissile:
-                case ItemEnum.LockedSuperMissile:
-                case ItemEnum.LockedPBomb:
-                    break;
+                case ItemEnum.Missile:
+                    if (alreadyAddedMissiles) break;
+                    if (item == ItemEnum.Missile && seedObject.StartingItems.TryGetValue(ItemEnum.LockedMissile, out int lockedMissileQuantity))
+                        finalQuantity += lockedMissileQuantity;
+                    if (item == ItemEnum.LockedMissile && seedObject.StartingItems.TryGetValue(ItemEnum.Missile, out int missileQuantity))
+                        finalQuantity += missileQuantity;
                     
+                    ReplaceGMLInCode(characterVarsCode, "global.missiles = 0", $"global.missiles = {finalQuantity};");
+                    alreadyAddedMissiles = true;
+                    break;
+                case ItemEnum.LockedSuperMissile:
+                case ItemEnum.SuperMissile:
+                    if (alreadyAddedSupers) break;
+                    if (item == ItemEnum.SuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.LockedSuperMissile, out int lockedSuperQuantity))
+                        finalQuantity += lockedSuperQuantity;
+                    if (item == ItemEnum.LockedSuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.SuperMissile, out int superQuantity))
+                        finalQuantity += superQuantity;
+                    
+                    ReplaceGMLInCode(characterVarsCode, "global.smissiles = 0", $"global.smissiles = {finalQuantity};");
+                    alreadyAddedSupers = true;
+                    break;
+
+                case ItemEnum.LockedPBomb:
+                case ItemEnum.PBomb:
+                    if (alreadyAddedPBombs) break;
+                    if (item == ItemEnum.PBomb && seedObject.StartingItems.TryGetValue(ItemEnum.LockedPBomb, out int lockedPBombQuantity))
+                        finalQuantity += lockedPBombQuantity;
+                    if (item == ItemEnum.LockedPBomb && seedObject.StartingItems.TryGetValue(ItemEnum.PBomb, out int pBombQuantity))
+                        finalQuantity += pBombQuantity;
+                    
+                    ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", $"global.pbombs = {finalQuantity};");
+                    alreadyAddedPBombs = true;
+                    break;
                 case ItemEnum.MissileLauncher:
                 case ItemEnum.SuperMissileLauncher:
                 case ItemEnum.PBombLauncher:
