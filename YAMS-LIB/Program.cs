@@ -3250,25 +3250,25 @@ public class Patcher
         //Defines the new septogg hint entries
         AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"""
             cat[5] = "DNA Hints"
-            lbl[50] = "Main Caves"
+            lbl[50] = "{seedObject.RoomObjects["rm_a0h13"].RegionName}"
             txt[50, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA0]}"
             pic[50, 0] = bgLogDNA0
-            lbl[51] = "Golden Temple"
+            lbl[51] = "{seedObject.RoomObjects["rm_a1b02"].RegionName}"
             txt[51, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA1]}"
             pic[51, 0] = bgLogDNA1
-            lbl[52] = "Hydro Station"
+            lbl[52] = "{seedObject.RoomObjects["rm_a2c05"].RegionName}"
             txt[52, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA2]}" 
             pic[52, 0] = bgLogDNA2
-            lbl[53] = "Industrial Complex"
+            lbl[53] = "{seedObject.RoomObjects["rm_a3b10"].RegionName}"
             txt[53, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA3]}"
             pic[53, 0] = bgLogDNA3
-            lbl[54] = "The Tower"
+            lbl[54] = "{seedObject.RoomObjects["rm_a4h03"].RegionName}"
             txt[54, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA4]}"
             pic[54, 0] = bgLogDNA4
-            lbl[55] = "Distribution Center"
+            lbl[55] = "{seedObject.RoomObjects["rm_a5c17"].RegionName}"
             txt[55, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA5]}"
             pic[55, 0] = bgLogDNA5
-            lbl[56] = "The Nest"
+            lbl[56] = "{seedObject.RoomObjects["rm_a6b02"].RegionName}"
             txt[56, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA6]}"
             pic[56, 0] = bgLogDNA6
             """);
