@@ -442,12 +442,16 @@ public enum ItemEnum
     Varia,
     [EnumMember(Value = "Space Jump")]
     Spacejump,
+    [EnumMember(Value = "Progressive Jump")]
+    ProgressiveJump,
     [EnumMember(Value = "Speed Booster")]
     Speedbooster,
     [EnumMember(Value = "Screw Attack")]
     Screwattack,
     [EnumMember(Value = "Gravity Suit")]
     Gravity,
+    [EnumMember(Value = "Progressive Suit")]
+    ProgressiveSuit,
     [EnumMember(Value = "Power Beam")]
     Power,
     [EnumMember(Value = "Charge Beam")]
