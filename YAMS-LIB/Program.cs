@@ -742,9 +742,10 @@ public class Patcher
             """
         eventToSet = 101; 
         if (((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) ||
-            (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 0)) 
+            (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] != 0)) 
         {
-            global.event[eventToSet] = 1;
+            if (global.event[eventToSet] < 1)
+                global.event[eventToSet] = 1;
             wasAlreadyDestroyed = 1; 
             instance_destroy();
         }
