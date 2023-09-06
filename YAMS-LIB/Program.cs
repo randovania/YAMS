@@ -2179,6 +2179,12 @@ public class Patcher
                 case ItemEnum.Spacejump:
                     ReplaceGMLInCode(characterVarsCode, "global.hasSpacejump = 0", $"global.hasSpacejump = {quantity};");
                     break;
+                case ItemEnum.ProgressiveJump:
+                    if (quantity >= 1)
+                        ReplaceGMLInCode(characterVarsCode, "global.hasHijump = 0", $"global.hasHijump = 1;");
+                    if (quantity >= 2)
+                        ReplaceGMLInCode(characterVarsCode, "global.hasSpacejump = 0", $"global.hasSpacejump = 1;");
+                    break;
                 case ItemEnum.Speedbooster:
                     ReplaceGMLInCode(characterVarsCode, "global.hasSpeedbooster = 0", $"global.hasSpeedbooster = {quantity};");
                     break;
@@ -2187,6 +2193,12 @@ public class Patcher
                     break;
                 case ItemEnum.Gravity:
                     ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = {quantity};");
+                    break;
+                case ItemEnum.ProgressiveSuit:
+                    if (quantity >= 1)
+                        ReplaceGMLInCode(characterVarsCode, "global.hasVaria = 0", $"global.hasVaria = 1;");
+                    if (quantity >= 2)
+                        ReplaceGMLInCode(characterVarsCode, "global.hasGravity = 0", $"global.hasGravity = 1;");
                     break;
                 case ItemEnum.Power:
                     // Stubbed for now, may get a purpose in the future
@@ -2482,6 +2494,7 @@ public class Patcher
                 ItemEnum.Spacejump => "event_inherited(); if (active) { global.spacejump = 1; global.hasSpacejump = 1; } with (oCharacter) sfx_stop(spinjump_sound);",
                 ItemEnum.Speedbooster => "event_inherited(); if (active) { global.speedbooster = 1; global.hasSpeedbooster = 1; }",
                 ItemEnum.Hijump => "event_inherited(); if (active) { global.hijump = 1; global.hasHijump = 1; }",
+                ItemEnum.ProgressiveJump => "event_inherited(); if (active) { if (global.hasSpacejump) exit; else if (global.hasHijump) { global.spacejump = 1; global.hasSpacejump = 1; } else { global.hijump = 1; global.hasHijump = 1; } }",
                 ItemEnum.Gravity => """
                         event_inherited();
                         global.hasGravity = 1;
@@ -2496,6 +2509,35 @@ public class Patcher
                         global.SuitChangeX = x;
                         global.SuitChangeY = y;
                         global.SuitChangeGravity = 1;
+                        if (active)
+                        {
+                            with (oCharacter)
+                                alarm[4] = 1;
+                        }
+                    """,
+                ItemEnum.ProgressiveSuit => """
+                        event_inherited();
+                        global.SuitChange = !global.skipItemFanfare;
+                        // If any Metroid exists, force suit cutscene to be off
+                        if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
+                            global.SuitChange = 0;
+                        if (collision_line((x + 8), (y - 8), (x + 8), (y - 32), oSolid, false, true))
+                            global.SuitChange = 0;
+                        if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
+                            global.SuitChange = 0;
+                        global.SuitChangeX = x;
+                        global.SuitChangeY = y;
+                        if (global.hasGravity) exit
+                        else if (global.hasVaria) 
+                        {
+                            global.hasGravity = 1;
+                            global.SuitChangeGravity = 1;
+                        }
+                        else 
+                        {
+                            global.hasVaria = 1;
+                            global.SuitChangeGravity = 0;
+                        }
                         if (active)
                         {
                             with (oCharacter)
