@@ -2429,7 +2429,7 @@ public class Patcher
         {
             var gmObject = gmData.GameObjects.ByName(pickupName);
             gmObject.Sprite = gmData.Sprites.ByName(pickup.SpriteDetails.Name);
-            if (gmObject.Sprite is null)
+            if (gmObject.Sprite is null && !String.IsNullOrWhiteSpace(pickup.SpriteDetails.Name))
                 throw new NotSupportedException($"The sprite for {pickupName} ({gmObject.Name.Content}) cannot be null!");
             // First 0 is for creation event
             var createCode = gmObject.Events[0][0].Actions[0].CodeId;
