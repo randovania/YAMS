@@ -3001,7 +3001,23 @@ public class Patcher
         // Skip baby collected cutscene
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267"), "if (global.skipCutscenes) { global.event[304] = 1; instance_create(x, y, oHatchling); instance_destroy(); exit; }");
         // Skip A5 activation cutscene to not have to wait a long time
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Collision_267"), "state = 1", "state = 1; if (global.skipCutscenes) {statetime = 119;}");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0"), """
+        if (oCharacter.x < 480)
+        {
+            with (oCharacter)
+                x += 1
+        }
+""", """
+        if (oCharacter.x < 480)
+        {
+            with (oCharacter)
+                x += 1
+        }
+        if (oCharacter.x == 480 && global.skipCutscenes)
+            statetime = 119
+""");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0"), "instance_create(x, y, oA5BotSpawnCutscene)",
+            "instance_create(x, y, oA5BotSpawnCutscene); if (global.skipCutscenes) statetime = 319");
         
         // Shorten save animation
         if (seedObject.Patches.SkipSaveCutscene)
