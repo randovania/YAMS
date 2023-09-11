@@ -40,7 +40,9 @@ jobs:
         run: dotnet publish YAMS-LIB -c Release -o am2r_yams/yams
 
       - name: build
-        run: PYTHONWARNINGS=error python -m build
+        # Ideally, we'd have PYTHONWARNINGS=error here, but
+        # https://github.com/pypa/pip/issues/12243 is causing issues.
+        run: python -m build
 
       - name: Store the packages
         uses: actions/upload-artifact@v3
