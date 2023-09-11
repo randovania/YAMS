@@ -2394,7 +2394,8 @@ public class Patcher
                         DoorLockType.Locked => "lock = 31; originalLock = lock; event = -1;",
                         DoorLockType.A2WaterTurbine => $"eventToSet = {doorEventIndex};" +
                                                        $"if (global.event[eventToSet] > 0)" +
-                                                       $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}}",
+                                                       $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}} " +
+                                                       $"if (wasAlreadyDestroyed && global.event[eventToSet] < 1) global.event[eventToSet] = 1;",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
                     };
 
