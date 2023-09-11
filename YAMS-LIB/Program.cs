@@ -2687,6 +2687,9 @@ public class Patcher
             ReplaceGMLInCode(characterVarsCode, "global.softlockPrevention = 0", "global.softlockPrevention = 1;");
 
         // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
+        // Also change these to chain bomb blocks
+        foreach (var go in gmData.Rooms.ByName("rm_a3b08").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockShootChain"))
+            go.ObjectDefinition = gmData.GameObjects.ByName("oBlockBombChain");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a3b08_Create"), """
                 if (oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1)
                 {
