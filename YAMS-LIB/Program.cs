@@ -2670,7 +2670,7 @@ public class Patcher
             {
                 if (gameObject.CreationCode is null) continue;
                 
-                ReplaceGMLInCode(gameObject.CreationCode, "instance_destroy()", "while (false) {}");
+                ReplaceGMLInCode(gameObject.CreationCode, "global.hasScrewattack == 0", "false");
             }
         }
         // A bunch of tiles in a5c13 - screw blocks before pipe hub
