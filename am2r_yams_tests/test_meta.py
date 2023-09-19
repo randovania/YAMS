@@ -10,15 +10,14 @@ from pythonnet import load, unload
 @pytest.fixture(scope="session", autouse=True)
 def _mock_load_unload():
     with patch("am2r_yams.wrapper._load_cs_environment") as mocked_load:
-        with patch("am2r_yams.wrapper._unload_cs_environment") as mocked_unload:
-            load("coreclr")
-            import clr
+        load("coreclr")
+        import clr
 
-            clr.AddReference("YAMS-LIB")
-            from YAMS_LIB import Patcher as CSharp_Patcher
+        clr.AddReference("YAMS-LIB")
+        from YAMS_LIB import Patcher as CSharp_Patcher
 
-            yield
-            unload()
+        yield
+        unload()
 
 
 def test_correct_versions():
@@ -38,5 +37,5 @@ def test_throw_correct_exception():
 
             raise System.Exception("Dummy Exception")
 
-    assert excinfo.type is YamsException
+    assert excinfo.type is System.Exception
     assert "Dummy Exception" == str(excinfo.value)

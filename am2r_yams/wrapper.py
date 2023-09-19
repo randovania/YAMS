@@ -87,10 +87,6 @@ def _load_cs_environment():
 
     clr.AddReference("YAMS-LIB")
 
-def _unload_cs_environment():
-    # Unload dotnet runtime
-    unload()
-
 @contextmanager
 def load_wrapper() -> Wrapper:
     try:
@@ -98,9 +94,7 @@ def load_wrapper() -> Wrapper:
         from YAMS_LIB import Patcher as CSharp_Patcher
         yield Wrapper(CSharp_Patcher)
     except Exception as e:
-        raise YamsException(str(e)) from None
-    finally:
-        _unload_cs_environment
+        raise e
 
 
 def _prepare_environment_and_get_data_win_path(folder: str) -> Path:
