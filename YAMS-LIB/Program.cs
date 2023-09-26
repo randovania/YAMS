@@ -762,7 +762,7 @@ public class Patcher
         """,
         """
         global.event[eventToSet] = 1;
-        if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 0)
+        if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 1)
         {
             o = instance_create(x, y, oMoveWater)
             o.targety = 1552
@@ -972,93 +972,19 @@ public class Patcher
         var waterTurbineDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_waterStationDoor_Create") };
         gmData.Code.Add(waterTurbineDoorCC);
         var rm_a2a08 = gmData.Rooms.ByName("rm_a2a08");
-        rm_a2a08.GameObjects.Add(new UndertaleRoom.GameObject()
-        {
-            X = 24,
-            Y = 96,
-            ObjectDefinition = gmData.GameObjects.ByName("oDoor"),
-            InstanceID = A2WaterTurbineLeftDoorID,
-            ScaleX = 1,
-            ScaleY = 1,
-            CreationCode = waterTurbineDoorCC
-        });
+        rm_a2a08.GameObjects.Add(CreateRoomObject(24, 96, gmData.GameObjects.ByName("oDoor"), waterTurbineDoorCC, 1, 1, A2WaterTurbineLeftDoorID));
             
-        var tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040174);
-        tempTile.X = 16;
+        
         var doorTileset = gmData.Backgrounds.ByName("tlDoor");
-        tempTile.BackgroundDefinition = doorTileset;
-        tempTile.SourceX = 112;
-        tempTile.SourceY = 64;
-            
-        tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040175);
-        tempTile.X = 16;
-        tempTile.BackgroundDefinition = doorTileset;
-        tempTile.SourceX = 112;
-        tempTile.SourceY = 32;
-            
-        tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040176);
-        tempTile.X = 16;
-        tempTile.BackgroundDefinition = doorTileset;
-        tempTile.SourceX = 112;
-        tempTile.SourceY = 16;
-            
-        tempTile = rm_a2a08.Tiles.First(t => t.InstanceID == 10040177);
-        tempTile.X = 16;
-        tempTile.BackgroundDefinition = doorTileset;
-        tempTile.SourceX = 112;
-        tempTile.SourceY = 0;
-
-        tempTile = new UndertaleRoom.Tile()
-        {
-            X = 0,
-            Y = 144,
-            BackgroundDefinition = doorTileset,
-            SourceX = 96,
-            SourceY = 64,
-            Width = 16,
-            Height = 16,
-            InstanceID = gmData.GeneralInfo.LastTile++
-        };
-        rm_a2a08.Tiles.Add(tempTile);
-            
-        tempTile = new UndertaleRoom.Tile()
-        {
-            X = 0,
-            Y = 128,
-            BackgroundDefinition = doorTileset,
-            SourceX = 96,
-            SourceY = 32,
-            Width = 16,
-            Height = 16,
-            InstanceID = gmData.GeneralInfo.LastTile++
-        };
-        rm_a2a08.Tiles.Add(tempTile);
-            
-        tempTile = new UndertaleRoom.Tile()
-        {
-            X = 0,
-            Y = 112,
-            BackgroundDefinition = doorTileset,
-            SourceX = 96,
-            SourceY = 16,
-            Width = 16,
-            Height = 16,
-            InstanceID = gmData.GeneralInfo.LastTile++
-        };
-        rm_a2a08.Tiles.Add(tempTile);
-            
-        tempTile = new UndertaleRoom.Tile()
-        {
-            X = 0,
-            Y = 96,
-            BackgroundDefinition = doorTileset,
-            SourceX = 96,
-            SourceY = 0,
-            Width = 16,
-            Height = 16,
-            InstanceID = gmData.GeneralInfo.LastTile++
-        };
-        rm_a2a08.Tiles.Add(tempTile);
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -101, doorTileset, 112, 64));        
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 128, -101, doorTileset, 112, 32));
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 112, -101, doorTileset, 112, 16));
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -101, doorTileset, 112, 0));     
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 144, -101, doorTileset, 96, 64));
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -101, doorTileset, 96, 32));    
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 112, -101, doorTileset, 96, 16));
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -101, doorTileset, 96, 0));    
+        
             
         // Implement dna item
         var enemyObject = gmData.GameObjects.ByName("oItem");
