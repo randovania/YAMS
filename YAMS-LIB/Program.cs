@@ -716,7 +716,7 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)", 
             "{ event_user(2); if(event > 0 && lock < 4) global.event[event] = 1; }");
         // ...But don't make them automatically opened for non-ammo doors!
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "lock = 0", "if (lock < 5) lock = 0;");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "lock = 0", "if (lock < 4) lock = 0;");
             
         // Make doors when unlocked, go to the type they were before except for ammo doors
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Create_0"), "originalLock = lock;");
