@@ -784,6 +784,11 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[207]");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[207]");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[207] = 1;");
+        
+        // Force drops into rooms if ammo is low
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3h02_Create"), "if (global.smissiles == 0 && global.maxsmissiles > 0) instance_create(32, 128, oSMPickup)");
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a08_Create"), "if (global.pbombs == 0 && global.maxpbombs > 0) instance_create(536, 140, oPBPickup)");
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a12_Create"), "if (global.pbombs == 0 && global.maxpbombs > 0) instance_create(496, 168, oPBPickup)");
             
         // Make Doors shine more in the dark
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLightEngine_Other_11"), "1, 0.4", "0.7, 1.4");
