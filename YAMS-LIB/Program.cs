@@ -1379,13 +1379,13 @@ public class Patcher
 
         // Make metroids drop an item onto you on death and increase music timer to not cause issues
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMAlpha_Other_10"), "check_areaclear()",
-            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[1] >= 0) alarm[1] = 120; }");
+            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; changeOnMap = false} with (oMusicV2) { if (alarm[1] >= 0) alarm[1] = 120; }");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMGamma_Other_10"), "check_areaclear()",
-            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[2] >= 0) alarm[2] = 120; }");
+            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; changeOnMap = false} with (oMusicV2) { if (alarm[2] >= 0) alarm[2] = 120; }");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMZeta_Other_10"), "check_areaclear()",
-            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[3] >= 0) alarm[3] = 120; }");
+            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; changeOnMap = false} with (oMusicV2) { if (alarm[3] >= 0) alarm[3] = 120; }");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMOmega_Other_10"), "check_areaclear()",
-            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; } with (oMusicV2) { if (alarm[4] >= 0) alarm[4] = 120; }");
+            "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; changeOnMap = false} with (oMusicV2) { if (alarm[4] >= 0) alarm[4] = 120; }");
 
         // Make new global.lavastate 11 that requires 46 dna to be collected
         SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
@@ -2301,8 +2301,9 @@ public class Patcher
             
             
         // Make items spawned from metroids not change map
+        AppendGMLInCode(gmData.Code.ByName("gml_Object_oItem_Create_0"), "changeOnMap = true");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (distance_to_object(oItem) > 180)", 
-            "if ((distance_to_object(oItem) > 180) && (instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0))");
+            "if ((distance_to_object(oItem) > 180) && changeOnMap)");
             
         // Door locks
         // Adjust global event array to be 700
