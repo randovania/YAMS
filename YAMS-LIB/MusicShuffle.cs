@@ -9,23 +9,25 @@ public class MusicShuffle
         if (musicDict.Count == 0)
             return;
         
-        // First, we rename all songs to have a _ at the end
+        
         DirectoryInfo musicPath = new DirectoryInfo(musicDirectory);
+        
+        // First we check whether we have a testers and itemamb2 music file. If we dont, we copy them
+        if (!File.Exists(musicDirectory + "/mustester.ogg") && File.Exists(musicDirectory + "/musancientguardian.ogg"))
+            File.Copy(musicDirectory + "/musancientguardian.ogg", musicDirectory + "/mustester.ogg");
+        
+        if (!File.Exists(musicDirectory + "/musitemamb2.ogg") && File.Exists(musicDirectory + "/musitemamb.ogg"))
+            File.Copy(musicDirectory + "/musitemamb.ogg", musicDirectory + "/musitemamb2.ogg");
+        
+        // Then we rename all songs to have an _ at the end
         foreach (var musicFile in musicPath.GetFiles("*.ogg"))
             musicFile.MoveTo(musicFile.FullName + "_");
 
         // Then we go through each song in the dictionary
         foreach ((var origSongName, var newSongName) in musicDict)
         {
-            string finalSongName = newSongName;
-            // These songs are optional, and may not be there in the directory
-            if (newSongName == "mustester.ogg" && !File.Exists(musicDirectory + "mustester.ogg_"))
-                finalSongName = "musancientguardian.ogg";
-            
-            if (newSongName == "musitemamb2.ogg" && !File.Exists(musicDirectory + "musitemamb2.ogg_"))
-                finalSongName = "musitemamb.ogg";
-            
-            File.Move(musicDirectory + "/" + origSongName + "_", musicDirectory + "/" + finalSongName);
+            if (File.Exists(musicDirectory + "/" + origSongName + "_"))
+                File.Move(musicDirectory + "/" + origSongName + "_", musicDirectory + "/" + newSongName);
         }
         
         // Finally, if there are still songs with _ left, try to rename them back to what they should've been
