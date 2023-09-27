@@ -41,8 +41,6 @@ public class Patcher
         // TODO: lots of code cleanup and sanity checking 
             
         // TODO: make insanity save stations enabled again by using jes' code
-            
-        // TODO: add missile/super drops in spots where you can get sotflocked via ammo (ice, a3 entrance maybe more)
         
         // Read 1.5.x data
         var gmData = new UndertaleData();
@@ -298,7 +296,7 @@ public class Patcher
             
         gmData.Sprites.Add(new UndertaleSprite()
         {
-            // TODO: sprite is offset by a bit
+            // TODO: sprite is offset by a bit? Double check whether thats still the case
             Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
             Textures =
             {
@@ -2013,7 +2011,7 @@ public class Patcher
             "show_message(\"Save file is from another seed! (\" + global.gameHash + \")\"); " +
             "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
             "} global.playerhealth = global.maxhealth");
-        // TODO: instead of just show_messsage, have an actual proper in-game solution
+        // TODO: instead of just show_messsage, have an actual proper in-game solution. Maybe do this after MW
         // reference: https://cdn.discordapp.com/attachments/914294505107251231/1121816654385516604/image.png
             
         var sv6loadDetails = gmData.Code.ByName("gml_Script_sv6_load_details");
