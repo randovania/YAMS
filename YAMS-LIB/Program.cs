@@ -979,14 +979,14 @@ public class Patcher
             
         
         var doorTileset = gmData.Backgrounds.ByName("tlDoor");
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -101, doorTileset, 112, 64));        
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 128, -101, doorTileset, 112, 32));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 112, -101, doorTileset, 112, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -101, doorTileset, 112, 0));     
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 144, -101, doorTileset, 96, 64));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -101, doorTileset, 96, 32));    
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 112, -101, doorTileset, 96, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -101, doorTileset, 96, 0));    
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -103, doorTileset, 112, 64));        
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 128, -103, doorTileset, 112, 32));
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 112, -103, doorTileset, 112, 16));
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -103, doorTileset, 112, 0));     
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 144, -103, doorTileset, 96, 64));
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -103, doorTileset, 96, 32));    
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 112, -103, doorTileset, 96, 16));
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -103, doorTileset, 96, 0));    
         
             
         // Implement dna item
