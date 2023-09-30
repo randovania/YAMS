@@ -24,7 +24,7 @@ public class MusicShuffle
             musicFile.MoveTo(musicFile.FullName + "_");
 
         // Then we go through each song in the dictionary
-        foreach ((var origSongName, var newSongName) in musicDict)
+        foreach ((var newSongName, var origSongName) in musicDict)
         {
             if (File.Exists(musicDirectory + "/" + origSongName + "_"))
                 File.Move(musicDirectory + "/" + origSongName + "_", musicDirectory + "/" + newSongName);
