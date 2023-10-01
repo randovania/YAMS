@@ -293,6 +293,66 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_4"]] },
             }
         });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemSmallHealthDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSmallHealthDrop_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSmallHealthDrop_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSmallHealthDrop_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSmallHealthDrop_4"]] },
+            }
+        });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemBigHealthDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBigHealthDrop_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBigHealthDrop_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBigHealthDrop_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBigHealthDrop_4"]] },
+            }
+        });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemMissileDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileDrop_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileDrop_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileDrop_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileDrop_4"]] },
+            }
+        });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemSMissileDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileDrop_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileDrop_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileDrop_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileDrop_4"]] },
+            }
+        });
+        
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemPBombDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_4"]] },
+            }
+        });
             
         gmData.Sprites.Add(new UndertaleSprite()
         {
@@ -2484,6 +2544,11 @@ public class Patcher
                 ItemEnum.Spazer => "event_inherited(); if (active) { global.sbeam = 1; global.hasSbeam = 1; }",
                 ItemEnum.Plasma => "event_inherited(); if (active) { global.pbeam = 1; global.hasPbeam = 1; }",
                 ItemEnum.Morphball => "event_inherited(); if (active) { global.morphball = 1; global.hasMorph = 1; }",
+                ItemEnum.SmallHealthDrop => $"event_inherited(); if (active) {{ global.playerhealth += {pickup.Quantity}; if (global.playerhealth > global.maxhealth) global.playerhealth = global.maxhealth }}",
+                ItemEnum.BigHealthDrop => $"event_inherited(); if (active) {{ global.playerhealth += {pickup.Quantity}; if (global.playerhealth > global.maxhealth) global.playerhealth = global.maxhealth }}",
+                ItemEnum.MissileDrop => $"event_inherited(); if (active) {{ global.missiles += {pickup.Quantity}; if (global.missiles > global.maxmissiles) global.missiles = global.maxmissiles }}",
+                ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
+                ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };

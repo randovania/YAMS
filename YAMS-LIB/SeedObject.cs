@@ -467,8 +467,17 @@ public enum ItemEnum
     [EnumMember(Value = "Morph Ball")]
     Morphball,
     [EnumMember(Value = "Nothing")]
-    Nothing
-    
+    Nothing,
+    [EnumMember(Value = "Small Health Drop")]
+    SmallHealthDrop,
+    [EnumMember(Value = "Big Health Drop")]
+    BigHealthDrop,
+    [EnumMember(Value = "Missile Drop")]
+    MissileDrop,
+    [EnumMember(Value = "Super Missile Drop")]
+    SuperMissileDrop,
+    [EnumMember(Value = "Power Bomb Drop")]
+    PBombDrop,
 }
 
 public class PickupObject
