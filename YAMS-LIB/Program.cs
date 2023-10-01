@@ -1622,7 +1622,28 @@ public class Patcher
     }
 """);
         ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "");
-            
+        
+        // Add speedbooster reduction 
+        PrependGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0;");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), "speedboost_steps > 75", "speedboost_steps >= 1 && speedboost_steps > (75 - global.speedBoosterFramesReduction)");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), "dash == 30", "dash >= 1 && dash >= (30 - (max(global.speedBoosterFramesReduction, 76)-76))");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
+            speedboost = 1
+            canturn = 0
+            sjball = 0
+            charge = 0
+            sfx_play(sndSBStart)
+            alarm[2] = 30
+        """, """
+            dash = 30
+            speedboost = 1
+            canturn = 0
+            sjball = 0
+            charge = 0
+            sfx_play(sndSBStart)
+            alarm[2] = 30
+        """);
+        
         // Decouple Major items from item locations
         PrependGMLInCode(characterVarsCode, "global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
                                             "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
@@ -1986,8 +2007,9 @@ public class Patcher
             ds_list_add(list, global.gameHash)
             ds_list_add(list, global.dna)
             ds_list_add(list, global.startingSave)
+            ds_list_add(list, global.speedBoosterFramesReduction)
             comment = "gives me some leeway in case i need to add more"
-            repeat (15)
+            repeat (14)
             {
                 ds_list_add(list, 0)
                 i += 1
@@ -2038,6 +2060,7 @@ public class Patcher
             global.gameHash = readline()
             global.dna = readline()
             global.startingSave = readline();
+            global.speedBoosterFramesReduction = readline();
             ds_list_clear(list)
             """);
         gmData.Code.Add(loadGlobalsCode);
@@ -2212,6 +2235,9 @@ public class Patcher
                     break;
                 case ItemEnum.Morphball:
                     ReplaceGMLInCode(characterVarsCode, "global.hasMorph = 0", $"global.hasMorph = {quantity};");
+                    break;
+                case ItemEnum.SpeedBoosterUpgrade:
+                    ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
                     break;
                 case ItemEnum.Nothing:
                     break;
@@ -2549,6 +2575,7 @@ public class Patcher
                 ItemEnum.MissileDrop => $"event_inherited(); if (active) {{ global.missiles += {pickup.Quantity}; if (global.missiles > global.maxmissiles) global.missiles = global.maxmissiles }}",
                 ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
                 ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
+                ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ global.speedBoosterFramesReduction += {pickup.Quantity}; }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };
