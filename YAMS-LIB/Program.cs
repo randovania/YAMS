@@ -20,7 +20,7 @@ public class Patcher
     }
 
     public static string Version = CreateVersionString();
-    
+
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
         // TODO: import jes tester display to make tester fight better
@@ -32,19 +32,19 @@ public class Patcher
         const uint PipeInDepthsLowerID = 400004;
         const uint PipeInDepthsUpperID = 400005;
         const uint PipeInWaterfallsID = 400006;
-            
+
         // Change this to not have to deal with floating point madness
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            
+
         var seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(jsonPath));
-            
-        // TODO: lots of code cleanup and sanity checking 
-            
+
+        // TODO: lots of code cleanup and sanity checking
+
         // TODO: make insanity save stations enabled again by using jes' code
-        
+
         // Read 1.5.x data
         var gmData = new UndertaleData();
-            
+
         using (FileStream fs = new FileInfo(am2rPath).OpenRead())
         {
             gmData = UndertaleIO.Read(fs);
@@ -55,13 +55,13 @@ public class Patcher
         var controlCreate = GetGMLCode(gmData.Code.ByName("gml_Object_oControl_Create_0"));
         if (!controlCreate.Contains("global.am2r_version = \"V1.5.5\""))
             throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
-        
+
 
         string GetGMLCode(UndertaleCode code)
         {
             return Decompiler.Decompile(code, decompileContext);
         }
-        
+
         void ReplaceGMLInCode(UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
         {
             var codeText = Decompiler.Decompile(code, decompileContext);
@@ -69,20 +69,20 @@ public class Patcher
             {
                 if (ignoreErrors)
                     return;
-                
+
                 throw new ApplicationException($"The text \"{textToReplace}\" was not found in \"{code.Name.Content}\"!");
             }
             codeText = codeText.Replace(textToReplace, replacementText);
             code.ReplaceGML(codeText, gmData);
         }
-            
+
         void PrependGMLInCode(UndertaleCode code, string prependedText)
         {
             var codeText = Decompiler.Decompile(code, decompileContext);
             codeText = prependedText + "\n" + codeText;
             code.ReplaceGML(codeText, gmData);
         }
-            
+
         void AppendGMLInCode(UndertaleCode code, string appendedText)
         {
             var codeText = Decompiler.Decompile(code, decompileContext);
@@ -143,7 +143,7 @@ public class Patcher
             {
                 AddAllSpritesFromDir(subDir);
             }
-            
+
             foreach (var filePath in Directory.GetFiles(dirPath))
             {
                 var sprite = Image.Load(filePath);
@@ -196,7 +196,7 @@ public class Patcher
                 a4PageImage.Save(ms, PngFormat.Instance);
                 a4Tex.TexturePage.TextureData.TextureBlob = ms.ToArray();
             }
-                
+
             var a4door2Tex = gmData.TexturePageItems[nameToPageItemDict["newA4Doors2"]];
             var a4Door2Image = Image.Load(a4door2Tex.TexturePage.TextureData.TextureBlob);
             a4Door2Image.Mutate((i => i.Crop(new Rectangle(a4door2Tex.SourceX, a4door2Tex.SourceY, a4door2Tex.SourceWidth, a4door2Tex.SourceHeight))));
@@ -222,24 +222,24 @@ public class Patcher
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA4"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA4"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA5"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA5"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("bgLogDNA6"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA6"]]});
-            
+
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpHideout"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpHideout"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpDepthsEntrance"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpDepthsEntrance"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpDepthsExit"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpDepthsExit"]]});
         gmData.Backgrounds.Add(new UndertaleBackground() {Name = gmData.Strings.MakeString("tlWarpWaterfall"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpWaterfall"]]});
-            
-            
+
+
         gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissile"]]});
         gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]]});
         gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBomb"]]});
-            
+
         // Replace existing door sprites
         gmData.Sprites.ByName("sDoorA5Locks").Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorBlue"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[1].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorMissile"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[2].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorSuper"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[3].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorPBomb"]];
         gmData.Sprites.ByName("sDoorA5Locks").Textures[4].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorTempLocked"]];
-            
+
         // Add new sprites for doors
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorChargeBeam"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorWaveBeam"]]});
@@ -268,7 +268,7 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPNearPipeHub"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorA5EMPRightExterior"]]});
         gmData.Sprites.ByName("sDoorA5Locks").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorLocked"]]});
-            
+
         // New sprites for door animation
         gmData.Sprites.ByName("sDoorA5").Textures.Clear();
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_1"]]});
@@ -280,10 +280,10 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_7"]]});
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_8"]]});
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_9"]]});
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
-            Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16, 
+            Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16,
             MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
             Textures =
             {
@@ -293,7 +293,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyMissile_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemSmallHealthDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -305,7 +305,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSmallHealthDrop_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemBigHealthDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -317,7 +317,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBigHealthDrop_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemMissileDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -329,7 +329,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileDrop_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemSMissileDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -341,7 +341,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileDrop_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemPBombDrop"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -353,6 +353,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_4"]] },
             }
         });
+
         //Torchlight TODO: add sprites
         gmData.Sprites.Add(new UndertaleSprite()
         {
@@ -363,7 +364,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_2"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             // TODO: sprite is offset by a bit? Double check whether thats still the case
@@ -376,7 +377,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemNothing_4"]] },
             }
         });
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemUnknown"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -388,7 +389,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemUnknown_4"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemShinyNothing"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -404,7 +405,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyNothing_8"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemShinyScrewAttack"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -430,10 +431,10 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemScrewAttacker_18"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
-            Name = gmData.Strings.MakeString("sItemShinyIceBeam"), Height = 16, Width = 16, 
+            Name = gmData.Strings.MakeString("sItemShinyIceBeam"), Height = 16, Width = 16,
             MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
             Textures =
             {
@@ -443,10 +444,10 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyIceBeam_4"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
-            Name = gmData.Strings.MakeString("sItemShinyHijump"), Height = 16, Width = 16, 
+            Name = gmData.Strings.MakeString("sItemShinyHijump"), Height = 16, Width = 16,
             MarginLeft = 3, MarginRight = 12, MarginBottom = 12, MarginTop = 1, OriginX = 0, OriginY = 16,
             Textures =
             {
@@ -456,13 +457,13 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemShinyHijump_4"]] },
             }
         });
-            
+
         gmData.Sprites.ByName("sItemPowergrip").Textures.Clear();
         gmData.Sprites.ByName("sItemPowergrip").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPowergrip_1"]]});
         gmData.Sprites.ByName("sItemPowergrip").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPowergrip_2"]]});
         gmData.Sprites.ByName("sItemPowergrip").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPowergrip_3"]]});
         gmData.Sprites.ByName("sItemPowergrip").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPowergrip_4"]]});
-                                    
+
         gmData.Sprites.ByName("sItemMorphBall").Textures.Clear();
         gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_1"]]});
         gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_2"]]});
@@ -482,7 +483,7 @@ public class Patcher
         gmData.Sprites.ByName("sItemMorphBall").Textures.Add(new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMorphBall_16"]]});
 
         gmData.Sprites.ByName("sMapSP").Textures.Add(new UndertaleSprite.TextureEntry() {Texture = gmData.TexturePageItems[nameToPageItemDict["sMapHint"]]});
-        
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sMapBlockUnexplored"), Height = 8, Width = 8,
@@ -494,7 +495,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapBlockUnexplored"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sMapCornerUnexplored"), Height = 8, Width = 8,
@@ -523,7 +524,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_1"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_0"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_1"]] },
-                    
+
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_2"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_3"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_4"]] },
@@ -536,7 +537,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_3"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_4"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_5"]] },
-                    
+
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_6"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_7"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_8"]] },
@@ -551,7 +552,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sMapCornerUnexplored_9"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemMissileLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -571,7 +572,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemMissileLauncher_12"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemSMissileLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -591,7 +592,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSMissileLauncher_12"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemPBombLauncher"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -611,7 +612,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombLauncher_12"]] },
             }
         });
-            
+
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sItemDNA"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -628,7 +629,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemDNA_9"]] },
             }
         });
-            
+
         // New sprites for dna septogg
         gmData.Sprites.Add(new UndertaleSprite()
         {
@@ -641,7 +642,7 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sWisdomSeptogg_4"]] },
             }
         });
-        
+
         void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
         {
             var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
@@ -651,7 +652,7 @@ public class Patcher
             texturePage.Save(ms, PngFormat.Instance);
             texture.TexturePage.TextureData.TextureBlob = ms.ToArray();
         }
-        
+
         // Hue shift etanks
         if (seedObject.Cosmetics.EtankHUDRotation != 0)
         {
@@ -679,7 +680,7 @@ public class Patcher
                 RotateTextureAndSaveToTexturePage(seedObject.Cosmetics.DNAHUDRotation, bg.Texture);
             }
         }
-        
+
         // Sabre's new skippy design for Skippy the Bot
         if (seedObject.Patches.SabreSkippy)
         {
@@ -689,7 +690,7 @@ public class Patcher
                 sprite.Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict[spriteName]];
             }
         }
-        
+
         // Shuffle Music
         MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
         // Fix annoying overlapping songs when fanfare is long song.
@@ -725,17 +726,17 @@ public class Patcher
         wisdomSeptoggEvent.Actions.Add(wisdomSeptoggAction);
         wisdomSeptoggStepList.Add(wisdomSeptoggEvent);
         gmData.GameObjects.Add(oWisdomSeptogg);
-            
+
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
-            
+
         // Fix power grip sprite
         gmData.Sprites.ByName("sItemPowergrip").OriginX = 0;
         gmData.Sprites.ByName("sItemPowergrip").OriginY = 16;
-            
+
         // Remove other game modes, rename "normal" to "Randovania"
         var gameSelMenuStepCode = gmData.Code.ByName("gml_Object_oGameSelMenu_Step_0");
         ReplaceGMLInCode(gameSelMenuStepCode, "if (global.mod_gamebeaten == 1)", "if (false)");
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSlotMenu_normal_only_Create_0"), 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSlotMenu_normal_only_Create_0"),
             "d0str = get_text(\"Title-Additions\", \"GameSlot_NewGame_NormalGame\")", "d0str = \"Randovania\";");
 
         // Unlock fusion etc. by default
@@ -745,32 +746,32 @@ public class Patcher
 
         // Make fusion only a damage multiplier, leaving the fusion stuff up to a setting
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0;");
-            
+
         // Fix varia cutscene
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0"), "bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
-            
+
         // Make beams not instantly despawn when out of screen
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBeam_Step_0"), 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBeam_Step_0"),
             "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
             "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
-        
+
         // Make Missiles not instantly despawn when out of screen
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMissile_Step_0"),
             "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
             "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
-                
+
         // Fix arachnus event value doing x coordinate BS
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArachnus_Alarm_11"), "global.event[103] = x", "global.event[103] = 1");
         // Make arachnus item location always spawn in center
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a04_Create"), "instance_create(global.event[103]", "instance_create(room_width / 2");
-        
+
         //No more Out of Bounds oSmallsplash crashes
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSmallSplash_Step_0"), "if (global.watertype == 0)", "if (global.watertype == 0 && instance_exists(oWater))");
 
         // Killing queen should not lock you out of the rest of the game
         AppendGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h01_3762_Create"), "instance_destroy()");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h01_Create"), "tile_layer_delete(-119)");
-        
+
         // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
         var ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
         ReplaceGMLInCode(ssDraw, "(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
@@ -782,42 +783,42 @@ public class Patcher
             ReplaceGMLInCode(gmData.Code.ByName(code), "global.stanks > 0", "true");
             ReplaceGMLInCode(gmData.Code.ByName(code), "global.ptanks > 0", "true");
         }
-            
+
         // Make doors automatically free their event when passing through them!...
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "event_user(2)",
             "{ event_user(2); if(event > 0 && lock < 4) global.event[event] = 1; }");
         // ...But don't make them automatically opened for non-ammo doors!
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Alarm_0"), "lock = 0", "if (lock < 4) lock = 0;");
-            
+
         // Make doors when unlocked, go to the type they were before except for ammo doors
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Create_0"), "originalLock = lock;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Other_13"), "lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
-            
+
         // Fix doors unlocking in arachnus/torizo/tester/serris/genesis
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a04_Create"), "if (!global.event[103]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3a01_Create"), "if (!global.event[152]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4a05_Create"), "if (!global.event[207]) {with (oDoor) lock = 4;}");
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0"), "else { with (oDoor) lock = 4; }");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a11_Create"), "if (!global.event[307]) {with (oDoor) lock = 4;}");
-            
+
         // Fix doors in tester to be always blue
         foreach (var codeName in new[] {"gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create"})
             SubstituteGMLCode(gmData.Code.ByName(codeName), "lock = 0;");
-        
+
         // Make water turbine generic where it can be shuffled
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), "facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0"), """
         if (global.event[101] > 0)
             instance_destroy()
-        """, 
+        """,
             """
-        eventToSet = 101; 
+        eventToSet = 101;
         if (((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) ||
-            (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] != 0)) 
+            (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] != 0))
         {
             if (global.event[eventToSet] < 1)
                 global.event[eventToSet] = 1;
-            wasAlreadyDestroyed = 1; 
+            wasAlreadyDestroyed = 1;
             instance_destroy();
         }
         """);
@@ -841,13 +842,13 @@ public class Patcher
             instance_create((x - 120), y, oBubbleSpawner)
         }
         """);
-            
+
         // Fix Tower activation unlocking right door for door lock rando
         if (seedObject.DoorLocks.ContainsKey(127890))
             ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0"), "lock = 0", "lock = lock;");
-            
+
         // Fix tester being fought in darkness / proboscums being disabled on not activated tower
-        PrependGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10"), 
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10"),
             "global.darkness = 0; with (oLightEngine) instance_destroy(); with (oFlashlight64); instance_destroy()");
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oProboscum_Create_0"), "active = true; image_index = 0;");
 
@@ -855,34 +856,34 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create"), "global.event[200] < 2", "!global.event[207]");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0"), "global.event[200] != 1", "global.event[207]");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oTester_Step_0"), "global.event[200] = 2", "global.event[207] = 1;");
-        
+
         // Force drops into rooms if ammo is low
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a3h02_Create"), "if (global.smissiles == 0 && global.maxsmissiles > 0) instance_create(32, 128, oSMPickup)");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a08_Create"), "if (global.pbombs == 0 && global.maxpbombs > 0) instance_create(536, 140, oPBPickup)");
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a12_Create"), "if (global.pbombs == 0 && global.maxpbombs > 0) instance_create(496, 168, oPBPickup)");
-            
+
         // Make Doors shine more in the dark
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLightEngine_Other_11"), "1, 0.4", "0.7, 1.4");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oLightEngine_Other_11"), "1, -0.4", "0.7, -1.4");
-        
+
         // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
-        foreach (var codeName in new[] {"gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create", 
+        foreach (var codeName in new[] {"gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create",
                      "gml_RoomCC_rm_a7b06A_9421_Create", "gml_RoomCC_rm_a7b06A_9420_Create", "gml_RoomCC_rm_a7b07_9437_Create", "gml_RoomCC_rm_a7b07_9438_Create",
                      "gml_RoomCC_rm_a7b08_9455_Create", "gml_RoomCC_rm_a7b08_9454_Create", "gml_RoomCC_rm_a7b08A_9467_Create", "gml_RoomCC_rm_a7b08A_9470_Create"
                  })
             SubstituteGMLCode(gmData.Code.ByName(codeName), "");
         SubstituteGMLCode(gmData.Code.ByName("gml_Object_oMonsterDoorControl_Alarm_0"), "if (instance_number(oMonster) > 0) { with (oDoor) lock = 4 }");
-            
+
         // Have option for missile doors to not open by supers
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_438"), "lock == 1", "((lock == 1 && !other.smissile) || (lock == 1 && other.smissile && global.canUseSupersOnMissileDoors))");
-        
+
         // Implement new beam doors (charge = 5, wave = 6, spazer = 7, plasma = 8, ice = 9)
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_439"), "lock == 0", "(lock == 0) || (lock == 5 && other.chargebeam) ||" +
                                                                                             "(lock == 6 && other.wbeam) || (lock == 7 && other.sbeam) || " +
                                                                                             "(lock == 7 && other.sbeam) || (lock == 8 && other.pbeam) || " +
                                                                                             "(lock == 9 && other.ibeam)");
-            
-            
+
+
         // Implement other weapon doors (bomb = 10, spider = 11, screw = 12)
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oDoor_Collision_435"), "lock == 0", "(lock == 0 || lock == 10 )");
         var doorSamusCollision = new UndertaleCode();
@@ -898,7 +899,7 @@ public class Patcher
         varDoorEvent.EventSubtype = 267; // 267 is oCharacter ID
         varDoorEvent.Actions.Add(varDoorAction);
         doorCollisionList.Add(varDoorEvent);
-            
+
         // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
         // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24), emp tutorial (25), emp robot home (26), emp near zeta (27),
         // emp near bullet hell (28), emp near pipe hub (29), emp near right exterior (30).
@@ -913,11 +914,11 @@ public class Patcher
                                      "|| (global.event[256] && lock == 28) || (global.event[254] && lock == 29) || (global.event[262] && lock == 30)";
         // beams, missile explosion, pbomb explosion, bomb explosion
         foreach (var codeName in new[] {"gml_Object_oDoor_Collision_439", "gml_Object_oDoor_Collision_438", "gml_Object_oDoor_Collision_437", "gml_Object_oDoor_Collision_435"})
-            ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);    
-            
+            ReplaceGMLInCode(gmData.Code.ByName(codeName), "lock == 0", newDoorReplacementText);
+
         // Make EMP slots activate doors instantly, rather than having to wait 1.5 seconds
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBattery_Collision_187"), "alarm[0] = 90", "alarm[0] = 1");
-        
+
         // Fix Emp devices unlocking all doors automatically!
         string empBatteryCellCondition = "false";
         foreach (var doorID in new uint[] {108539, 111778, 115149, 133836, 133903, 133914, 133911, 134711, 134426, 135330})
@@ -952,42 +953,42 @@ public class Patcher
                     lock = 0
             """,
             $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
-            
-                
+
+
         //Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors and to "water should be here" if entering from the top.
         PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a08_Create"), """
         if (global.targety == 160 && global.event[101] < 1)
             global.event[101] = 1;
-        else if (global.targety > 240) 
-        { 
-            with (oA2SmallTurbine) 
-                instance_destroy(); 
-            global.event[101] = 4; 
+        else if (global.targety > 240)
+        {
+            with (oA2SmallTurbine)
+                instance_destroy();
+            global.event[101] = 4;
         }
         """);
         //Remove setting of turbine event from adjacent rooms
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a09_Create"), "global.event[101] = 4", "");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a2a19_Create"), "global.event[101] = 4", "");
-            
+
         // Fix plasma chamber having a missile door instead of normal after tester dead
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create"), "lock = 1", "lock = 0;");
-        
+
         // Fix lab log not displaying progress bar
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a7b04A_Create"), "create_log_trigger(0, 44, 440, 111, 0, 0)", "create_log_trigger(0, 44, 438, 111, -60, 1)");
-            
+
         // Fix skreek street not actually having skreeks
         PrependGMLInCode(gmData.Code.ByName("gml_Script_scr_skreeks_destroy"), "exit");
-            
+
         // Rename "fusion" difficulty to brutal, in order to be less confusing
         foreach (var codeName in new[] { "gml_Object_oMenuSaveSlot_Other_10", "gml_Object_oSlotMenu_Fusion_Create_0" })
             ReplaceGMLInCode(gmData.Code.ByName(codeName), @"get_text(""Title-Additions"", ""GameSlot_NewGame_Fusion"")", "\"Brutal\"");
         // Implement a fix, where every save shows "Brutal" as the difficulty when global.mod_fusion is enabled
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "if (oControl.mod_fusion == 1)", "if (oControl.mod_diffmult == 4)");
-            
+
         // Make the popup text display during the pause for item acquisitions for less awkwardness
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItemCutscene_Create_0"), "sfx_play(sndMessage)",
             "popup_text(global.itmtext1); sfx_play(sndMessage);");
-        
+
         // Fixes character step event for further modification
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
             if (yVel < 0 && state == AIRBALL)
@@ -1013,7 +1014,7 @@ public class Patcher
                     x += ((1 + st1) + st2)
             }
         """);
-        
+
         // Add doors to gfs thoth bridge
         var thothLeftDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create")};
         var thothRightDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_thothRightDoor_Create") };
@@ -1039,29 +1040,29 @@ public class Patcher
             ScaleY = 1,
             CreationCode = thothRightDoorCC
         });
-        
+
         // Make doors appear in front, so you can see them in door lock rando
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a8a03_Create"), "with (oDoor) depth = -200");
-        
-            
+
+
         // Add door from water turbine station to hydro station exterior
         var waterTurbineDoorCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_waterStationDoor_Create") };
         gmData.Code.Add(waterTurbineDoorCC);
         var rm_a2a08 = gmData.Rooms.ByName("rm_a2a08");
         rm_a2a08.GameObjects.Add(CreateRoomObject(24, 96, gmData.GameObjects.ByName("oDoor"), waterTurbineDoorCC, 1, 1, A2WaterTurbineLeftDoorID));
-            
-        
+
+
         var doorTileset = gmData.Backgrounds.ByName("tlDoor");
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -103, doorTileset, 112, 64));        
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -103, doorTileset, 112, 64));
         rm_a2a08.Tiles.Add(CreateRoomTile(16, 128, -103, doorTileset, 112, 32));
         rm_a2a08.Tiles.Add(CreateRoomTile(16, 112, -103, doorTileset, 112, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -103, doorTileset, 112, 0));     
+        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -103, doorTileset, 112, 0));
         rm_a2a08.Tiles.Add(CreateRoomTile(0, 144, -103, doorTileset, 96, 64));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -103, doorTileset, 96, 32));    
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -103, doorTileset, 96, 32));
         rm_a2a08.Tiles.Add(CreateRoomTile(0, 112, -103, doorTileset, 96, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -103, doorTileset, 96, 0));    
-        
-            
+        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -103, doorTileset, 96, 0));
+
+
         // Implement dna item
         var enemyObject = gmData.GameObjects.ByName("oItem");
         for (int i = 350; i <= 395; i++)
@@ -1080,7 +1081,7 @@ public class Patcher
             var gEvent = new UndertaleGameObject.Event();
             gEvent.Actions.Add(action);
             createEventList.Add(gEvent);
-                
+
             var collision = new UndertaleCode();
             collision.Name = gmData.Strings.MakeString($"gml_Object_oItemDNA_{i}_Collision_267");
             gmData.Code.Add(collision);
@@ -1093,7 +1094,7 @@ public class Patcher
             collisionEventList.Add(gEvent);
             gmData.GameObjects.Add(go);
         }
-            
+
         // Adjust global item array to be 400
         ReplaceGMLInCode(characterVarsCode, """
             i = 350
@@ -1112,7 +1113,7 @@ public class Patcher
             """);
         ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_add_items"), "350", "400");
         ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_get_items"), "350", "400");
-            
+
         // Metroid ID to DNA map
         var scrDNASpawn = new UndertaleCode();
         scrDNASpawn.Name = gmData.Strings.MakeString("gml_Script_scr_DNASpawn");
@@ -1208,32 +1209,32 @@ public class Patcher
             if (argument0 == 44)
                 return oItemDNA_393;
             if (argument0 == 45)
-                return oItemDNA_395;            
+                return oItemDNA_395;
             """);
         gmData.Code.Add(scrDNASpawn);
         gmData.Scripts.Add(new UndertaleScript() {Name = gmData.Strings.MakeString("scr_DNASpawn"), Code = scrDNASpawn});
-            
+
         // Make DNA count show on map
-        ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext)", 
+        ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext)",
             "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext); draw_text((view_xview[0] + 158), ((view_yview[0] + 198) + rectoffset), string(global.dna) + \"/46\")");
-        ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext)", 
+        ReplaceGMLInCode(ssDraw, "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext)",
             "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext); draw_text((view_xview[0] + 157), ((view_yview[0] + 197) + rectoffset), string(global.dna) + \"/46\")");
-            
+
         // Fix item percentage now that more items have been added
         foreach (var name in new[] {"gml_Object_oGameSelMenu_Other_12", "gml_Object_oSS_Fg_Draw_0", "gml_Object_oScoreScreen_Create_0", "gml_Object_oScoreScreen_Other_10", "gml_Object_oIGT_Step_0", })
             ReplaceGMLInCode(gmData.Code.ByName(name), "/ 88", "/ 134");
-            
+
         // Make Charge Beam always hit metroids
         foreach (string name in new[] { "gml_Object_oMAlpha_Collision_439", "gml_Object_oMGamma_Collision_439", "gml_Object_oMZeta_Collision_439", "gml_Object_oMZetaBodyMask_Collision_439", "gml_Object_oMOmegaMask2_Collision_439", "gml_Object_oMOmegaMask3_Collision_439"})
             ReplaceGMLInCode(gmData.Code.ByName(name), "&& global.missiles == 0 && global.smissiles == 0", "");
-            
+
         // Replace Metroids counters with DNA counters
         var drawGuiCode = gmData.Code.ByName("gml_Script_draw_gui");
         ReplaceGMLInCode(drawGuiCode, "global.monstersleft", "global.dna");
         ReplaceGMLInCode(drawGuiCode, "global.monstersarea", "46 - global.dna");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_14"), "get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_10"), "get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_13"), "get_text(\"OptionsDisplay\", \"MonsterCounter_Tip\")", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_13"), "get_text(\"OptionsDisplay\", \"MonsterCounter_Tip\")",
             "\"Switches the type of the HUD DNA Counter\"");
         var optionsDisplayUser2 = gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_12");
         ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Local\")", "\"Until Labs\"");
@@ -1242,7 +1243,7 @@ public class Patcher
         ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Local_Tip\")", "\"Show the remaining DNA until you can access the Genetics Laboratory\"");
         ReplaceGMLInCode(optionsDisplayUser2, "get_text(\"OptionsDisplay\", \"MonsterCounter_Global_Tip\")", "\"Show the currently collected DNA\"");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12"), "global.monstersleft", "global.dna");
-            
+
         // Add shortcut between nest and hideout
         if (seedObject.Patches.NestPipes)
         {
@@ -1297,7 +1298,7 @@ public class Patcher
             SubstituteGMLCode(nestPipeCode, "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
             gmData.Code.Add(nestPipeCode);
             nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode, 1, 1, PipeInDepthsLowerID));
-                
+
             // Change slope to solid to prevent oob issue
             nestPipeRoom.GameObjects.First(o => o.X == 176 && o.Y == 416).ObjectDefinition = solidObject;
 
@@ -1359,7 +1360,7 @@ public class Patcher
             waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode, 1, 1, PipeInWaterfallsID));
 
             AppendGMLInCode(waterfallsPipeRoom.CreationCodeId, "global.darkness = 0");
-                
+
             // Modify minimap for new pipes and purple in nest and waterfalls too
             // Hideout
             ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), @"global.map[21, 53] = ""1210100""", @"global.map[21, 53] = ""12104U0""");
@@ -1391,7 +1392,7 @@ public class Patcher
 
         // Make new global.lavastate 11 that requires 46 dna to be collected
         SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
-            
+
         // Check lavastate at labs
         var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
         var labBlock = new UndertaleRoom.GameObject();
@@ -1436,34 +1437,34 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a6a09_8945_Create"), "if (global.lavastate > 8)", "y = 320; if (false)");
 
         // Lock these blocks behind a setting because they can make for some interesting changes
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"), 
-            "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h07_Create"),
+            "if (oControl.mod_purerandombool == 1 || oControl.mod_splitrandom == 1 || global.gamemode == 2)",
             $"if ({(!seedObject.Patches.GraveGrottoBlocks).ToString().ToLower()})");
 
         // enable randomizer to be always on
         var newGameCode = gmData.Code.ByName("gml_Script_scr_newgame");
         ReplaceGMLInCode(newGameCode,"oControl.mod_randomgamebool = 0", "oControl.mod_randomgamebool = 1");
-            
+
         // Fix local metroids
         ReplaceGMLInCode(newGameCode, "global.monstersleft = 47", "global.monstersleft = 47; global.monstersarea = 44");
-            
+
         // Fix larvas dropping either missiles or supers instead of what's needed
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMonster_Other_10"), "pickup == 1", "true");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oMonster_Other_10"), "pickup == 0", "true");
 
         // Make it in oItem, that itemtype one's automatically spawn a popup
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "global.itemtype = itemtype", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "global.itemtype = itemtype",
             "if (itemtype == 1) {popup_text(text1);} global.itemtype = itemtype");
-            
+
         // Add main (super) missile / PB launcher
         // missileLauncher, SMissileLauncher, PBombLauncher
         // also add an item for them + amount of expansions they give
-            
+
         PrependGMLInCode(characterVarsCode, "global.missileLauncher = 0; global.SMissileLauncher = 0; global.PBombLauncher = 0;" +
                                             "global.missileLauncherExpansion = 30; global.SMissileLauncherExpansion = 2; global.PBombLauncherExpansion = 2;");
-            
-            
-            
+
+
+
         // Make expansion set to default values
         ReplaceGMLInCode(characterVarsCode, "global.missiles = oControl.mod_Mstartingcount", "global.missiles = 0;");
         ReplaceGMLInCode(characterVarsCode, "global.maxmissiles = oControl.mod_Mstartingcount", "global.maxmissiles = global.missiles;");
@@ -1472,15 +1473,15 @@ public class Patcher
         ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", "global.pbombs = 0;");
         ReplaceGMLInCode(characterVarsCode, "global.maxpbombs = 0", "global.maxpbombs = global.pbombs;");
         ReplaceGMLInCode(characterVarsCode, "global.maxhealth = 99", "global.maxhealth = global.playerhealth;");
-            
+
         // Make main (super) missile / PB launcher required for firing
         var shootMissileCode = gmData.Code.ByName("gml_Script_shoot_missile");
-        ReplaceGMLInCode(shootMissileCode, 
+        ReplaceGMLInCode(shootMissileCode,
             "if ((global.currentweapon == 1 && global.missiles > 0) || (global.currentweapon == 2 && global.smissiles > 0))",
             "if ((global.currentweapon == 1 && global.missiles > 0 && global.missileLauncher) || (global.currentweapon == 2 && global.smissiles > 0 && global.SMissileLauncher))");
         var chStepFireCode = gmData.Code.ByName("gml_Script_chStepFire");
         ReplaceGMLInCode(chStepFireCode, "&& global.pbombs > 0", "&& global.pbombs > 0 && global.PBombLauncher");
-            
+
         // Change GUI For toggle, use a red item sprite instead of green, for hold use a red instead of yellow
         // Replace Missile GUI
         ReplaceGMLInCode(drawGuiCode, """
@@ -1501,7 +1502,7 @@ public class Patcher
             else if (global.currentweapon == 1 && !global.missileLauncher)
                 draw_sprite(sGUIMissile, 3, ((0 + xoff) + 1), 4)
 """);
-            
+
         // Replace Super GUI
         ReplaceGMLInCode(drawGuiCode, """
                 if (oCharacter.armmsl == 1)
@@ -1521,7 +1522,7 @@ public class Patcher
             else if (global.currentweapon == 2 && !global.SMissileLauncher)
                 draw_sprite(sGUISMissile, 3, (xoff + 1), 4)
 """);
-            
+
         // Replace PB GUI
         ReplaceGMLInCode(drawGuiCode, """
                 if (oCharacter.armmsl == 1)
@@ -1541,12 +1542,12 @@ public class Patcher
             else if (global.currentweapon == 3 && !global.PBombLauncher)
                 draw_sprite(sGUIPBomb, 3, (xoff + 1), 4)
 """);
-            
+
         // Fix weapon selection with toggle
         var chStepControlCode = gmData.Code.ByName("gml_Script_chStepControl");
         ReplaceGMLInCode(chStepControlCode, "if (kMissile && kMissilePushedSteps == 1 && global.maxmissiles > 0", "if (kMissile && kMissilePushedSteps == 1");
         ReplaceGMLInCode(chStepControlCode, "if (global.currentweapon == 1 && global.missiles == 0)", "if (global.currentweapon == 1 && (global.maxmissiles == 0 || global.missiles == 0))");
-            
+
         // Fix weapon selection with hold
         ReplaceGMLInCode(chStepControlCode, """
                 if (global.currentweapon == 0)
@@ -1559,29 +1560,29 @@ public class Patcher
             }
             """);
         ReplaceGMLInCode(chStepControlCode, "if (global.maxmissiles > 0 && (state", "if ((state");
-            
+
         // TODO: change samus arm cannon to different sprite, when no missile launcher. This requires delving into state machine tho and that is *pain*
         // For that, also make her not arm the cannon if you have missile launcher but no missiles
         // ALTERNATIVE: if missile equipped, but no launcher, make EMP effect display that usually appears in gravity area
-            
+
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         PrependGMLInCode(characterVarsCode, "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipSaveCutscene = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
                                             "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
-            
+
         // Set geothermal reactor to always be exploded
         AppendGMLInCode(characterVarsCode, "global.event[203] = 9");
-            
+
         // Set a bunch of metroid events to already be scanned
         AppendGMLInCode(characterVarsCode, "global.event[301] = 1; global.event[305] = 1; global.event[306] = 1;");
-            
+
         // Move Geothermal PB to big shaft
         AppendGMLInCode(gmData.Rooms.ByName("rm_a4b02a").CreationCodeId, "instance_create(272, 400, scr_itemsopen(oControl.mod_253));");
         ReplaceGMLInCode(gmData.Rooms.ByName("rm_a4b02b").CreationCodeId, "instance_create(314, 192, scr_itemsopen(oControl.mod_253))", "");
-            
+
         // Set lava state and the metroid scanned events
         AppendGMLInCode(characterVarsCode, "global.lavastate = 11; global.event[4] = 1; global.event[56] = 1;" +
                                            " global.event[155] = 1; global.event[173] = 1; global.event[204] = 1; global.event[259] = 1");
-            
+
         // Improve when expansions trigger big pickup text and popup_text
         PrependGMLInCode(characterVarsCode, "global.firstMissileCollected = 0; global.firstSMissileCollected = 0; " +
                                             "global.firstPBombCollected = 0; global.firstETankCollected = 0;");
@@ -1596,7 +1597,7 @@ public class Patcher
     }
 """);
         ReplaceGMLInCode(missileCharacterEvent, "popup_text(get_text(\"Notifications\", \"MissileTank\"))", "");
-        
+
         var superMissileCharacterEvent = gmData.Code.ByName("gml_Script_scr_supermissile_character_event");
         ReplaceGMLInCode(superMissileCharacterEvent, """
     if (global.maxsmissiles == 0)
@@ -1608,7 +1609,7 @@ public class Patcher
     }
 """);
         ReplaceGMLInCode(superMissileCharacterEvent, "popup_text(get_text(\"Notifications\", \"SuperMissileTank\"))", "");
-            
+
         var pBombCharacterEvent = gmData.Code.ByName("gml_Script_scr_powerbomb_character_event");
         ReplaceGMLInCode(pBombCharacterEvent, """
     if (global.maxpbombs == 0)
@@ -1620,7 +1621,7 @@ public class Patcher
     }
 """);
         ReplaceGMLInCode(pBombCharacterEvent, "popup_text(get_text(\"Notifications\", \"PowerBombTank\"))", "");
-            
+
         var eTankCharacterEvent = gmData.Code.ByName("gml_Script_scr_energytank_character_event");
         ReplaceGMLInCode(eTankCharacterEvent, """
     if (global.maxhealth < 100)
@@ -1632,12 +1633,33 @@ public class Patcher
     }
 """);
         ReplaceGMLInCode(eTankCharacterEvent, "popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "");
-            
+
+        // Add speedbooster reduction
+        PrependGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0;");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), "speedboost_steps > 75", "speedboost_steps >= 1 && speedboost_steps > (75 - global.speedBoosterFramesReduction)");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), "dash == 30", "dash >= 1 && dash >= (30 - (max(global.speedBoosterFramesReduction, 76)-76))");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Script_characterStepEvent"), """
+            speedboost = 1
+            canturn = 0
+            sjball = 0
+            charge = 0
+            sfx_play(sndSBStart)
+            alarm[2] = 30
+        """, """
+            dash = 30
+            speedboost = 1
+            canturn = 0
+            sjball = 0
+            charge = 0
+            sfx_play(sndSBStart)
+            alarm[2] = 30
+        """);
+
         // Decouple Major items from item locations
         PrependGMLInCode(characterVarsCode, "global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
                                             "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
                                             "global.hasCbeam = 0; global.hasIbeam = 0; global.hasWbeam = 0; global.hasSbeam  = 0; global.hasPbeam = 0; global.hasMorph = 0;");
-            
+
         // Make all item activation dependant on whether the main item is enabled.
         ReplaceGMLInCode(characterVarsCode, """
                 global.morphball = 1
@@ -1670,9 +1692,9 @@ public class Patcher
                 global.sbeam = global.hasSbeam;
                 global.cbeam = global.hasCbeam;
                 """);
-        ReplaceGMLInCode(characterVarsCode, "global.currentsuit = 0", 
+        ReplaceGMLInCode(characterVarsCode, "global.currentsuit = 0",
             "global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
-            
+
         // Fix spring showing up for a brief moment when killing arachnus
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oArachnus_Alarm_11"), "if (temp_randitem == oItemJumpBall)", "if (false)");
 
@@ -1681,8 +1703,8 @@ public class Patcher
         ReplaceGMLInCode(subscreenMenuStep, "global.item[0] == 0", "!global.hasBombs");
         var subscreenMiscDaw = gmData.Code.ByName("gml_Object_oSubScreenMisc_Draw_0");
         ReplaceGMLInCode(subscreenMiscDaw, "global.item[0]", "global.hasBombs");
-            
-        foreach(var code in new[]{"gml_Script_spawn_rnd_pickup", "gml_Script_spawn_rnd_pickup_at", "gml_Script_spawn_many_powerups", 
+
+        foreach(var code in new[]{"gml_Script_spawn_rnd_pickup", "gml_Script_spawn_rnd_pickup_at", "gml_Script_spawn_many_powerups",
                     "gml_Script_spawn_many_powerups_tank", "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create",
                     "gml_RoomCC_rm_a3h03_5279_Create", "gml_Room_rm_a3b08_Create"
                 })
@@ -1693,59 +1715,59 @@ public class Patcher
             foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
                 ReplaceGMLInCode(go.CreationCode, "global.item[0]", "global.hasBombs", true);
         }
-            
-            
+
+
         // Powergrip
         ReplaceGMLInCode(subscreenMiscDaw, "global.item[1]", "global.hasPowergrip");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[1] == 0", "!global.hasPowergrip");
-            
+
         // Spiderball
         ReplaceGMLInCode(subscreenMiscDaw, "global.item[2]", "global.hasSpiderball");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[2] == 0", "!global.hasSpiderball");
-        foreach (UndertaleCode code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+        foreach (UndertaleCode code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
                      c.Name.Content.Contains('2') || c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
             ReplaceGMLInCode(code, "global.item[2]", "global.hasSpiderball");
-            
+
         // Jumpball
         ReplaceGMLInCode(subscreenMiscDaw, "global.item[3]", "global.hasJumpball");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[3] == 0", "!global.hasJumpball");
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "global.item[3] == 0", "!global.hasJumpball");
-            
+
         // Hijump
         var subcreenBootsDraw = gmData.Code.ByName("gml_Object_oSubScreenBoots_Draw_0");
         ReplaceGMLInCode(subcreenBootsDraw, "global.item[4]", "global.hasHijump");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[4] == 0", "!global.hasHijump");
-        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
                                                     c.Name.Content.Contains('4')) || c.Name.Content == "gml_Room_rm_a3b08_Create" || c.Name.Content == "gml_RoomCC_rm_a5c17_7779_Create"))
             ReplaceGMLInCode(code, "global.item[4]", "global.hasHijump");
-        
+
         // Varia
         var subscreenSuitDraw = gmData.Code.ByName("gml_Object_oSubScreenSuit_Draw_0");
         ReplaceGMLInCode(subscreenSuitDraw, "global.item[5]", "global.hasVaria");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[5] == 0", "!global.hasVaria");
         foreach(var code in new[]{"gml_Script_characterStepEvent", "gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown", "gml_Object_oQueenHead_Step_0"})
             ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[5]", "global.hasVaria");
-            
+
         // Spacejump
         ReplaceGMLInCode(subcreenBootsDraw, "global.item[6]", "global.hasSpacejump");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[6] == 0", "!global.hasSpacejump");
-        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
-                                                    c.Name.Content.Contains('6')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5a03_") || 
+        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
+                                                    c.Name.Content.Contains('6')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5a03_") ||
                                                    c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
             ReplaceGMLInCode(code, "global.item[6]", "global.hasSpacejump", true);
-            
+
         // Speedbooster
         ReplaceGMLInCode(subcreenBootsDraw, "global.item[7]", "global.hasSpeedbooster");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[7] == 0", "!global.hasSpeedbooster");
-        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && 
+        foreach(var code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
                                                     c.Name.Content.Contains('7')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5c08_")))
             ReplaceGMLInCode(code, "global.item[7]", "global.hasSpeedbooster", true);
 
-            
+
         // Screwattack
         ReplaceGMLInCode(subscreenMiscDaw, "global.item[8]", "global.hasScrewattack");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[8] == 0", "!global.hasScrewattack");
-        foreach(var code in new[]{"gml_Script_scr_septoggs_2468", "gml_Script_scr_septoggs_48", "gml_RoomCC_rm_a1a06_4447_Create", 
+        foreach(var code in new[]{"gml_Script_scr_septoggs_2468", "gml_Script_scr_septoggs_48", "gml_RoomCC_rm_a1a06_4447_Create",
                     "gml_RoomCC_rm_a1a06_4448_Create", "gml_RoomCC_rm_a1a06_4449_Create", "gml_RoomCC_rm_a3a04_5499_Create", "gml_RoomCC_rm_a3a04_5500_Create",
                     "gml_RoomCC_rm_a3a04_5501_Create", "gml_RoomCC_rm_a4a01_6476_Create", "gml_RoomCC_rm_a4a01_6477_Create", "gml_RoomCC_rm_a4a01_6478_Create",
                     "gml_RoomCC_rm_a5c13_7639_Create", "gml_RoomCC_rm_a5c13_7640_Create", "gml_RoomCC_rm_a5c13_7641_Create", "gml_RoomCC_rm_a5c13_7642_Create",
@@ -1753,11 +1775,11 @@ public class Patcher
                 })
             ReplaceGMLInCode(gmData.Code.ByName(code), "global.item[8]", "global.hasScrewattack");
 
-            
+
         // Gravity
         ReplaceGMLInCode(subscreenSuitDraw, "global.item[9]", "global.hasGravity");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[9] == 0", "!global.hasGravity");
-            
+
         foreach(var code in new[]{"gml_Script_scr_variasuitswap", "gml_Object_oGravitySuitChangeFX_Step_0", "gml_Object_oGravitySuitChangeFX_Other_10",
                     "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create", "gml_RoomCC_rm_a5a03_8631_Create", "gml_RoomCC_rm_a5a03_8632_Create",
                     "gml_RoomCC_rm_a5a03_8653_Create", "gml_RoomCC_rm_a5a03_8654_Create", "gml_RoomCC_rm_a5a03_8655_Create", "gml_RoomCC_rm_a5a03_8656_Create",
@@ -1769,7 +1791,7 @@ public class Patcher
         var itemsSwapScript = gmData.Code.ByName("gml_Script_scr_itemsmenu_swap");
         ReplaceGMLInCode(itemsSwapScript, "global.item[10]", "global.hasCbeam");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[10] == 0", "!global.hasCbeam");
-            
+
         // Ice
         ReplaceGMLInCode(itemsSwapScript, "global.item[11]", "global.hasIbeam");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[11] == 0", "!global.hasIbeam");
@@ -1779,15 +1801,15 @@ public class Patcher
         // Wave
         ReplaceGMLInCode(itemsSwapScript, "global.item[12]", "global.hasWbeam");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[12] == 0", "!global.hasWbeam");
-            
+
         // Spazer
         ReplaceGMLInCode(itemsSwapScript, "global.item[13]", "global.hasSbeam");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[13] == 0", "!global.hasSbeam");
-            
+
         // Plasma
         ReplaceGMLInCode(itemsSwapScript, "global.item[14]", "global.hasPbeam");
         ReplaceGMLInCode(subscreenMenuStep, "global.item[14] == 0", "!global.hasPbeam");
-            
+
         // Morph Ball
         ReplaceGMLInCode(subscreenMiscDaw, """
                 draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
@@ -1835,7 +1857,7 @@ public class Patcher
                     if (global.curropt == 13 && (!global.hasScrewattack))
                         global.curropt += 1
                 """);
-            
+
         ReplaceGMLInCode(subscreenMenuStep, """
                 if (global.curropt > 16)
                     global.curropt = 8
@@ -1843,23 +1865,23 @@ public class Patcher
                 if (global.curropt > 16)
                     global.curropt = 8
                 if (global.curropt == 8 && (!global.hasMorph))
-                        global.curropt = 0 
+                        global.curropt = 0
             """);
-            
+
         // Save current hash seed, so we can compare saves later
         PrependGMLInCode(characterVarsCode, $"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
-            
+
         // modify gravity pod room to *always* spawn an item
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a5a07_Create"), "if (oControl.mod_gravity != 9)", "");
         SubstituteGMLCode(gmData.Code.ByName("gml_Object_oGravityPodTrigger_Create_0"), "instance_destroy()");
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oGravityPod_Create_0"), "closed = 1; xoff = 0;");
-            
+
         // Always enable long range activation, for consistent zips
         foreach (var room in gmData.Rooms.Where(r => r.Name.Content.StartsWith("rm_a")))
             AppendGMLInCode(room.CreationCodeId, "global.objdeactivate = 0");
-            
+
         AppendGMLInCode(gmData.Code.ByName("gml_Script_start_new_game"), "global.targetx = global.save_x; global.targetx = global.save_y;");
-        
+
         // Make new game not hardcode separate starting values
         PrependGMLInCode(characterVarsCode, "global.startingSave = 0;");
         var startNewGame = gmData.Code.ByName("gml_Script_start_new_game");
@@ -1868,7 +1890,7 @@ public class Patcher
                 global.save_x = 3408
                 global.save_y = 1184
                 """, "load_character_vars(); global.save_room = global.startingSave; set_start_location();");
-            
+
         // Modify main menu to have a "restart from starting save" option
         SubstituteGMLCode(gmData.Code.ByName("gml_Object_oPauseMenuOptions_Other_10"), """
             op1 = instance_create(x, y, oPauseOption)
@@ -1951,10 +1973,10 @@ public class Patcher
               global.save_room = global.startingSave;
               set_start_location();
               room_change(global.start_room, 1)
-              global.shouldLoadFromStart = 0;  
+              global.shouldLoadFromStart = 0;
             }
             """);
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsReload_Step_0"), "instance_create(50, 92, oPauseMenuOptions)", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oOptionsReload_Step_0"), "instance_create(50, 92, oPauseMenuOptions)",
             "instance_create(50, 92, oPauseMenuOptions); global.shouldLoadFromStart = 0;");
 
         // Modify save scripts to load our new globals / stuff we modified
@@ -1997,8 +2019,10 @@ public class Patcher
             ds_list_add(list, global.dna)
             ds_list_add(list, global.startingSave)
             ds_list_add(list, global.flashlightLevel)
+            ds_list_add(list, global.speedBoosterFramesReduction)
+
             comment = "gives me some leeway in case i need to add more"
-            repeat (15)
+            repeat (14)
             {
                 ds_list_add(list, 0)
                 i += 1
@@ -2050,11 +2074,12 @@ public class Patcher
             global.dna = readline()
             global.startingSave = readline()
             global.flashlightLevel = readline()
+            global.speedBoosterFramesReduction = readline();
             ds_list_clear(list)
             """);
         gmData.Code.Add(loadGlobalsCode);
         gmData.Scripts.Add(new UndertaleScript(){Name = gmData.Strings.MakeString("sv6_get_newglobals"), Code = loadGlobalsCode});
-            
+
         var sv6Save = gmData.Code.ByName("gml_Script_sv6_save");
         ReplaceGMLInCode(sv6Save, "save_str[10] = sv6_add_seed()", "save_str[10] = sv6_add_seed(); save_str[11] = sv6_add_newglobals()");
         ReplaceGMLInCode(sv6Save, "V7.0", "RDV V8.0");
@@ -2078,28 +2103,28 @@ public class Patcher
                     global.maxpbombs = global.ptanks
                 }
             """, "");
-            
+
         //complain if invalid game hash
         PrependGMLInCode(sv6load, $"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
-        ReplaceGMLInCode(sv6load, "global.playerhealth = global.maxhealth", 
+        ReplaceGMLInCode(sv6load, "global.playerhealth = global.maxhealth",
             "if (global.gameHash != uniqueGameHash) { " +
             "show_message(\"Save file is from another seed! (\" + global.gameHash + \")\"); " +
             "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
             "} global.playerhealth = global.maxhealth");
         // TODO: instead of just show_messsage, have an actual proper in-game solution. Maybe do this after MW
         // reference: https://cdn.discordapp.com/attachments/914294505107251231/1121816654385516604/image.png
-            
+
         var sv6loadDetails = gmData.Code.ByName("gml_Script_sv6_load_details");
         ReplaceGMLInCode(sv6loadDetails, "V7.0", "RDV V8.0");
         ReplaceGMLInCode(sv6loadDetails, "sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid); sv6_get_newglobals(fid);");
 
         foreach (var code in new[] {"gml_Script_save_stats", "gml_Script_save_stats2", "gml_Script_load_stats", "gml_Script_load_stats2"})
             ReplaceGMLInCode(gmData.Code.ByName(code), "V7.0", "RDV V8.0");
-            
+
         // Change to custom save directory
         gmData.GeneralInfo.Name = gmData.Strings.MakeString("AM2R_RDV");
         gmData.GeneralInfo.FileName = gmData.Strings.MakeString("AM2R_RDV");
-            
+
         // Change starting health and energy per tank
         ReplaceGMLInCode(characterVarsCode, "global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1};");
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
@@ -2111,7 +2136,7 @@ public class Patcher
                                                                             if (global.darkness < 0)
                                                                             global.darkness = 0
                                                                             """);
-        
+
         // Set starting items
         bool alreadyAddedMissiles = false;
         bool alreadyAddedSupers = false;
@@ -2133,7 +2158,7 @@ public class Patcher
                         finalQuantity += lockedMissileQuantity;
                     if (item == ItemEnum.LockedMissile && seedObject.StartingItems.TryGetValue(ItemEnum.Missile, out int missileQuantity))
                         finalQuantity += missileQuantity;
-                    
+
                     ReplaceGMLInCode(characterVarsCode, "global.missiles = 0", $"global.missiles = {finalQuantity};");
                     alreadyAddedMissiles = true;
                     break;
@@ -2144,7 +2169,7 @@ public class Patcher
                         finalQuantity += lockedSuperQuantity;
                     if (item == ItemEnum.LockedSuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.SuperMissile, out int superQuantity))
                         finalQuantity += superQuantity;
-                    
+
                     ReplaceGMLInCode(characterVarsCode, "global.smissiles = 0", $"global.smissiles = {finalQuantity};");
                     alreadyAddedSupers = true;
                     break;
@@ -2156,7 +2181,7 @@ public class Patcher
                         finalQuantity += lockedPBombQuantity;
                     if (item == ItemEnum.LockedPBomb && seedObject.StartingItems.TryGetValue(ItemEnum.PBomb, out int pBombQuantity))
                         finalQuantity += pBombQuantity;
-                    
+
                     ReplaceGMLInCode(characterVarsCode, "global.pbombs = 0", $"global.pbombs = {finalQuantity};");
                     alreadyAddedPBombs = true;
                     break;
@@ -2165,11 +2190,11 @@ public class Patcher
                 case ItemEnum.PBombLauncher:
                     // Are handled further down
                     break;
-                    
+
                 case var x when x.ToString().StartsWith("DNA"):
                     ReplaceGMLInCode(characterVarsCode, "global.dna =", "global.dna = 1 +");
                     break;
-                    
+
                 case ItemEnum.Bombs:
                     ReplaceGMLInCode(characterVarsCode, "global.hasBombs = 0", $"global.hasBombs = {quantity};");
                     break;
@@ -2235,6 +2260,8 @@ public class Patcher
                     break;
                 case ItemEnum.Flashlight:
                     ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
+                case ItemEnum.SpeedBoosterUpgrade:
+                    ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
                     break;
                 case ItemEnum.Nothing:
                     break;
@@ -2242,7 +2269,7 @@ public class Patcher
                     throw new ArgumentOutOfRangeException();
             }
         }
-            
+
         // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
         if (!seedObject.Patches.RequireMissileLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.MissileLauncher))
             ReplaceGMLInCode(characterVarsCode, "global.missileLauncher = 0", "global.missileLauncher = 1");
@@ -2250,11 +2277,11 @@ public class Patcher
             ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncher = 0", "global.SMissileLauncher = 1");
         if (!seedObject.Patches.RequirePBLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.PBombLauncher))
             ReplaceGMLInCode(characterVarsCode, "global.PBombLauncher = 0", "global.PBombLauncher = 1");
-            
+
         // Set starting location
         ReplaceGMLInCode(characterVarsCode, "global.startingSave = 0", $"global.startingSave = {seedObject.StartingLocation.SaveRoom}");
         ReplaceGMLInCode(characterVarsCode, "global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
-            
+
         // Modify minimap for power plant because of pb movement
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_07"), """
             global.map[35, 43] = "0112300"
@@ -2313,13 +2340,13 @@ public class Patcher
             i++
         }
         """);
-            
-            
+
+
         // Make items spawned from metroids not change map
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oItem_Create_0"), "changeOnMap = true");
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (distance_to_object(oItem) > 180)", 
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (distance_to_object(oItem) > 180)",
             "if ((distance_to_object(oItem) > 180) && changeOnMap)");
-            
+
         // Door locks
         // Adjust global event array to be 700
         ReplaceGMLInCode(characterVarsCode, """
@@ -2339,7 +2366,7 @@ public class Patcher
             """);
         ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_add_events"), "350", "700");
         ReplaceGMLInCode( gmData.Code.ByName("gml_Script_sv6_get_events"), "350", "700");
-            
+
         // Replace every normal, a4 and a8 door with an a5 door for consistency
         var a5Door = gmData.GameObjects.ByName("oDoorA5");
         foreach (var room in gmData.Rooms)
@@ -2351,8 +2378,8 @@ public class Patcher
         }
         // Also fix depth value for them
         a5Door.Depth = -99;
-            
-            
+
+
         var doorEventIndex = 350;
         foreach ((var id, var doorLock) in seedObject.DoorLocks)
         {
@@ -2373,7 +2400,7 @@ public class Patcher
                         gmData.Code.Add(code);
                         gameObject.CreationCode = code;
                     }
-                        
+
                     string codeText = doorLock.Lock switch
                     {
                         DoorLockType.Normal => "lock = 0; event = -1;",
@@ -2437,7 +2464,7 @@ public class Patcher
                             room.GameObjects.Add(CreateRoomObject(gameObject.X-72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
                         else if ((gameObject.X + 48) == room.Width)
                             room.GameObjects.Add(CreateRoomObject(gameObject.X+72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
-                        
+
                     }
 
                     AppendGMLInCode(gameObject.CreationCode, codeText);
@@ -2451,7 +2478,7 @@ public class Patcher
             if (!found)
                 throw new NotSupportedException($"There is no door with ID {id}!");
         }
-        
+
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((var pickupName, PickupObject pickup) in seedObject.PickupObjects)
         {
@@ -2469,7 +2496,7 @@ public class Patcher
             var collisionCodeToBe = pickup.ItemEffect switch
             {
                 ItemEnum.EnergyTank => "scr_energytank_character_event()",
-                ItemEnum.MissileExpansion => $"if (!global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; "+ 
+                ItemEnum.MissileExpansion => $"if (!global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; "+
                                              $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} scr_missile_character_event()",
                 ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
                                             "{ global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles; }",
@@ -2477,7 +2504,7 @@ public class Patcher
                                                   $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} scr_supermissile_character_event()",
                 ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
                                                  "{ global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles; }",
-                ItemEnum.PBombExpansion=> $"if (!global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " + 
+                ItemEnum.PBombExpansion=> $"if (!global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " +
                                           $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} scr_powerbomb_character_event()",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                           "{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }",
@@ -2544,12 +2571,12 @@ public class Patcher
                         global.SuitChangeX = x;
                         global.SuitChangeY = y;
                         if (global.hasGravity) exit
-                        else if (global.hasVaria) 
+                        else if (global.hasVaria)
                         {
                             global.hasGravity = 1;
                             global.SuitChangeGravity = 1;
                         }
-                        else 
+                        else
                         {
                             global.hasVaria = 1;
                             global.SuitChangeGravity = 0;
@@ -2572,13 +2599,13 @@ public class Patcher
                 ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
                 ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
                 ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlightLevel += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
+                ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ global.speedBoosterFramesReduction += {pickup.Quantity}; }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };
             SubstituteGMLCode(collisionCode, collisionCodeToBe);
         }
-        
-        
+
         // Modify how much expansions give
         ReplaceGMLInCode(missileCharacterEvent, """
     if (global.difficulty < 2)
@@ -2588,7 +2615,7 @@ public class Patcher
 """,$"""
     global.maxmissiles += {seedObject.PickupObjects.FirstOrDefault(p => p.Value.ItemEffect == ItemEnum.MissileExpansion).Value?.Quantity ?? 0}
 """);
-            
+
         ReplaceGMLInCode(superMissileCharacterEvent, """
     if (global.difficulty < 2)
         global.maxsmissiles += 2
@@ -2597,7 +2624,7 @@ public class Patcher
 """,$"""
     global.maxsmissiles += {seedObject.PickupObjects.FirstOrDefault(p => p.Value.ItemEffect == ItemEnum.SuperMissileExpansion).Value?.Quantity ?? 0}
 """);
-            
+
         ReplaceGMLInCode(pBombCharacterEvent, """
     if (global.difficulty < 2)
         global.maxpbombs += 2
@@ -2606,22 +2633,22 @@ public class Patcher
 """,$"""
     global.maxpbombs += {seedObject.PickupObjects.FirstOrDefault(p => p.Value.ItemEffect == ItemEnum.PBombExpansion).Value?.Quantity ?? 0}
 """);
-            
-            
+
+
         // Set how much items the launchers give
         if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.MissileLauncher))
-            ReplaceGMLInCode(characterVarsCode, "global.missileLauncherExpansion = 30", 
+            ReplaceGMLInCode(characterVarsCode, "global.missileLauncherExpansion = 30",
                 $"global.missileLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.MissileLauncher).Value.Quantity};");
-            
+
         if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.SuperMissileLauncher))
-            ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncherExpansion = 2", 
+            ReplaceGMLInCode(characterVarsCode, "global.SMissileLauncherExpansion = 2",
                 $"global.SMissileLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.SuperMissileLauncher).Value.Quantity};");
-            
+
         if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.PBombLauncher))
-            ReplaceGMLInCode(characterVarsCode, "global.PBombLauncherExpansion = 2", 
+            ReplaceGMLInCode(characterVarsCode, "global.PBombLauncherExpansion = 2",
                 $"global.PBombLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.PBombLauncher).Value.Quantity};");
-            
-            
+
+
         // Also change how gui health is drawn
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_gui_health"), """
             if (ceil(guih) == 100)
@@ -2631,7 +2658,7 @@ public class Patcher
             if (ceil(guih) == {seedObject.Patches.EnergyPerTank})
                 guih = {seedObject.Patches.EnergyPerTank-1};
             """);
-            
+
         // Draw_gui has a huge fucking block that does insane etank shenanigans
         // because i dont want to copypaste the whole thing into here, i'll get the index where it starts, where it ends, and replace that section with my own
         var drawGuiText = Decompiler.Decompile(drawGuiCode, decompileContext);
@@ -2651,24 +2678,24 @@ public class Patcher
               var etankIndex = 0
               if (global.playerhealth > ({{seedObject.Patches.EnergyPerTank-0.01}} + ((i-1)*{{seedObject.Patches.EnergyPerTank}})))
                 etankIndex = 1;
-              var drawXOff = (floor((i-1)/2) * 6) + (floor((i-1) / 10) * 3) 
+              var drawXOff = (floor((i-1)/2) * 6) + (floor((i-1) / 10) * 3)
               var drawYOff = 4;
               if (i % 2 == 0) drawYOff = 10
               draw_sprite(sGUIETank, etankIndex, (0+etankxoff+drawXOff), drawYOff)
             }
 
             """);
-            
+
         // Turn off Septoggs if the wished configuration
         if (seedObject.Patches.SeptoggHelpers)
             ReplaceGMLInCode(characterVarsCode, "global.septoggHelpers = 0", "global.septoggHelpers = 1");
         foreach (var code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_")))
             PrependGMLInCode(code, "if (!global.septoggHelpers) return true; else return false;");
-            
+
         foreach (UndertaleRoom room in gmData.Rooms)
         {
             foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
-                ReplaceGMLInCode(go.CreationCode, "oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1", 
+                ReplaceGMLInCode(go.CreationCode, "oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1",
                     "!global.septoggHelpers", true);
         }
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a0h25_4105_Create"), "else if (global.hasBombs == 1 || global.hasSpiderball == 1 || global.hasSpacejump == 1)",
@@ -2677,8 +2704,8 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a13_5007_Create"), "&& oControl.mod_previous_room == 103", "");
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a3a07_5533_Create"), "&& oControl.mod_previous_room == 136", "");
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a5a05_8701_Create"), "&& oControl.mod_previous_room == 300", "");
-            
-            
+
+
         // Options to turn off the random room geometry changes!
         // screw+pipes related
         if (seedObject.Patches.ScrewPipeBlocks)
@@ -2691,20 +2718,20 @@ public class Patcher
             foreach (var gameObject in gmData.Rooms.ByName(roomName).GameObjects.Where(g => g.ObjectDefinition.Name.Content == "oBlockScrew"))
             {
                 if (gameObject.CreationCode is null) continue;
-                
+
                 ReplaceGMLInCode(gameObject.CreationCode, "global.hasScrewattack == 0", "false");
             }
         }
         // A bunch of tiles in a5c13 - screw blocks before pipe hub
         for (int i = 39; i <= 44; i++)
-            SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) instance_destroy();");            
-            
+            SubstituteGMLCode(gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create"), "if (!global.screwPipeBlocks) instance_destroy();");
+
         // Bomb block before a3 entry
         if (seedObject.Patches.A3EntranceBlocks)
             ReplaceGMLInCode(characterVarsCode, "global.a3Block = 0", "global.a3Block = 1;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a3h03_5279_Create"), "if ((oControl.mod_randomgamebool == 1 || oControl.mod_splitrandom == 1) && global.hasBombs == 0 && global.ptanks == 0)",
             "if (!global.a3Block)");
-            
+
         // Softlock prevention blocks
         if (seedObject.Patches.SoftlockPrevention)
             ReplaceGMLInCode(characterVarsCode, "global.softlockPrevention = 0", "global.softlockPrevention = 1;");
@@ -2755,7 +2782,7 @@ public class Patcher
                     instance_destroy()
             }
             """);
-            
+
         // speed booster blocks near a5 activation
         foreach (var gameObject in gmData.Rooms.ByName("rm_a5c08").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
         {
@@ -2765,9 +2792,9 @@ public class Patcher
                 if (oControl.mod_randomgamebool == 1 && global.hasSpeedbooster == 0)
                     instance_destroy()
                 """, "");
-                
+
             // Y 80 is the bottom row of speed blocks
-            if (gameObject.Y == 80) 
+            if (gameObject.Y == 80)
                 AppendGMLInCode(gameObject.CreationCode, "if (global.softlockPrevention) instance_destroy();");
         }
 
@@ -2778,14 +2805,14 @@ public class Patcher
                 ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 268 && global.screwattack == 0 && global.item[scr_itemchange(8)] == 1",
                     "global.softlockPrevention");
         }
-            
+
         // Crumble blocks and shoot block before Ice chamber
         foreach (var gameObject in gmData.Rooms.ByName("rm_a5c31").GameObjects.Where(o => o.ObjectDefinition.Name.Content is "oBlockStep" or "oBlockShoot"))
         {
             ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 277 && global.ibeam == 0 && global.item[scr_itemchange(11)] == 1",
                 "global.softlockPrevention");
         }
-            
+
         // Crumble blocks in gravity area one way room
         foreach (var gameObject in gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
         {
@@ -2793,7 +2820,7 @@ public class Patcher
                 ReplaceGMLInCode(gameObject.CreationCode, "oControl.mod_previous_room == 298 && (global.hasGravity == 0 || global.hasSpacejump == 0)",
                     "global.softlockPrevention");
         }
-            
+
         foreach (var gameObject in gmData.Rooms.ByName("rm_a5a06").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockBombChain"))
         {
             // Top bomb block
@@ -2803,48 +2830,34 @@ public class Patcher
                     instance_destroy()
                 else
                 """, "");
-                
+
             // Bottom bomb block
             if (gameObject.Y == 176)
                 AppendGMLInCode(gameObject.CreationCode, "if (global.softlockPrevention) instance_destroy();");
         }
-            
-            
+
+
         // A4 exterior top, always remove the bomb blocks when coming from that entrance
         foreach (string codeName in new[] {"gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create"})
             ReplaceGMLInCode(gmData.Code.ByName(codeName), "oControl.mod_previous_room == 214 && global.spiderball == 0", "global.targetx == 416");
-            
+
         // The bomb block puzzle in the room before varia dont need to be done anymore because it's already now covered by "dont regen bomb blocks" option
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",
             "if (false)");
         ReplaceGMLInCode(gmData.Code.ByName("gml_RoomCC_rm_a2a06_4759_Create"), "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && global.hasGravity == 0)",
             "if (false)");
-            
+
         // When going down from thoth, make PB blocks disabled
         PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h13_Create"), "if (global.targety == 16) {global.event[176] = 1; with (oBlockPBombChain) event_user(0); }");
-        
+
         // When coming from right side in Drill, always make drill event done
         PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h17e_Create"), "if (global.targety == 160) global.event[172] = 3");
-        
+
         // Stop Bomb blocks from respawning
         if (seedObject.Patches.RespawnBombBlocks)
             ReplaceGMLInCode(characterVarsCode, "global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
-        foreach (UndertaleRoom room in gmData.Rooms)
-        {
-            foreach (var go in room.GameObjects)
-            {
-                // Instance ID here is for a puzzle in a2, that when not respawned makes it a tad hard.
-                if (!go.ObjectDefinition.Name.Content.StartsWith("oBlockBomb") || go.InstanceID == 110602) continue;
-                    
-                if (go.CreationCode is null)
-                {
-                    var code = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_RoomCC_" + room.Name.Content + "_" + go.InstanceID + "_Create")};
-                    gmData.Code.Add(code);
-                    go.CreationCode = code;
-                }
-                AppendGMLInCode(go.CreationCode, "if (!global.respawnBombBlocks) regentime = -1");
-            }
-        }
+        // The position here is for a puzzle in a2, that when not respawned makes it a tad hard.
+        PrependGMLInCode(gmData.Code.ByName("gml_Object_oBlockBomb_Other_10"), "if (!global.respawnBombBlocks && !(room == rm_a2a06 && x == 624 && y == 128)) regentime = -1");
 
         // On start, make all rooms show being "unexplored" similar to primes/super
         // Replaces all mentions of sMapBlock and sMapCorner with local variables.
@@ -2935,7 +2948,7 @@ public class Patcher
         global.map[73, 24] = "11102M0"
         global.map[73, 31] = "11102M0"
         """);
-        
+
         // Fix BG3 surprise gamma map tile
         SubstituteGMLCode(gmData.Code.ByName("gml_Object_oMGamma_Alarm_9"), """
         myposx = floor((x / 320))
@@ -2951,13 +2964,13 @@ public class Patcher
         with (oControl)
             event_user(2)
         """);
-        
+
         // Force all breakables (except the hidden super blocks) to be visible
         if (seedObject.Cosmetics.UnveilBlocks)
             ReplaceGMLInCode(characterVarsCode, "global.unveilBlocks = 0", "global.unveilBlocks = 1");
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oSolid_Alarm_5"), "if (global.unveilBlocks && sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
                                                                          "{ event_user(1); visible = true; }");
-        
+
         // Skip most cutscenes when enabled
         if (seedObject.Patches.SkipCutscenes)
         {
@@ -2970,15 +2983,15 @@ public class Patcher
         AppendGMLInCode(characterVarsCode, "global.event[0] = global.skipCutscenes");
         // Gamma mutation cutscene - event 109
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oMGammaFirstTrigger_Collision_267"), """
-            if (global.skipCutscenes) 
-            { 
+            if (global.skipCutscenes)
+            {
                 global.event[109] = 1;
                 mus_current_fadeout();
                 mutat = instance_create(144, 96, oMGammaMutate);
                 mutat.state = 3;
                 mutat.statetime = 90;
                 instance_destroy();
-                exit; 
+                exit;
             }
             """);
         // Zeta mutation cutscene - event 205
@@ -3044,7 +3057,7 @@ public class Patcher
 """);
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0"), "instance_create(x, y, oA5BotSpawnCutscene)",
             "instance_create(x, y, oA5BotSpawnCutscene); if (global.skipCutscenes) statetime = 319");
-        
+
         // Shorten save animation
         if (seedObject.Patches.SkipSaveCutscene)
             ReplaceGMLInCode(characterVarsCode, "global.skipSaveCutscene = 0", "global.skipSaveCutscene = 1");
@@ -3080,22 +3093,22 @@ public class Patcher
         // Skip Item acquisition fanfares
         if (seedObject.Patches.SkipItemFanfares)
             ReplaceGMLInCode(characterVarsCode, "global.skipItemFanfare = 0", "global.skipItemFanfare = 1");
-        
+
         // Put all items as type one
         PrependGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (global.skipItemFanfare) itemtype = 1;");
-        
+
         // Show popup text only when we skip the cutscene
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "if (itemtype == 1)", "if (global.skipItemFanfare)");
         // Removes cutscenes for type 1's
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oItem_Other_10"), "display_itemmsg", "if (!global.skipItemFanfare) display_itemmsg");
-        
-        
+
+
         // Patch to add room name display near health
         StringBuilder roomNameDSMapBuilder = new StringBuilder();
         foreach ((var roomName, var roomData) in seedObject.RoomObjects)
             roomNameDSMapBuilder.Append($"ds_map_add(roomNames, \"{roomName}\", \"{roomData.DisplayName}\");\n");
         string roomNameDSMapString = roomNameDSMapBuilder.ToString();
-        
+
         var roomNameHudCC = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oRoomNameHUD_Create_0") };
         SubstituteGMLCode(roomNameHudCC, $"""
         rnh_surface = surface_create((320 + oControl.widescreen_space), 240)
@@ -3173,7 +3186,7 @@ public class Patcher
         gmData.Code.Add(roomNameHudRoomStart);
         gmData.Code.Add(roomNameHudStep);
         // Create Object and add events
-        
+
         var roomHudObject = new UndertaleGameObject() { Name = gmData.Strings.MakeString("oRoomNameHUD"), Depth = -9999999, Persistent = true};
         gmData.GameObjects.Add(roomHudObject);
         AppendGMLInCode(gmData.Code.ByName("gml_Script_load_character_vars"), "if (!instance_exists(oRoomNameHUD))\ninstance_create(0, 0, oRoomNameHUD)");
@@ -3220,7 +3233,7 @@ public class Patcher
 
         // Set fusion mode value
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oControl_Step_0"), "mod_fusion = 0", $"mod_fusion = {(seedObject.Patches.FusionMode ? 1 : 0)}");
-        
+
         // Display Seed hash
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oGameSelMenu_Draw_0"), $"""
             draw_set_font(global.fontGUI2)
@@ -3233,9 +3246,9 @@ public class Patcher
         // Set option on whether supers can destroy missile doors
         if (seedObject.Patches.CanUseSupersOnMissileDoors)
             ReplaceGMLInCode(characterVarsCode, "global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
-        
+
         // TODO: For the future, with room rando, go through each door and modify where it leads to
-            
+
         // Hints
         // Ice Beam Hints
         // Make log in lab always appear
@@ -3246,7 +3259,7 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Script_load_logs_list"), $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[HintLocationEnum.ChozoLabs]}\"; pic[44, 0] = bgLogImg44B");
         // Remove second scanning
         ReplaceGMLInCode(gmData.Code.ByName("gml_Room_rm_a0h01_Create"), "scan_log(44, get_text(\"Misc\", \"Translation\"), 180, 1)", "if (false) {}");
-            
+
         // Septogg hints
         // Prep work:
         // Increase log array size to 100
@@ -3274,7 +3287,7 @@ public class Patcher
             global.log[20] = 1
             global.log[30] = 1
             """);
-        //Another array extension	
+        //Another array extension
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_reset_logs_list"), """
             i = 49
             repeat (50)
@@ -3345,7 +3358,7 @@ public class Patcher
             txt[51, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA1]}"
             pic[51, 0] = bgLogDNA1
             lbl[52] = "{seedObject.RoomObjects["rm_a2c05"].RegionName}"
-            txt[52, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA2]}" 
+            txt[52, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA2]}"
             pic[52, 0] = bgLogDNA2
             lbl[53] = "{seedObject.RoomObjects["rm_a3b10"].RegionName}"
             txt[53, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA3]}"
@@ -3383,31 +3396,31 @@ public class Patcher
         // A6
         gmData.Rooms.ByName("rm_a6b02").GameObjects.Add(CreateRoomObject(240, 400, oWisdomSeptogg));
         AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a6b02_Create"), "create_log_trigger(0, 56, 240, 400, -35, 1)");
-        
+
         // A0
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_09"), "global.map[41, 24] = \"2201100\"", "global.map[41, 24] = \"22011W0\"");
-        
+
         // A1
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_12"), "global.map[58, 16] = \"0212200\"", "global.map[58, 16] = \"02122W0\"");
 
         // A2
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_04"), "global.map[24, 26] = \"0101200\"", "global.map[24, 26] = \"01012W0\"");
-        
+
         // A3
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_14"), "global.map[63, 28] = \"0011200\"", "global.map[63, 28] = \"00112W0\"");
-        
+
         // A4
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_05"), "global.map[32, 29] = \"0021200\"", "global.map[32, 29] = \"00212W0\"");
 
         // A5
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_16"), "global.map[69, 45] = \"0112300\"", "global.map[69, 45] = \"01123W0\"");
-        
+
         // A6
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_03"), "global.map[20, 40] = \"0112100\"", "global.map[20, 40] = \"01121W0\"");
-        
+
         // Ice
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_map_init_01"), "global.map[8, 22] = \"1210300\"", "global.map[8, 22] = \"12103W0\"");
-        
+
         // Pipe rando
         // TODO: optimization could be made here, by letting rdv provide the room where the instance id is, thus not neeeding to crawl over every room.
         // TODO: for this (And for entrance rando) i need to go through each room, and set the correct global.darkness, global.water and music value.
@@ -3423,7 +3436,7 @@ public class Patcher
                 }
             }
         }
-        
+
         // Add patch to see room names on minimap
         StringBuilder dsMapCordBuilder = new StringBuilder("room_names_coords = ds_map_create()");
         foreach ((string key, RoomObject value) in seedObject.RoomObjects)
@@ -3466,10 +3479,10 @@ public class Patcher
 
 
         // TODO: rewrite log rendering to have color
-        
-        
+
+
         // Multiworld stuff
-        
+
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
         {

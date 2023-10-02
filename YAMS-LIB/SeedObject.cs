@@ -480,6 +480,8 @@ public enum ItemEnum
     PBombDrop,
     [EnumMember(Value = "Flashlight")]
     Flashlight,
+    [EnumMember(Value = "Speed Booster Upgrade")]
+    SpeedBoosterUpgrade,
 }
 
 public class PickupObject
