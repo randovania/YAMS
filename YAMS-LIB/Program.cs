@@ -353,7 +353,17 @@ public class Patcher
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemPBombDrop_4"]] },
             }
         });
-            
+        //Torchlight TODO: add sprites
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sFlashlight"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_2"]] },
+            }
+        });
+        
         gmData.Sprites.Add(new UndertaleSprite()
         {
             // TODO: sprite is offset by a bit? Double check whether thats still the case
@@ -1986,6 +1996,7 @@ public class Patcher
             ds_list_add(list, global.gameHash)
             ds_list_add(list, global.dna)
             ds_list_add(list, global.startingSave)
+            ds_list_add(list, global.flashlightLevel)
             comment = "gives me some leeway in case i need to add more"
             repeat (15)
             {
@@ -2037,7 +2048,8 @@ public class Patcher
             global.maxpbombs = readline()
             global.gameHash = readline()
             global.dna = readline()
-            global.startingSave = readline();
+            global.startingSave = readline()
+            global.flashlightLevel = readline()
             ds_list_clear(list)
             """);
         gmData.Code.Add(loadGlobalsCode);
@@ -2092,6 +2104,14 @@ public class Patcher
         ReplaceGMLInCode(characterVarsCode, "global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1};");
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
             
+        // Flashlight
+        PrependGMLInCode(characterVarsCode, "global.flashlightLevel = 0;");
+        PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"), """
+                                                                            global.darkness -= global.flashlightLevel
+                                                                            if (global.darkness < 0)
+                                                                            global.darkness = 0
+                                                                            """);
+        
         // Set starting items
         bool alreadyAddedMissiles = false;
         bool alreadyAddedSupers = false;
@@ -2212,6 +2232,9 @@ public class Patcher
                     break;
                 case ItemEnum.Morphball:
                     ReplaceGMLInCode(characterVarsCode, "global.hasMorph = 0", $"global.hasMorph = {quantity};");
+                    break;
+                case ItemEnum.Flashlight:
+                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
                     break;
                 case ItemEnum.Nothing:
                     break;
@@ -2428,8 +2451,7 @@ public class Patcher
             if (!found)
                 throw new NotSupportedException($"There is no door with ID {id}!");
         }
-            
-
+        
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((var pickupName, PickupObject pickup) in seedObject.PickupObjects)
         {
@@ -2549,12 +2571,14 @@ public class Patcher
                 ItemEnum.MissileDrop => $"event_inherited(); if (active) {{ global.missiles += {pickup.Quantity}; if (global.missiles > global.maxmissiles) global.missiles = global.maxmissiles }}",
                 ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
                 ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
+                ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlightLevel += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };
             SubstituteGMLCode(collisionCode, collisionCodeToBe);
         }
-            
+        
+        
         // Modify how much expansions give
         ReplaceGMLInCode(missileCharacterEvent, """
     if (global.difficulty < 2)

@@ -478,6 +478,8 @@ public enum ItemEnum
     SuperMissileDrop,
     [EnumMember(Value = "Power Bomb Drop")]
     PBombDrop,
+    [EnumMember(Value = "Flashlight")]
+    Flashlight,
 }
 
 public class PickupObject
