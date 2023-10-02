@@ -367,6 +367,22 @@ public class Patcher
 
         gmData.Sprites.Add(new UndertaleSprite()
         {
+            Name = gmData.Strings.MakeString("sItemSpeedBoosterUpgrade"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_4"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_5"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_6"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_7"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemSpeedBoosterUpgrade_8"]] },
+            }
+        });
+
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
             // TODO: sprite is offset by a bit? Double check whether thats still the case
             Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
             Textures =
