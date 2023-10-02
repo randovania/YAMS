@@ -2147,11 +2147,14 @@ public class Patcher
 
         // Flashlight
         PrependGMLInCode(characterVarsCode, "global.flashlightLevel = 0;");
-        PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"), """
-                                                                            global.darkness -= global.flashlightLevel
-                                                                            if (global.darkness < 0)
-                                                                            global.darkness = 0
-                                                                            """);
+        PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"),
+"""
+        global.darkness -= global.flashlightLevel
+        if (global.darkness < 0)
+            global.darkness = 0
+        if (global.darkness > 4)
+            global.darkness = 4
+        """);
 
         // Set starting items
         bool alreadyAddedMissiles = false;
