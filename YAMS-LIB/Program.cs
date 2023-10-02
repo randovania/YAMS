@@ -354,7 +354,7 @@ public class Patcher
             }
         });
 
-        // Flashlight TODO: add sprites
+        // TODO: add better Flashlight sprites
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sFlashlight"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
