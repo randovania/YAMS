@@ -354,7 +354,7 @@ public class Patcher
             }
         });
 
-        //Torchlight TODO: add sprites
+        // Flashlight TODO: add sprites
         gmData.Sprites.Add(new UndertaleSprite()
         {
             Name = gmData.Strings.MakeString("sFlashlight"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
@@ -2128,7 +2128,7 @@ public class Patcher
         // Change starting health and energy per tank
         ReplaceGMLInCode(characterVarsCode, "global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank-1};");
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
-            
+
         // Flashlight
         PrependGMLInCode(characterVarsCode, "global.flashlightLevel = 0;");
         PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"), """
@@ -2260,6 +2260,7 @@ public class Patcher
                     break;
                 case ItemEnum.Flashlight:
                     ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
+                    break;
                 case ItemEnum.SpeedBoosterUpgrade:
                     ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
                     break;
