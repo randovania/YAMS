@@ -362,6 +362,20 @@ public class Patcher
             {
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_1"]] },
                 new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemFlashlight_1"]] },
+            }
+        });
+        gmData.Sprites.Add(new UndertaleSprite()
+        {
+            Name = gmData.Strings.MakeString("sItemBlindfold"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures =
+            {
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBlindfold_1"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBlindfold_2"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBlindfold_3"]] },
+                new UndertaleSprite.TextureEntry() {Texture =  gmData.TexturePageItems[nameToPageItemDict["sItemBlindfold_2"]] },
             }
         });
 
@@ -2034,11 +2048,12 @@ public class Patcher
             ds_list_add(list, global.gameHash)
             ds_list_add(list, global.dna)
             ds_list_add(list, global.startingSave)
-            ds_list_add(list, global.flashlightLevel)
+            ds_list_add(list, global.flashlight)
+            ds_list_add(list, global.blindfold)
             ds_list_add(list, global.speedBoosterFramesReduction)
 
             comment = "gives me some leeway in case i need to add more"
-            repeat (14)
+            repeat (16)
             {
                 ds_list_add(list, 0)
                 i += 1
@@ -2089,7 +2104,8 @@ public class Patcher
             global.gameHash = readline()
             global.dna = readline()
             global.startingSave = readline()
-            global.flashlightLevel = readline()
+            global.flashlight = readline()
+            global.blindfold = readline()
             global.speedBoosterFramesReduction = readline();
             ds_list_clear(list)
             """);
@@ -2146,12 +2162,13 @@ public class Patcher
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
 
         // Flashlight
-        PrependGMLInCode(characterVarsCode, "global.flashlightLevel = 0;");
+        PrependGMLInCode(characterVarsCode, "global.flashlight = 0;");
+        PrependGMLInCode(characterVarsCode, "global.blindfold = 0;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"), "global.darkness", "lightLevel");
         PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"),
             """
             var lightLevel = 0
-            lightLevel = global.darkness - global.flashlightLevel
+            lightLevel = global.darkness - (global.flashlight - global.blindfold)
             if (lightLevel < 0)
                 lightLevel = 0
             if (lightLevel > 4)
@@ -2280,7 +2297,10 @@ public class Patcher
                     ReplaceGMLInCode(characterVarsCode, "global.hasMorph = 0", $"global.hasMorph = {quantity};");
                     break;
                 case ItemEnum.Flashlight:
-                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
+                    ReplaceGMLInCode(characterVarsCode, "global.flashlight = 0", $"global.flashlight = {quantity};");
+                    break;
+                case ItemEnum.Blindfold:
+                    ReplaceGMLInCode(characterVarsCode, "global.blindfold = 0", $"global.blindfold = {quantity};");
                     break;
                 case ItemEnum.SpeedBoosterUpgrade:
                     ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
@@ -2620,7 +2640,8 @@ public class Patcher
                 ItemEnum.MissileDrop => $"event_inherited(); if (active) {{ global.missiles += {pickup.Quantity}; if (global.missiles > global.maxmissiles) global.missiles = global.maxmissiles }}",
                 ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
                 ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
-                ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlightLevel += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
+                ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlight += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
+                ItemEnum.Blindfold => $"event_inherited(); if (active) {{ global.blindfold += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ global.speedBoosterFramesReduction += {pickup.Quantity}; }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
