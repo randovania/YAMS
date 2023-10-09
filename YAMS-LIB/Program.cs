@@ -2048,8 +2048,7 @@ public class Patcher
             ds_list_add(list, global.gameHash)
             ds_list_add(list, global.dna)
             ds_list_add(list, global.startingSave)
-            ds_list_add(list, global.flashlight)
-            ds_list_add(list, global.blindfold)
+            ds_list_add(list, global.flashlightLevel)
             ds_list_add(list, global.speedBoosterFramesReduction)
 
             comment = "gives me some leeway in case i need to add more"
@@ -2104,8 +2103,7 @@ public class Patcher
             global.gameHash = readline()
             global.dna = readline()
             global.startingSave = readline()
-            global.flashlight = readline()
-            global.blindfold = readline()
+            global.flashlightLevel = readline()
             global.speedBoosterFramesReduction = readline();
             ds_list_clear(list)
             """);
@@ -2162,13 +2160,12 @@ public class Patcher
         ReplaceGMLInCode(eTankCharacterEvent, "global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
 
         // Flashlight
-        PrependGMLInCode(characterVarsCode, "global.flashlight = 0;");
-        PrependGMLInCode(characterVarsCode, "global.blindfold = 0;");
+        PrependGMLInCode(characterVarsCode, "global.flashlightLevel = 0;");
         ReplaceGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"), "global.darkness", "lightLevel");
         PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"),
             """
             var lightLevel = 0
-            lightLevel = global.darkness - (global.flashlight - global.blindfold)
+            lightLevel = global.darkness - (global.flashlightLevel)
             if (lightLevel < 0)
                 lightLevel = 0
             if (lightLevel > 4)
@@ -2297,10 +2294,10 @@ public class Patcher
                     ReplaceGMLInCode(characterVarsCode, "global.hasMorph = 0", $"global.hasMorph = {quantity};");
                     break;
                 case ItemEnum.Flashlight:
-                    ReplaceGMLInCode(characterVarsCode, "global.flashlight = 0", $"global.flashlight = {quantity};");
+                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
                     break;
                 case ItemEnum.Blindfold:
-                    ReplaceGMLInCode(characterVarsCode, "global.blindfold = 0", $"global.blindfold = {quantity};");
+                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
                     break;
                 case ItemEnum.SpeedBoosterUpgrade:
                     ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
@@ -2640,8 +2637,8 @@ public class Patcher
                 ItemEnum.MissileDrop => $"event_inherited(); if (active) {{ global.missiles += {pickup.Quantity}; if (global.missiles > global.maxmissiles) global.missiles = global.maxmissiles }}",
                 ItemEnum.SuperMissileDrop => $"event_inherited(); if (active) {{ global.smissiles += {pickup.Quantity}; if (global.smissiles > global.maxsmissiles) global.smissiles = global.maxsmissiles }}",
                 ItemEnum.PBombDrop => $"event_inherited(); if (active) {{ global.pbombs += {pickup.Quantity}; if (global.pbombs > global.maxpbombs) global.pbombs = global.maxpbombs }}",
-                ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlight += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
-                ItemEnum.Blindfold => $"event_inherited(); if (active) {{ global.blindfold += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
+                ItemEnum.Flashlight => $"event_inherited(); if (active) {{ global.flashlightLevel += {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
+                ItemEnum.Blindfold => $"event_inherited(); if (active) {{ global.flashlightLevel -= {pickup.Quantity}; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); ApplyLightPreset() }}",
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ global.speedBoosterFramesReduction += {pickup.Quantity}; }}",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
