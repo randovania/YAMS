@@ -11,22 +11,22 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("configuration_identifier")]
     public ConfigurationIdentifier Identifier;
-    
+
     [JsonInclude]
     [JsonPropertyName("game_patches")]
     public GamePatches Patches;
 
     [JsonInclude] [JsonPropertyName("door_locks")]
     public Dictionary<uint, DoorLock> DoorLocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("pickups")]
     public Dictionary<string, PickupObject> PickupObjects = new Dictionary<string, PickupObject>();
-    
+
     [JsonInclude]
     [JsonPropertyName("rooms")]
     public Dictionary<string, RoomObject> RoomObjects = new Dictionary<string, RoomObject>();
-    
+
     [JsonInclude]
     [JsonPropertyName("pipes")]
     public Dictionary<uint, PipeObject> PipeObjects = new Dictionary<uint, PipeObject>();
@@ -38,11 +38,11 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("starting_location")]
     public StartingLocationObject StartingLocation;
-    
+
     [JsonInclude]
     [JsonPropertyName("hints")]
     public Dictionary<HintLocationEnum, string> Hints = new Dictionary<HintLocationEnum, string>();
-    
+
     [JsonInclude]
     [JsonPropertyName("cosmetics")]
     public GameCosmetics Cosmetics;
@@ -163,27 +163,27 @@ public class GameCosmetics
     [JsonInclude]
     [JsonPropertyName("show_unexplored_map")]
     public bool ShowUnexploredMap;
-    
+
     [JsonInclude]
     [JsonPropertyName("unveiled_blocks")]
     public bool UnveilBlocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("health_hud_rotation")]
     public int HealthHUDRotation;
-    
+
     [JsonInclude]
     [JsonPropertyName("etank_hud_rotation")]
     public int EtankHUDRotation;
-    
+
     [JsonInclude]
     [JsonPropertyName("dna_hud_rotation")]
     public int DNAHUDRotation;
-    
+
     [JsonInclude]
     [JsonPropertyName("room_names_on_hud")]
     public RoomNameHudEnum RoomNameHud;
-    
+
     [JsonInclude]
     [JsonPropertyName("music_shuffle")]
     public Dictionary<string, string> MusicShuffleDict = new Dictionary<string, string>();
@@ -194,82 +194,82 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("septogg_helpers")]
     public bool SeptoggHelpers;
-    
+
     [JsonInclude]
     [JsonPropertyName("change_level_design")]
     public bool ChangeLevelDesign;
 
     [JsonInclude] [JsonPropertyName("grave_grotto_blocks")]
     public bool GraveGrottoBlocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("respawn_bomb_blocks")]
     public bool RespawnBombBlocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("skip_cutscenes")]
     public bool SkipCutscenes;
-    
+
     [JsonInclude]
     [JsonPropertyName("skip_save_cutscene")]
     public bool SkipSaveCutscene;
-    
+
     [JsonInclude]
     [JsonPropertyName("skip_item_cutscenes")]
     public bool SkipItemFanfares;
-    
+
     [JsonInclude]
     [JsonPropertyName("energy_per_tank")]
     public int EnergyPerTank;
-    
+
     [JsonInclude]
     [JsonPropertyName("require_missile_launcher")]
     public bool RequireMissileLauncher;
-    
+
     [JsonInclude]
     [JsonPropertyName("require_super_launcher")]
     public bool RequireSuperLauncher;
-    
+
     [JsonInclude]
     [JsonPropertyName("require_pb_launcher")]
     public bool RequirePBLauncher;
-    
+
     [JsonInclude]
     [JsonPropertyName("fusion_mode")]
     public bool FusionMode;
 
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("supers_on_missile_doors")]
     public bool CanUseSupersOnMissileDoors = true;
-    
+
     [JsonInclude]
     [JsonPropertyName("nest_pipes")]
     public bool NestPipes;
-    
+
     [JsonInclude]
     [JsonPropertyName("softlock_prevention_blocks")]
     public bool SoftlockPrevention;
-    
+
     [JsonInclude]
     [JsonPropertyName("a3_entrance_blocks")]
     public bool A3EntranceBlocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("screw_blocks")]
     public bool ScrewPipeBlocks;
-    
+
     [JsonInclude]
     [JsonPropertyName("sabre_designed_skippy")]
     public bool SabreSkippy;
-    
+
     [JsonInclude]
     [JsonPropertyName("locked_missile_text")]
     public TextDetails LockedMissileText;
-    
+
     [JsonInclude]
     [JsonPropertyName("locked_super_text")]
     public TextDetails LockedSuperText;
-    
+
     [JsonInclude]
     [JsonPropertyName("locked_pb_text")]
     public TextDetails LockedPBombText;
@@ -280,15 +280,15 @@ public class ConfigurationIdentifier
     [JsonInclude]
     [JsonPropertyName("hash")]
     public string Hash = "Quack";
-    
+
     [JsonInclude]
     [JsonPropertyName("word_hash")]
     public string WordHash = "Have fun";
-    
+
     [JsonInclude]
     [JsonPropertyName("randovania_version")]
     public string RDVVersion = "Randovania";
-    
+
     [JsonInclude]
     [JsonPropertyName("patcher_version")]
     public string PatcherVersion = "YAMS";
@@ -398,7 +398,7 @@ public enum ItemEnum
     DNA45,
     [EnumMember(Value = "Metroid DNA 46")]
     DNA46,
-    
+
     [EnumMember(Value = "Missile Expansion")]
     MissileExpansion,
     [EnumMember(Value = "Super Missile Expansion")]
@@ -407,7 +407,7 @@ public enum ItemEnum
     PBombExpansion,
     [EnumMember(Value = "Energy Tank")]
     EnergyTank,
-    
+
     [EnumMember(Value = "Missiles")]
     Missile,
     [EnumMember(Value = "Locked Missiles")]
@@ -420,14 +420,14 @@ public enum ItemEnum
     PBomb,
     [EnumMember(Value = "Locked Power Bombs")]
     LockedPBomb,
-    
+
     [EnumMember(Value = "Missile Launcher")]
     MissileLauncher,
     [EnumMember(Value = "Super Missile Launcher")]
     SuperMissileLauncher,
     [EnumMember(Value = "Power Bomb Launcher")]
     PBombLauncher,
-    
+
     [EnumMember(Value = "Bombs")]
     Bombs,
     [EnumMember(Value = "Power Grip")]
@@ -480,6 +480,8 @@ public enum ItemEnum
     PBombDrop,
     [EnumMember(Value = "Flashlight")]
     Flashlight,
+    [EnumMember(Value = "Blindfold")]
+    Blindfold,
     [EnumMember(Value = "Speed Booster Upgrade")]
     SpeedBoosterUpgrade,
 }
@@ -499,7 +501,7 @@ public class PickupObject
     [JsonPropertyName("quantity")]
     public int Quantity;
 
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("text")]
     public TextDetails Text;
 
@@ -517,11 +519,11 @@ public class SpriteDetails
 
 public class TextDetails
 {
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("header")]
     public string Header = "INVALID TEXT";
-    
-    [JsonInclude] 
+
+    [JsonInclude]
     [JsonPropertyName("description")]
     public string Description = "INVALID DESCRIPTION";
 }
@@ -531,11 +533,11 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("display_name")]
     public string DisplayName = "";
-    
+
     [JsonInclude]
     [JsonPropertyName("region_name")]
     public string RegionName = "";
-    
+
     [JsonInclude]
     [JsonPropertyName("minimap_data")]
     public List<Coordinate> MinimapData = new List<Coordinate>();
@@ -543,26 +545,26 @@ public class RoomObject
 
 public class PipeObject
 {
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("dest_x")]
     public int XPosition;
 
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("dest_y")]
     public int YPosition;
-    
-    [JsonInclude] 
+
+    [JsonInclude]
     [JsonPropertyName("dest_room")]
     public string Room = "";
 }
 
 public struct Coordinate
 {
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("x")]
     public int X;
 
-    [JsonInclude] 
+    [JsonInclude]
     [JsonPropertyName("y")]
     public int Y;
 }
