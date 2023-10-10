@@ -2165,7 +2165,7 @@ public class Patcher
         PrependGMLInCode(gmData.Code.ByName("gml_Script_ApplyLightPreset"),
             """
             var lightLevel = 0
-            lightLevel = global.darkness - (global.flashlightLevel)
+            lightLevel = global.darkness - global.flashlightLevel
             if (lightLevel < 0)
                 lightLevel = 0
             if (lightLevel > 4)
@@ -2297,7 +2297,7 @@ public class Patcher
                     ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
                     break;
                 case ItemEnum.Blindfold:
-                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
+                    ReplaceGMLInCode(characterVarsCode, "global.flashlightLevel = 0", $"global.flashlightLevel = -{quantity};");
                     break;
                 case ItemEnum.SpeedBoosterUpgrade:
                     ReplaceGMLInCode(characterVarsCode, "global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
