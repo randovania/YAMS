@@ -2606,7 +2606,10 @@ public class Patcher
                         if (active)
                         {
                             with (oCharacter)
-                                alarm[4] = 1;
+                                if (global.hasGravity)
+                                    alarm[4] = 1;
+                                else if (global.hasVaria)
+                                    alarm[1] = 1;
                         }
                     """,
                 ItemEnum.Charge => "btn1_name = \"Fire\"; event_inherited(); if (active) { global.cbeam = 1; global.hasCbeam = 1; }",
