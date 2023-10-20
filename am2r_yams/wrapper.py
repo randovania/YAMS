@@ -12,7 +12,9 @@ from contextlib import contextmanager
 # TODO: revise this to be cleaner. Following things to keep in mind here
 # 1. AFAIK the DLLs must be in path before loading the CLR. test whether that's truly the case.
 #    Maybe we can remove from path when we're done?
-# 2. Figure out how to deal with non-system dotnet installations
+# 2. While we figured out how to deal with non system installations via the DOTNET_ROOT env var,
+#    should we also provide a way to just pass a `dotnet_root` param to the wrapper which gets
+#    passed to pythonnet?
 yams_path = os.fspath(Path(__file__).with_name(name="yams"))
 sys.path.append(yams_path)
 from pythonnet import load, unload
@@ -64,8 +66,6 @@ class Wrapper:
         profile_xml_path = Path(tempdir.name).joinpath("profile.xml")
         if profile_xml_path.exists():
             profile_xml_path.unlink()
-
-        # TODO: this is where we'd call the patcher to do some customization options like music shuffler or samus palettes
 
         # Patch data.win
         progress_update("Patching data file...", 0.6)
