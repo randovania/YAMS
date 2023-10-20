@@ -779,6 +779,7 @@ public class Patcher
 
         // Fix varia cutscene
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0"), "bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSuitChangeFX2_Create_0"), "image_index = 1133", "sprite_indx = sSuitChangeFX2_fusion");
 
         // Make beams not instantly despawn when out of screen
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oBeam_Step_0"),
