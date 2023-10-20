@@ -769,6 +769,9 @@ public class Patcher
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSlotMenu_normal_only_Create_0"),
             "d0str = get_text(\"Title-Additions\", \"GameSlot_NewGame_NormalGame\")", "d0str = \"Randovania\";");
 
+        // Add Credits
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCreditsText_Create_0"), "/Japanese Community;;;;", "/Japanese Community;;;*AM2R Randovania Credits;;*Development;Miepee=JesRight;;*Logic Database;Miepee=JeffGainsNGames;/Esteban 'DruidVorse' Criado;;*Art;ShirtyScarab=AbyssalCreature;;/With contributions from many others;;");
+
         // Unlock fusion etc. by default
         var unlockStuffCode = gmData.Code.ByName("gml_Object_oControl_Other_2");
         AppendGMLInCode(unlockStuffCode, "global.mod_fusion_unlocked = 1; global.mod_gamebeaten = 1;");
