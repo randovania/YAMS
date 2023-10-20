@@ -146,6 +146,9 @@ public class Patcher
 
             foreach (var filePath in Directory.GetFiles(dirPath))
             {
+                string extension = new FileInfo(filePath).Extension;
+                if (String.IsNullOrWhiteSpace(extension) || extension == ".md" || extension == ".txt")
+                    continue;
                 var sprite = Image.Load(filePath);
                 currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
                 if ((lastUsedX + sprite.Width) > pageDimension)
@@ -770,7 +773,7 @@ public class Patcher
             "d0str = get_text(\"Title-Additions\", \"GameSlot_NewGame_NormalGame\")", "d0str = \"Randovania\";");
 
         // Add Credits
-        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCreditsText_Create_0"), "/Japanese Community;;;;", "/Japanese Community;;;*AM2R Randovania Credits;;*Development;Miepee=JesRight;;*Logic Database;Miepee=JeffGainsNGames;/Esteban 'DruidVorse' Criado;;*Art;ShirtyScarab=AbyssalCreature;;/With contributions from many others;;");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCreditsText_Create_0"), "/Japanese Community;;;;", "/Japanese Community;;;*AM2R Randovania Credits;;*Development;Miepee=JesRight;;*Logic Database;Miepee=JeffGainsNGames;/Esteban 'DruidVorse' Criado;;*Art;ShirtyScarab=AbyssalCreature;;/With contributions from many others;;;");
 
         // Unlock fusion etc. by default
         var unlockStuffCode = gmData.Code.ByName("gml_Object_oControl_Other_2");
@@ -3526,6 +3529,9 @@ public class Patcher
 
 
         // TODO: rewrite log rendering to have color
+
+        // Add spoiler log in credits when finished game normally
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCreditsText_Create_0"), "TEXT_ROWS = ", $"if (!global.creditsmenuopt) text = \"{seedObject.CreditsSpoiler}\" + text;\n TEXT_ROWS = ");
 
 
         // Multiworld stuff

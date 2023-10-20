@@ -46,6 +46,10 @@ public class SeedObject
     [JsonInclude]
     [JsonPropertyName("cosmetics")]
     public GameCosmetics Cosmetics;
+
+    [JsonInclude]
+    [JsonPropertyName("credits_spoiler")]
+    public string CreditsSpoiler;
 }
 
 public class DoorLock
