@@ -7,6 +7,6 @@ Authors are as follows:
 - The Morph Ball and Missile launcher sprites (`items/morph` and `items/missileLauncher` respectively) were made by ShirtyScarab554
 - Power Grip and the Shiny nothing orb (`items/powerGrip` and `items/shinyNothing` respectively) were made by ShirtyScarab554 and modified by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The flashlight and blindfold (`items/flashlight` and `items/blindfold` respectively) were made by [JeffGainsNGames](https://www.youtube.com/@jeffgainsngames)
-- The Ammo/Health Drops sprites (`items/bigHealthDrop`, `items/missileDrop`, `items/pbDrop`, `items/smallHealthDrop` and `items/superMissileDrop`) were made by [Miepee](https://github.com/Miepee)
+- The Ammo/Health Drops sprites (`items/bigHealthDrop`, `items/missileDrop`, `items/pbDrop`, `items/smallHealthDrop` and `items/superMissileDrop`) were made by [Miepee](https://github.com/Miepee), modified from the Nothing sprites mentioned above.
 - The Speed Booster Upgrade sprites were (`items/speedboosterUpgrade`) were made by BastionB56 and modified by [Miepee](https://github.com/Miepee)
 
