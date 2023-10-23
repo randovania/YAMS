@@ -1428,7 +1428,7 @@ public class Patcher
             "check_areaclear(); with (instance_create(oCharacter.x, oCharacter.y, scr_DNASpawn(myid))) { active = 1; itemtype = 1; changeOnMap = false} with (oMusicV2) { if (alarm[4] >= 0) alarm[4] = 120; }");
 
         // Make new global.lavastate 11 that requires 46 dna to be collected
-        SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "if (global.lavastate == 11) { if (global.dna >= 46) { instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
+        SubstituteGMLCode(gmData.Code.ByName("gml_Script_check_areaclear"), "var spawnQuake = is_undefined(argument0); if (global.lavastate == 11) { if (global.dna >= 46) { if (spawnQuake) instance_create(0, 0, oBigQuake); global.lavastate = 12; } }");
 
         // Check lavastate at labs
         var labsRoom = gmData.Rooms.ByName("rm_a7b04A");
@@ -1618,7 +1618,7 @@ public class Patcher
 
         // Set lava state and the metroid scanned events
         AppendGMLInCode(characterVarsCode, "global.lavastate = 11; global.event[4] = 1; global.event[56] = 1;" +
-                                           " global.event[155] = 1; global.event[173] = 1; global.event[204] = 1; global.event[259] = 1");
+                                           " global.event[155] = 1; global.event[173] = 1; global.event[204] = 1; global.event[259] = 1; check_areaclear(1)");
 
         // Improve when expansions trigger big pickup text and popup_text
         PrependGMLInCode(characterVarsCode, "global.firstMissileCollected = 0; global.firstSMissileCollected = 0; " +
