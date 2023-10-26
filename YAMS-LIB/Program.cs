@@ -3527,6 +3527,8 @@ public class Patcher
         ssFGEvent.Actions.Add(ssFGAction);
         ssFGCollisionList.Add(ssFGEvent);
 
+        // Adjust pause screen text to mention room names
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oSS_Fg_Create_0"), "tip2text = get_text(\"Subscreen\", \"Marker_Tip\")", "tip2text = \"| - Marker & Room Names\"");
 
         // TODO: rewrite log rendering to have color
 
