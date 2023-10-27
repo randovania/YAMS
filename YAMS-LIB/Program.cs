@@ -1914,8 +1914,7 @@ public class Patcher
         AppendGMLInCode(gmData.Code.ByName("gml_Object_oGravityPod_Create_0"), "closed = 1; xoff = 0;");
 
         // Always enable long range activation, for consistent zips
-        foreach (var room in gmData.Rooms.Where(r => r.Name.Content.StartsWith("rm_a")))
-            AppendGMLInCode(room.CreationCodeId, "global.objdeactivate = 0");
+        ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCharacter_Step_1"), "global.objdeactivate", "false");
 
         AppendGMLInCode(gmData.Code.ByName("gml_Script_start_new_game"), "global.targetx = global.save_x; global.targetx = global.save_y;");
 
