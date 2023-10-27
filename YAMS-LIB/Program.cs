@@ -2561,7 +2561,6 @@ public class Patcher
                 ItemEnum.Screwattack => "event_inherited(); if (active) { global.screwattack = 1; global.hasScrewattack = 1; } with (oCharacter) sfx_stop(spinjump_sound);",
                 ItemEnum.Varia => """
                         event_inherited()
-                        global.hasVaria = 1;
                         global.SuitChange = !global.skipItemFanfare;
                         // If any Metroid exists, force suit cutscene to be off
                         if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
@@ -2575,6 +2574,7 @@ public class Patcher
                         global.SuitChangeGravity = 0;
                         if (active)
                         {
+                            global.hasVaria = 1;
                             with (oCharacter)
                                 alarm[1] = 1;
                         }
@@ -2585,7 +2585,6 @@ public class Patcher
                 ItemEnum.ProgressiveJump => "event_inherited(); if (active) { if (global.hasSpacejump) exit; else if (global.hasHijump) { global.spacejump = 1; global.hasSpacejump = 1; } else { global.hijump = 1; global.hasHijump = 1; } }",
                 ItemEnum.Gravity => """
                         event_inherited();
-                        global.hasGravity = 1;
                         global.SuitChange = !global.skipItemFanfare;
                         // If any Metroid exists, force suit cutscene to be off
                         if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
@@ -2599,6 +2598,7 @@ public class Patcher
                         global.SuitChangeGravity = 1;
                         if (active)
                         {
+                            global.hasGravity = 1;
                             with (oCharacter)
                                 alarm[4] = 1;
                         }
@@ -2615,19 +2615,19 @@ public class Patcher
                             global.SuitChange = 0;
                         global.SuitChangeX = x;
                         global.SuitChangeY = y;
-                        if (global.hasGravity) exit
-                        else if (global.hasVaria)
-                        {
-                            global.hasGravity = 1;
-                            global.SuitChangeGravity = 1;
-                        }
-                        else
-                        {
-                            global.hasVaria = 1;
-                            global.SuitChangeGravity = 0;
-                        }
                         if (active)
                         {
+                            if (global.hasGravity) exit
+                            else if (global.hasVaria)
+                            {
+                                global.hasGravity = 1;
+                                global.SuitChangeGravity = 1;
+                            }
+                            else
+                            {
+                                global.hasVaria = 1;
+                                global.SuitChangeGravity = 0;
+                            }
                             with (oCharacter)
                                 if (global.hasGravity)
                                     alarm[4] = 1;
