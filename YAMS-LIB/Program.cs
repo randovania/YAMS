@@ -49,6 +49,7 @@ public class Patcher
         {
             gmData = UndertaleIO.Read(fs);
         }
+        Console.WriteLine("Read data file.");
         var decompileContext = new GlobalDecompileContext(gmData, false);
 
         // Check for 1.5.5 before doing *anything*
@@ -678,7 +679,7 @@ public class Patcher
 
         void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
         {
-            var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
+            using var texturePage = Image.Load(texture.TexturePage.TextureData.TextureBlob);
             texturePage.Mutate(im => im.Hue(rotation, new Rectangle(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight)));
 
             using var ms = new MemoryStream();
@@ -2833,7 +2834,8 @@ public class Patcher
             """);
 
         // speed booster blocks near a5 activation
-        foreach (var gameObject in gmData.Rooms.ByName("rm_a5c08").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
+        var a5c08 = gmData.Rooms.ByName("rm_a5c08");
+        foreach (var gameObject in a5c08.GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
         {
             // Y 32 is the top row of speed blocks
             if (gameObject.Y == 32)
