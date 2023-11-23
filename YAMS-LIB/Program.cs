@@ -2501,7 +2501,7 @@ public class Patcher
                             room.Tiles.Remove(tile);
                     }
 
-                    if (doorLock.Lock == DoorLockType.A2WaterTurbine)
+                    if (gameObject.ObjectDefinition != waterTurbineObject && doorLock.Lock == DoorLockType.A2WaterTurbine)
                     {
                         gameObject.ObjectDefinition = waterTurbineObject;
                         gameObject.X += (24 * (int)gameObject.ScaleX);
