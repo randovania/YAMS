@@ -52,8 +52,6 @@ class Wrapper:
         input_data_win: str = shutil.move(output_data_win, output_data_win + "_orig")
         input_data_win_path = Path(input_data_win)
 
-        # TODO: do some check on whether input is valid? on patcher side probably.
-
         # Temp write patch_data into json file for yams later
         progress_update("Creating json file...", 0.3)
         json_file: str = os.fspath(
@@ -61,6 +59,15 @@ class Wrapper:
         )
         with open(json_file, "w+") as f:
             f.write(json.dumps(patch_data, indent=2))
+
+        # Wrapper to play rando easier on flatpak
+        tempdir_Path = Path(tempdir.name)
+        if platform.system() == "Linux" and not tempdir_Path.joinpath("AM2R.AppImage").exists():
+            wrapper_file: str = os.fspath(tempdir_Path.joinpath("start-rando.sh"))
+            with open(wrapper_file, "w+") as f:
+                f.write("#!/usr/bin/env bash\n")
+                f.write(f"flatpak run --command=\"{os.fspath(output_path)}/runner\" io.github.am2r_community_developers.AM2RLauncher")
+            os.chmod(wrapper_file, 0o775)
 
         # AM2RLauncher installations usually have a profile.xml file. For less confusion, remove it if it exists
         profile_xml_path = Path(tempdir.name).joinpath("profile.xml")
