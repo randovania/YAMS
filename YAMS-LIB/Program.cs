@@ -776,6 +776,9 @@ public class Patcher
         // Add Credits
         ReplaceGMLInCode(gmData.Code.ByName("gml_Object_oCreditsText_Create_0"), "/Japanese Community;;;;", "/Japanese Community;;;*AM2R Randovania Credits;;*Development;Miepee=JesRight;;*Logic Database;Miepee=JeffGainsNGames;/Esteban 'DruidVorse' Criado;;*Art;ShirtyScarab=AbyssalCreature;;/With contributions from many others;;;");
 
+        // Fix crashes where rooms try to access these vars in the starting room
+        AppendGMLInCode(gmData.Code.ByName("gml_Script_set_start_location"), "global.targetx = global.save_x; global.targety = global.save_y;");
+
         // Fix visual edge case discrepancy with time of day
         PrependGMLInCode(gmData.Code.ByName("gml_Room_rm_a8h01_Create"), "global.timeofday = 1;");
 
