@@ -1,0 +1,361 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "YAMS JSON API",
+    "description": "Input format for YAMS' JSON API. The JSON schema can be found [here]().",
+    "type": "object",
+    "properties": 
+    {
+        "$schema": 
+        {
+            "description": "The URL of the JSON schema. Typically ``.",
+            "type": "string"
+        },
+        "configuration_identifier": 
+        {
+            "description": "Properties to more easily identify a game.",
+            "type": "object",
+            "properties":
+            {
+                "word_hash":
+                {
+                    "description": "A human readable word hash to define this current seed. Will be displayed on the title screen.",
+                    "type": "string"
+                },
+                "hash": 
+                {
+                    "description": "A non-human readable hash to define this current seed. Will be displayed on the title screen.",
+                    "type": "string"
+                },
+                "session_uuid":
+                {
+                    "description": "A UUID to identify this current game.",
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "randovania_version":
+                {
+                    "description": "A string that describes the Randovania version used to generate the seed.",
+                    "type": "string"
+                },
+                "patcher_version":
+                {
+                    "description": "A string that described the YAMS patcher version used to generate the seed.",
+                    "type": "string"
+                }
+            }
+        },
+        "starting_items": 
+        {
+        },
+        "starting_location": 
+        {
+            "description": "Properties relevant to the starting location in-game.",
+            "type": "object",
+            "properties":
+            {
+                "save_room":
+                {
+                    "description": "A number describing which save station to start on. The full list can be found in the language files or in the `set_start_location` script.",
+                    "type": "number"
+                }
+            }
+        },
+        "pickups":
+        {
+
+        },
+        "rooms":
+        {
+            "description": "A dictionary of internal room names and their properties.",
+            "type": "object",
+            "patternProperties":
+            {
+                ".*":
+                {
+                    "description": "The room name.",
+                    "type": "string",
+                    "properties":
+                    {
+                        "display_name": 
+                        {
+                            "description": "A name for that room, which gets displayed on the minimap and when in the room.",
+                            "type": "string"
+                        },
+                        "region_name": 
+                        {
+                            "description": "The region name for that room, which gets displayed on the minimap.",
+                            "type": "string"
+                        },
+                        "minimap_data":
+                        {
+                            "description": "An array which determines coordinates on the minimap where this room exists.",
+                            "type": "array",
+                            "items": 
+                            {
+                                "type": "object",
+                                "properties":
+                                {
+                                    "x":
+                                    {
+                                        "description": "The X-coordinate on the minimap of this room.",
+                                        "type": "integer"
+                                    },
+                                    "y":
+                                    {
+                                        "description": "The Y-coordinate on the minimap of this room.",
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "game_patches":
+        {
+            "description": "Properties for general game patches.",
+            "type": "object",
+            "properties":
+            {
+                "septogg_helpers":
+                {
+                    "description": "Determines whether Septoggs will spawn to help with platforming.",
+                    "type": "boolean"
+                },
+                "respawn_bomb_blocks":
+                {
+                    "description": "Determines whether bomb blocks will respawn after they've been destroyed.",
+                    "type": "boolean"
+                },
+                "skip_cutscenes":
+                {
+                    "description": "Determines whether gameplay cutscenes will be skipped.",
+                    "type": "boolean"
+                },
+                "skip_save_cutscene":
+                {
+                    "description": "Determines whether the small cutscene that plays when saving will be skipped.",
+                    "type": "boolean"
+                },
+                "skip_item_cutscenes":
+                {
+                    "description": "Determines whether the item collection cutscenes will be skipped.",
+                    "type": "boolean"
+                },
+                "energy_per_tank":
+                {
+                    "description": "Determines how much energy an E-Tank provides. The starting energy is this value minus one.",
+                    "type": "integer"
+                },
+                "grave_grotto_blocks":
+                {
+                    "description": "Determines whether the bomb blocks between the upper half and the lower half will be there in Grave Grotto.",
+                    "type": "boolean"
+                },
+                "fusion_mode":
+                {
+                    "description": "Determines whether fusion mode will be enabled.",
+                    "type": "boolean"
+                },
+                "supers_on_missile_doors":
+                {
+                    "description": "Determines whether Super Missiles will open Missile doors.",
+                    "type": "boolean"
+                },
+                "nest_pipes":
+                {
+                    "description": "Determines whether The Depths will have new transportation pipes for easier traversal.",
+                    "type": "boolean"
+                },
+                "softlock_prevention_blocks":
+                {
+                    "description": "Determines whether some blocks which can cause softlocks will be removed.",
+                    "type": "boolean"
+                },
+                "a3_entrance_blocks":
+                {
+                    "description": "Determines whether the bomb blocks at the entrance of the Industrial Complex will be there.",
+                    "type": "boolean"
+                },
+                "screw_blocks":
+                {
+                    "description": "Determines whether the pipe rooms will be blocked off by Screw Attack blocks.",
+                    "type": "boolean"
+                },
+                "sabre_designed_skippy":
+                {
+                    "description": "Determines whether Skippy/Player-Autoad will have its designed changed to look like Sabre320's redesign for Skippy the Bot.",
+                    "type": "boolean"
+                },
+                "locked_missile_text":
+                {
+                    "description": "The text that will appear when collecting Missile Expansions without Missile Launcher in the inventory.",
+                    "$ref": "#/$defs/item_text_details"
+                },
+                "locked_super_text":
+                {
+                    "description": "The text that will appear when collecting Super Missile Expansions without Super Missile Launcher in the inventory.",
+                    "$ref": "#/$defs/item_text_details"
+                },
+                "locked_pb_text":
+                {
+                    "description": "The text that will appear when collecting Power Bomb Expansions without Power Bomb Launcher in the inventory.",
+                    "$ref": "#/$defs/item_text_details"
+                },
+                "require_missile_launcher":
+                {
+                    "description": "Determines whether the Missile Launcher is required to fire Missiles.",
+                    "type": "boolean"
+                },
+                "require_super_launcher":
+                {
+                    "description": "Determines whether the Super Missile Launcher is required to fire Super Missiles.",
+                    "type": "boolean"
+                },
+                "require_pb_launcher":
+                {
+                    "description": "Determines whether the Power Bomb Launcher is required to fire Power Bombs.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "door_locks":
+        {
+            "description": "Contains properties for door lock rando.",
+            "type": "object",
+            "patternProperties":
+            {
+                "^[0-9]+$":
+                {
+                    "description": "The instance ID of the door.",
+                    "type": "object",
+                    "properties":
+                    {
+                        "lock":
+                        {
+                            "description": "The kind of lock this door uses.",
+                            "enum": 
+                            [
+                                "Arachnus-Locked Door",
+                                "Bomb Door",
+                                "Charge Beam Door",
+                                "Distribution Center Bullet Hell Room Access EMP Door",
+                                "Distribution Center EMP Ball Introduction EMP Door",
+                                "Distribution Center Energy Distribution Tower East EMP Door",
+                                "Distribution Center Energy Restored Door",
+                                "Distribution Center Exterior East Access EMP Door",
+                                "Distribution Center Pipe Hub Access EMP Door",
+                                "Distribution Center Robot Home EMP Door",
+                                "Genesis-Locked Door",
+                                "Golden Temple EMP Door",
+                                "Guardian-Locked Door",
+                                "Hydro Station EMP Door",
+                                "Hydro Station Water Turbine",
+                                "Ice Beam Door",
+                                "Industrial Complex EMP Door",
+                                "Locked Door",
+                                "Missile Door",
+                                "Normal Door",
+                                "Plasma Beam Door",
+                                "Power Bomb Door",
+                                "Screw Attack Door",
+                                "Serris-Locked Door",
+                                "Spazer Beam Door",
+                                "Spider Ball Door",
+                                "Super Missile Door",
+                                "Tester-Locked Door",
+                                "Torizo-Locked Door",
+                                "Tower Energy Restored Door",
+                                "Wave Beam Door"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "hints":
+        {
+            "description": "Properties for in-game hints.",
+            "type": "object",
+            "properties":
+            {
+                "septogg_a0":
+                {
+                    "description": "The hint text for the Wisdom Septogg in Main Caves.",
+                    "type": "string"
+                },
+                "septogg_a1":
+                {
+                    "description": "The hint text for the Wisdom Septogg in Golden Temple.",
+                    "type": "string"
+                },
+                "septogg_a2":
+                {
+                    "description": "The hint text for the Wisdom Septogg in Hydro Station.",
+                    "type": "string"
+                },
+                "septogg_a3":
+                {
+                    "description": "The hint text for the Wisdom Septogg in Industrial Complex.",
+                    "type": "string"
+                },
+                "septogg_a4":
+                {
+                    "description": "The hint text for the Wisdom Septogg in The Tower.",
+                    "type": "string"
+                },
+                "septogg_a5":
+                {
+                    "description": "The hint text for the Wisdom Septogg in Distribution Center.",
+                    "type": "string"
+                },
+                "septogg_a6":
+                {
+                    "description": "The hint text for the Wisdom Septogg in The Depths.",
+                    "type": "string"
+                },
+                "chozo_labs":
+                {
+                    "description": "The hint text for the Chozo statue in the Genetics Laboratory.",
+                    "type": "string"
+                }
+            }
+        },
+        "cosmetics":
+        {
+            "description": "Contains properties for cosmetic patches.",
+            "type": "object",
+            "properties":
+            {
+                
+            }
+        },
+        "credits_spoiler":
+        {
+            "description": "A text which will be prepended to the normal credits. Usually used to contain a spoiler log, as it will not be shown when viewing the credits through the title-screen option. Only when beating the game.",
+            "type": "string"
+        }
+    },
+    "$defs": 
+    {
+        "item_text_details":
+        {
+            "description": "Contains text properties for the item collection screen.",
+            "type": "object",
+            "properties":
+            {
+                "header": 
+                {
+                    "description": "The header/title message.",
+                    "type": "string"
+                },
+                "description":
+                {
+                    "description": "The description message.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
