@@ -2896,6 +2896,8 @@ public class Patcher
                 AppendGMLInCode(gameObject.CreationCode, "if (global.softlockPrevention) instance_destroy();");
         }
 
+        // Crumble blocks in plasma chamber
+        AppendGMLInCode(gmData.Code.ByName("gml_Room_rm_a4a10_Create"), "if (global.softlockPrevention) { with (oBlockStep) instance_destroy(); }");
 
         // A4 exterior top, always remove the bomb blocks when coming from that entrance
         foreach (string codeName in new[] {"gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create"})
