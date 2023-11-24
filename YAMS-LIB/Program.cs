@@ -1592,6 +1592,9 @@ public class Patcher
         ReplaceGMLInCode(chStepControlCode, "if (kMissile && kMissilePushedSteps == 1 && global.maxmissiles > 0", "if (kMissile && kMissilePushedSteps == 1");
         ReplaceGMLInCode(chStepControlCode, "if (global.currentweapon == 1 && global.missiles == 0)", "if (global.currentweapon == 1 && (global.maxmissiles == 0 || global.missiles == 0))");
 
+        // Fix weapon selection cancel with toggle
+        ReplaceGMLInCode(chStepControlCode, "if (kSelect && kSelectPushedSteps == 0 && global.maxmissiles > 0 && global.currentweapon != 0)", "if (kSelect && kSelectPushedSteps == 0 && (global.missiles > 0 || global.smissiles > 0 || global.pbombs > 0) && global.currentweapon != 0)");
+
         // Fix weapon selection with hold
         ReplaceGMLInCode(chStepControlCode, """
                 if (global.currentweapon == 0)
