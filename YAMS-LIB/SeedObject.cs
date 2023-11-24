@@ -303,6 +303,7 @@ public class StartingLocationObject
 {
     [JsonInclude]
     [JsonPropertyName("save_room")]
+    // TODO: For ease of use, this should be 3 fields: a string for room name, and two int positions for x/y start.
     public int SaveRoom;
 }
 
