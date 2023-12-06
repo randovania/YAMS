@@ -2,11 +2,14 @@
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using SixLabors.ImageSharp;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
 using SixLabors.ImageSharp.Formats.Png;
 using static YAMS_LIB.ExtensionMethods;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace YAMS_LIB;
 
