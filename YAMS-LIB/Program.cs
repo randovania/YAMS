@@ -2374,7 +2374,7 @@ public class Patcher
                                           $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} scr_powerbomb_character_event()",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
                                           "{ global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs; }",
-                var x when x.ToString().StartsWith("DNA") => "event_inherited(); if (active) { global.dna++; check_areaclear(); }",
+                var x when Enum.GetName(x).StartsWith("DNA") => "event_inherited(); if (active) { global.dna++; check_areaclear(); }",
                 ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) { global.bomb = 1; global.hasBombs = 1; }",
                 ItemEnum.Powergrip =>"event_inherited(); if (active) { global.powergrip = 1; global.hasPowergrip = 1; }",
                 ItemEnum.Spiderball => "btn1_name = \"Aim\"; event_inherited(); if (active) { global.spiderball = 1; global.hasSpiderball = 1; }",
