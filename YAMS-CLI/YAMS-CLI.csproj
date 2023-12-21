@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\YAMS-LIB\YAMS-LIB.csproj" />
+        <ProjectReference Include="..\YAMS-LIB\YAMS-LIB.csproj"/>
     </ItemGroup>
 
 </Project>

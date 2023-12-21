@@ -10,11 +10,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj" />
+        <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="sprites\" />
+        <Folder Include="sprites\"/>
         <Content Include="sprites/**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -22,8 +22,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Macross.Json.Extensions" Version="3.0.0" />
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.1" />
+        <PackageReference Include="Macross.Json.Extensions" Version="3.0.0"/>
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.1"/>
     </ItemGroup>
 
 </Project>
