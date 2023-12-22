@@ -16,7 +16,8 @@ public class SeedObject
     [JsonPropertyName("game_patches")]
     public GamePatches Patches;
 
-    [JsonInclude] [JsonPropertyName("door_locks")]
+    [JsonInclude]
+    [JsonPropertyName("door_locks")]
     public Dictionary<uint, DoorLock> DoorLocks;
 
     [JsonInclude]
@@ -296,6 +297,10 @@ public class ConfigurationIdentifier
     [JsonInclude]
     [JsonPropertyName("patcher_version")]
     public string PatcherVersion = "YAMS";
+
+    [JsonInclude]
+    [JsonPropertyName("starting_memo")]
+    public TextDetails? StartingMemoText;
 }
 
 

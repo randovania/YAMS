@@ -1497,6 +1497,17 @@ public class Patcher
                                                                                       alarm[2] = 30
                                                                                   """);
 
+        // Add starting equipment memo
+        characterVarsCode.PrependGMLInCode("global.showStartingMemo = 1; global.startingHeader = \"\"; global.startingText = \"\";");
+        gmData.Code.ByName("gml_Object_oCharacter_Create_0").AppendGMLInCode("if (!global.showStartingMemo) display_itemmsg(global.startingHeader, global.startingText, \"\", \"\");");
+        gmData.Code.ByName("gml_Script_display_itemmsg").PrependGMLInCode("global.showStartingMemo = 1;");
+        if (seedObject.Identifier.StartingMemoText is not null)
+        {
+            characterVarsCode.ReplaceGMLInCode("global.showStartingMemo = 1", "global.showStartingMemo = 0");
+            characterVarsCode.ReplaceGMLInCode("global.startingHeader = \"\"", $"global.startingHeader = \"{seedObject.Identifier.StartingMemoText.Header}\"");
+            characterVarsCode.ReplaceGMLInCode("global.startingText = \"\"", $"global.startingText = \"{seedObject.Identifier.StartingMemoText.Description}\"");
+        }
+
         // Decouple Major items from item locations
         characterVarsCode.PrependGMLInCode("global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
                                            "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
@@ -1856,7 +1867,7 @@ public class Patcher
         UndertaleCode saveGlobalsCode = new UndertaleCode();
         saveGlobalsCode.Name = gmData.Strings.MakeString("gml_Script_sv6_add_newglobals");
         saveGlobalsCode.SubstituteGMLCode("""
-                                          var list, str_list, comment;
+                                          var list, str_list;
                                           list = ds_list_create()
                                           ds_list_add(list, global.hasBombs)
                                           ds_list_add(list, global.hasPowergrip)
@@ -1893,13 +1904,7 @@ public class Patcher
                                           ds_list_add(list, global.startingSave)
                                           ds_list_add(list, global.flashlightLevel)
                                           ds_list_add(list, global.speedBoosterFramesReduction)
-
-                                          comment = "gives me some leeway in case i need to add more"
-                                          repeat (16)
-                                          {
-                                              ds_list_add(list, 0)
-                                              i += 1
-                                          }
+                                          ds_list_add(list, global.showStartingMemo)
                                           str_list = ds_list_write(list)
                                           ds_list_clear(list)
                                           return str_list;
@@ -1948,6 +1953,7 @@ public class Patcher
                                           global.startingSave = readline()
                                           global.flashlightLevel = readline()
                                           global.speedBoosterFramesReduction = readline();
+                                          global.showStartingMemo = readline();
                                           ds_list_clear(list)
                                           """);
         gmData.Code.Add(loadGlobalsCode);
