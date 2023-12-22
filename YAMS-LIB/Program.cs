@@ -2604,7 +2604,7 @@ public class Patcher
         UndertaleRoom? a5c08 = gmData.Rooms.ByName("rm_a5c08");
         foreach (UndertaleRoom.GameObject? gameObject in a5c08.GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
         {
-            // Y 32 is the top row of speed blocks
+            // Y 32 is the top row of speed blocks. we need to remove am2random behaviour from them
             if (gameObject.Y == 32)
             {
                 gameObject.CreationCode.ReplaceGMLInCode("""
@@ -2613,8 +2613,8 @@ public class Patcher
                                                          """, "");
             }
 
-            // Y 80 is the bottom row of speed blocks
-            if (gameObject.Y == 80) gameObject.CreationCode.AppendGMLInCode("if (global.softlockPrevention) instance_destroy();");
+            // X 960 are the right pillars which we want to remove.
+            if (gameObject.X >= 960) gameObject.CreationCode.AppendGMLInCode("if (global.softlockPrevention) instance_destroy();");
         }
 
         // screw blocks in bullet hell room
