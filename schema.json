@@ -41,6 +41,11 @@
                 {
                     "description": "A string that described the YAMS patcher version used to generate the seed.",
                     "type": "string"
+                },
+                "starting_memo":
+                {
+                    "description": "If given, shows an item collection message at the start of the game.",
+                    "$ref": "#/$defs/item_text_details"
                 }
             }
         },
