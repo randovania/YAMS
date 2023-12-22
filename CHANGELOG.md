@@ -7,6 +7,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 - An item collection screen will now be shown, when the user starts with random items.
 - When softlock prevention is active, then the first two crumble blocks in Super Missile Chamber will be shoot blocks instead.
+- Clearer GUI symbols, when expansions have been collected, but not their corresponding launcher.
 
 ### Changed
 - When softlock prevention is active, then in the EMP Escape route room, instead of the bottom row of speedbooster blocks being gone, now every pillar but the leftmost one is gone.

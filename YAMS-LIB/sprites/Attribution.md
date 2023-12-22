@@ -5,7 +5,8 @@ the `LICENSE-GRAPHICS` file for the full license details.
 Authors are as follows:
 
 - Everything in the `doors` folder was made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- Everything in the `misc` folder was made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- Everything in the `misc` folder, with the exception of the `hud` subfolder, was made by [AbyssalCreature](https://github.com/AbyssalCreature)
+  - The `hud` subfolder in the `misc` folder was made by [Miepee](https://github.com/Miepee).
 - The DNA, Nothing, Power Bomb Launcher, Shiny Screw Attack, Shiny Hi-Jump, Shiny Ice beam, Shiny Missile, Super Missile
   Launcher and Unknown
   sprites (`items/dna`, `items/nothing`, `items/pbLauncher`, `items/screwAttackShiny`, `items/shinyHijump`, `items/shinyIcebeam`, `items/shinyMissile`, `items/superMissileLauncher`

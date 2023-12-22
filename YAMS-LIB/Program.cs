@@ -186,9 +186,15 @@ public class Patcher
             { Name = gmData.Strings.MakeString("tlWarpWaterfall"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpWaterfall"]] });
 
 
-        gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissile"]] });
-        gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissile"]] });
-        gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBomb"]] });
+        gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissileSelected"]] });
+        gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissileSelected"]] });
+        gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBombSelected"]] });
+        gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissileNormal"]] });
+        gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissileNormal"]] });
+        gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBombNormal"]] });
+        gmData.Sprites.ByName("sGUIMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIMissileNormalGreen"]] });
+        gmData.Sprites.ByName("sGUISMissile").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUISMissileNormalGreen"]] });
+        gmData.Sprites.ByName("sGUIPBomb").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sGUIPBombNormalGreen"]] });
 
         // Replace existing door sprites
         gmData.Sprites.ByName("sDoorA5Locks").Textures[0].Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorBlue"]];
@@ -1317,8 +1323,29 @@ public class Patcher
         UndertaleCode? chStepFireCode = gmData.Code.ByName("gml_Script_chStepFire");
         chStepFireCode.ReplaceGMLInCode("&& global.pbombs > 0", "&& global.pbombs > 0 && global.PBombLauncher");
 
-        // Change GUI For toggle, use a red item sprite instead of green, for hold use a red instead of yellow
+        // Change GUI For toggle, use a red item sprite instead of green, for hold use a red instead of yellow. For not selected, use a crossed out one.
         // Replace Missile GUI
+        drawGuiCode.ReplaceGMLInCode(
+            """
+                        if (global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
+                            draw_sprite(sGUIMissile, 0, ((0 + xoff) + 1), 4)
+            """,
+            """
+                        if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (!global.missileLauncher)))
+                            draw_sprite(sGUIMissile, 4, ((0 + xoff) + 1), 4)
+                        else if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (global.missileLauncher)))
+                            draw_sprite(sGUIMissile, 0, ((0 + xoff) + 1), 4)
+
+            """);
+        drawGuiCode.ReplaceGMLInCode("""
+                                                     if (oCharacter.armmsl == 0)
+                                                         draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                     """, """
+                                                          if (oCharacter.armmsl == 0 && global.missileLauncher)
+                                                              draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                                          else if (oCharacter.armmsl == 0 && !global.missileLauncher)
+                                                              draw_sprite(sGUIMissile, 5, ((0 + xoff) + 1), 4)
+                                          """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
                                                          draw_sprite(sGUIMissile, 2, ((0 + xoff) + 1), 4)
@@ -1336,9 +1363,32 @@ public class Patcher
                                                           draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
                                                       else if (global.currentweapon == 1 && !global.missileLauncher)
                                                           draw_sprite(sGUIMissile, 3, ((0 + xoff) + 1), 4)
+                                                      else if (global.currentweapon != 1 && !global.missileLauncher)
+                                                          draw_sprite(sGUIMissile, 4, ((0 + xoff) + 1), 4)
                                           """);
 
         // Replace Super GUI
+        drawGuiCode.ReplaceGMLInCode(
+            """
+                        if (global.currentweapon != 2 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
+                            draw_sprite(sGUISMissile, 0, (xoff + 1), 4)
+            """,
+            """
+                        if ((global.currentweapon != 2 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && !global.SMissileLauncher)
+                            draw_sprite(sGUISMissile, 4, (xoff + 1), 4)
+                        else if ((global.currentweapon != 2 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && global.SMissileLauncher)
+                            draw_sprite(sGUISMissile, 0, (xoff + 1), 4)
+
+            """);
+        drawGuiCode.ReplaceGMLInCode("""
+                                                     if (oCharacter.armmsl == 0)
+                                                         draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
+                                     """, """
+                                                          if (oCharacter.armmsl == 0 && global.SMissileLauncher)
+                                                              draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
+                                                          else if (oCharacter.armmsl == 0 && !global.SMissileLauncher)
+                                                              draw_sprite(sGUISMissile, 5, (xoff + 1), 4)
+                                          """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
                                                          draw_sprite(sGUISMissile, 2, (xoff + 1), 4)
@@ -1356,9 +1406,31 @@ public class Patcher
                                                           draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
                                                       else if (global.currentweapon == 2 && !global.SMissileLauncher)
                                                           draw_sprite(sGUISMissile, 3, (xoff + 1), 4)
+                                                      else if (global.currentweapon != 2 && !global.SMissileLauncher)
+                                                          draw_sprite(sGUISMissile, 4, (xoff + 1), 4)
                                           """);
 
         // Replace PB GUI
+        drawGuiCode.ReplaceGMLInCode(
+            """
+                        if (oCharacter.state != 23 && oCharacter.state != 24 && oCharacter.state != 27 && oCharacter.state != 54 && oCharacter.state != 55 && oCharacter.sjball == 0)
+                            draw_sprite(sGUIPBomb, 0, (xoff + 1), 4)
+            """,
+            """
+                        if ((global.PBombLauncher) && oCharacter.state != 23 && oCharacter.state != 24 && oCharacter.state != 27 && oCharacter.state != 54 && oCharacter.state != 55 && oCharacter.sjball == 0)
+                            draw_sprite(sGUIPBomb, 0, (xoff + 1), 4)
+                        else if ((!global.PBombLauncher) && oCharacter.state != 23 && oCharacter.state != 24 && oCharacter.state != 27 && oCharacter.state != 54 && oCharacter.state != 55 && oCharacter.sjball == 0)
+                            draw_sprite(sGUIPBomb, 4, (xoff + 1), 4)
+            """);
+        drawGuiCode.ReplaceGMLInCode("""
+                                                     if (oCharacter.armmsl == 0)
+                                                         draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
+                                     """, """
+                                                          if (oCharacter.armmsl == 0 && global.PBombLauncher)
+                                                              draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
+                                                          else if (oCharacter.armmsl == 0 && !global.PBombLauncher)
+                                                              draw_sprite(sGUIPBomb, 5, (xoff + 1), 4)
+                                          """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
                                                          draw_sprite(sGUIPBomb, 2, (xoff + 1), 4)
@@ -1376,6 +1448,8 @@ public class Patcher
                                                           draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
                                                       else if (global.currentweapon == 3 && !global.PBombLauncher)
                                                           draw_sprite(sGUIPBomb, 3, (xoff + 1), 4)
+                                                      else if (global.currentweapon != 3 && !global.PBombLauncher)
+                                                          draw_sprite(sGUIPBomb, 4, (xoff + 1), 4)
                                           """);
 
         // Fix weapon selection with toggle
