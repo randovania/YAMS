@@ -6,6 +6,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [1.1.0] - 2023-12-??
 ### Added
 - An item collection screen will now be shown, when the user starts with random items.
+- When softlock prevention is active, then the first two crumble blocks in Super Missile Chamber will be shoot blocks instead.
 
 ## [1.0.3] - 2023-11-24
 ### Added
