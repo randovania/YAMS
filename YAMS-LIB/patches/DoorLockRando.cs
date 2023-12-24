@@ -68,7 +68,7 @@ public class DoorLockRando
                     if (isGotoObject)
                     {
                         // Place tiles
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0, gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)192 : 224, 64, 32, 64));
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0, gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
                         // Place door
                         door = CreateRoomObject(gameObject.X - ((doorEntry.FacingDirection == DoorFacingDirection.Left ? 1 : -1) * 24), gameObject.Y-64, gmData.GameObjects.ByName("oDoorA5"), null, doorEntry.FacingDirection == DoorFacingDirection.Left ? -1 : 1);
                         room.GameObjects.Add(door);
