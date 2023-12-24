@@ -11,7 +11,7 @@ public class DoorLockRando
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
-        // Adjust global event array to be 700
+        // Adjust global event array to be 900
         characterVarsCode.ReplaceGMLInCode( """
             i = 350
             repeat (350)
@@ -20,15 +20,15 @@ public class DoorLockRando
                 global.event[i] = 0
             }
             """, """
-            i = 700
-            repeat (700)
+            i = 900
+            repeat (900)
             {
                 i -= 1
                 global.event[i] = 0
             }
             """);
-         gmData.Code.ByName("gml_Script_sv6_add_events").ReplaceGMLInCode( "350", "700");
-         gmData.Code.ByName("gml_Script_sv6_get_events").ReplaceGMLInCode( "350", "700");
+         gmData.Code.ByName("gml_Script_sv6_add_events").ReplaceGMLInCode( "350", "900");
+         gmData.Code.ByName("gml_Script_sv6_get_events").ReplaceGMLInCode( "350", "900");
 
         // Replace every normal, a4 and a8 door with an a5 door for consistency
         var a5Door = gmData.GameObjects.ByName("oDoorA5");
@@ -44,7 +44,7 @@ public class DoorLockRando
 
 
         var doorEventIndex = 350;
-        foreach ((var id, var doorLock) in seedObject.DoorLocks)
+        foreach ((var id, var doorEntry) in seedObject.DoorLocks)
         {
             bool found = false;
             foreach (var room in gmData.Rooms)
@@ -53,18 +53,36 @@ public class DoorLockRando
                 {
                     if (gameObject.InstanceID != id) continue;
 
-                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor") && gameObject.ObjectDefinition.Name.Content != "oA2BigTurbine")
+                    bool isGotoObject = gameObject.ObjectDefinition.Name.Content == "oGotoRoom";
+                    if (isGotoObject && !doorEntry.isDock)
+                    {
+                        throw new NotSupportedException($"The instance id {id} is a GotoRoom object, but the setting whether this instance is a dock is set to false!");
+                    }
+
+                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor") && gameObject.ObjectDefinition.Name.Content != "oA2BigTurbine" && !isGotoObject)
+                    {
                         throw new NotSupportedException($"The 'door' instance {id} is not actually a door!");
+                    }
+
+                    UndertaleRoom.GameObject door = gameObject;
+                    if (isGotoObject)
+                    {
+                        // Place tiles
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0, gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)192 : 224, 64, 32, 64));
+                        // Place door
+                        door = CreateRoomObject(gameObject.X - ((doorEntry.FacingDirection == DoorFacingDirection.Left ? 1 : -1) * 24), gameObject.Y-64, gmData.GameObjects.ByName("oDoorA5"), null, doorEntry.FacingDirection == DoorFacingDirection.Left ? -1 : 1);
+                        room.GameObjects.Add(door);
+                    }
 
                     found = true;
-                    if (gameObject.CreationCode is null)
+                    if (door.CreationCode is null)
                     {
                         var code = new UndertaleCode() { Name = gmData.Strings.MakeString($"gml_RoomCC_{room.Name.Content}_{id}_Create") };
                         gmData.Code.Add(code);
-                        gameObject.CreationCode = code;
+                        door.CreationCode = code;
                     }
 
-                    string codeText = doorLock.Lock switch
+                    string codeText = doorEntry.Lock switch
                     {
                         DoorLockType.Normal => "lock = 0; event = -1;",
                         DoorLockType.Missile => $"lock = 1; originalLock = lock; event = {doorEventIndex};",
@@ -102,35 +120,35 @@ public class DoorLockRando
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}} " +
                                                        $"if (wasAlreadyDestroyed && global.event[eventToSet] < 1) global.event[eventToSet] = 1;",
-                        _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorLock.Lock})!")
+                        _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorEntry.Lock})!")
                     };
 
                     var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
-                    if (gameObject.ObjectDefinition == waterTurbineObject && doorLock.Lock != DoorLockType.A2WaterTurbine)
+                    if (door.ObjectDefinition == waterTurbineObject && doorEntry.Lock != DoorLockType.A2WaterTurbine)
                     {
-                        gameObject.ObjectDefinition = gmData.GameObjects.ByName("oDoorA5");
-                        gameObject.X += (24 * (int)gameObject.ScaleX);
-                        gameObject.ScaleX *= -1;
-                        bool leftFacing = gameObject.ScaleX < 0;
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - (leftFacing ? 8 : 24), gameObject.Y, -110, gmData.Backgrounds.ByName("tlDoor"), (leftFacing ? 0u : 32u), 0, 32, 64));
+                        door.ObjectDefinition = gmData.GameObjects.ByName("oDoorA5");
+                        door.X += (24 * (int)door.ScaleX);
+                        door.ScaleX *= -1;
+                        bool leftFacing = door.ScaleX < 0;
+                        room.Tiles.Add(CreateRoomTile(door.X - (leftFacing ? 8 : 24), door.Y, -110, gmData.Backgrounds.ByName("tlDoor"), (leftFacing ? 0u : 32u), 0, 32, 64));
                         var tilesToDelete = room.Tiles.Where((t => (t is { X: 912, Y: 1584, SourceX: 48, SourceY: 304 } or { X: 928, Y: 1536, SourceX: 96, SourceY: 304 }))).ToList();
                         foreach (var tile in tilesToDelete)
                             room.Tiles.Remove(tile);
                     }
 
-                    if (gameObject.ObjectDefinition != waterTurbineObject && doorLock.Lock == DoorLockType.A2WaterTurbine)
+                    if (door.ObjectDefinition != waterTurbineObject && doorEntry.Lock == DoorLockType.A2WaterTurbine)
                     {
-                        gameObject.ObjectDefinition = waterTurbineObject;
-                        gameObject.X += (24 * (int)gameObject.ScaleX);
-                        gameObject.ScaleX *= -1;
-                        if ((gameObject.X - 48) == 0)
-                            room.GameObjects.Add(CreateRoomObject(gameObject.X-72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
-                        else if ((gameObject.X + 48) == room.Width)
-                            room.GameObjects.Add(CreateRoomObject(gameObject.X+72, gameObject.Y, gmData.GameObjects.ByName("oSolid1x4")));
+                        door.ObjectDefinition = waterTurbineObject;
+                        door.X += (24 * (int)door.ScaleX);
+                        door.ScaleX *= -1;
+                        if ((door.X - 48) == 0)
+                            room.GameObjects.Add(CreateRoomObject(door.X-72, door.Y, gmData.GameObjects.ByName("oSolid1x4")));
+                        else if ((door.X + 48) == room.Width)
+                            room.GameObjects.Add(CreateRoomObject(door.X+72, door.Y, gmData.GameObjects.ByName("oSolid1x4")));
 
                     }
 
-                    gameObject.CreationCode.AppendGMLInCode( codeText);
+                    door.CreationCode.AppendGMLInCode( codeText);
                     doorEventIndex++;
                     break;
                 }

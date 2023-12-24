@@ -53,11 +53,28 @@ public class SeedObject
     public string CreditsSpoiler;
 }
 
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
+public enum DoorFacingDirection
+{
+    [EnumMember(Value = "left")]
+    Left,
+    [EnumMember(Value = "right")]
+    Right,
+}
+
 public class DoorLock
 {
     [JsonInclude]
     [JsonPropertyName("lock")]
     public DoorLockType Lock;
+
+    [JsonInclude]
+    [JsonPropertyName("is_dock")]
+    public bool isDock;
+
+    [JsonInclude]
+    [JsonPropertyName("facing_direction")]
+    public DoorFacingDirection FacingDirection;
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
