@@ -60,6 +60,8 @@ public enum DoorFacingDirection
     Left,
     [EnumMember(Value = "right")]
     Right,
+    [EnumMember(Value = "invalid")]
+    Invalid,
 }
 
 public class DoorLock
@@ -68,6 +70,7 @@ public class DoorLock
     [JsonPropertyName("lock")]
     public DoorLockType Lock;
 
+    // TODO: add these two to the schema.
     [JsonInclude]
     [JsonPropertyName("is_dock")]
     public bool isDock;
