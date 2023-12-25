@@ -68,7 +68,7 @@ public class DoorLockRando
                     if (isGotoObject)
                     {
                         // Place tiles
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0, gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
                         // Place door
                         door = CreateRoomObject(gameObject.X - ((doorEntry.FacingDirection == DoorFacingDirection.Left ? 1 : -1) * 24), gameObject.Y-64, gmData.GameObjects.ByName("oDoorA5"), null, doorEntry.FacingDirection == DoorFacingDirection.Left ? -1 : 1);
                         room.GameObjects.Add(door);
@@ -120,6 +120,7 @@ public class DoorLockRando
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}} " +
                                                        $"if (wasAlreadyDestroyed && global.event[eventToSet] < 1) global.event[eventToSet] = 1;",
+                        DoorLockType.ResearchHatch => $"facing = {(door.ScaleX >= 0 ? 1 : -1)}",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorEntry.Lock})!")
                     };
 
@@ -146,6 +147,17 @@ public class DoorLockRando
                         else if ((door.X + 48) == room.Width)
                             room.GameObjects.Add(CreateRoomObject(door.X+72, door.Y, gmData.GameObjects.ByName("oSolid1x4")));
 
+                    }
+
+                    var researchHatchObject = gmData.GameObjects.ByName("oA3LabDoor");
+                    if (door.ObjectDefinition != researchHatchObject && doorEntry.Lock == DoorLockType.ResearchHatch)
+                    {
+                        door.ObjectDefinition = researchHatchObject;
+                        if (door.ScaleX < 0)
+                        {
+                            door.ScaleX = Math.Abs(door.ScaleX);
+                            door.X -= 16;
+                        }
                     }
 
                     door.CreationCode.AppendGMLInCode( codeText);

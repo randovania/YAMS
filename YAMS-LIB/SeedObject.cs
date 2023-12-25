@@ -149,6 +149,8 @@ public enum DoorLockType
     Locked,
     [EnumMember(Value = "Hydro Station Water Turbine")]
     A2WaterTurbine,
+    [EnumMember(Value = "Research Site Open Hatch")]
+    ResearchHatch,
 }
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
