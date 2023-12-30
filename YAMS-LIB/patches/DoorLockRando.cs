@@ -84,6 +84,10 @@ public class DoorLockRando
                         door.CreationCode = code;
                     }
 
+                    var doorObject = gmData.GameObjects.ByName("oDoorA5");
+                    var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
+                    var researchHatchObject = gmData.GameObjects.ByName("oA3LabDoor");
+
                     string codeText = doorEntry.Lock switch
                     {
                         DoorLockType.Normal => "lock = 0; event = -1;",
@@ -122,13 +126,9 @@ public class DoorLockRando
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}} " +
                                                        $"if (wasAlreadyDestroyed && global.event[eventToSet] < 1) global.event[eventToSet] = 1;",
-                        DoorLockType.ResearchHatch => $"facing = {(door.ScaleX >= 0 ? 1 : -1)}",
+                        DoorLockType.ResearchHatch => door.ObjectDefinition != researchHatchObject ? $"facing = {(door.ScaleX >= 0 ? 1 : -1)}" : "",
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorEntry.Lock})!")
                     };
-
-                    var doorObject = gmData.GameObjects.ByName("oDoorA5");
-                    var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
-                    var researchHatchObject = gmData.GameObjects.ByName("oA3LabDoor");
 
                     if (door.ObjectDefinition == researchHatchObject && doorEntry.Lock != DoorLockType.ResearchHatch)
                     {
