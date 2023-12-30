@@ -54,12 +54,14 @@ public class DoorLockRando
                     if (gameObject.InstanceID != id) continue;
 
                     bool isGotoObject = gameObject.ObjectDefinition.Name.Content == "oGotoRoom";
+                    bool isResearchHatch = gameObject.ObjectDefinition.Name.Content == "oA3LabDoor";
                     if (isGotoObject && !doorEntry.isDock)
                     {
                         throw new NotSupportedException($"The instance id {id} is a GotoRoom object, but the setting whether this instance is a dock is set to false!");
                     }
 
-                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor") && gameObject.ObjectDefinition.Name.Content != "oA2BigTurbine" && !isGotoObject)
+                    if (!gameObject.ObjectDefinition.Name.Content.StartsWith("oDoor") && gameObject.ObjectDefinition.Name.Content != "oA2BigTurbine" && !isGotoObject &&
+                        !isResearchHatch)
                     {
                         throw new NotSupportedException($"The 'door' instance {id} is not actually a door!");
                     }
@@ -124,10 +126,32 @@ public class DoorLockRando
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorEntry.Lock})!")
                     };
 
+                    var doorObject = gmData.GameObjects.ByName("oDoorA5");
                     var waterTurbineObject = gmData.GameObjects.ByName("oA2BigTurbine");
+                    var researchHatchObject = gmData.GameObjects.ByName("oA3LabDoor");
+
+                    if (door.ObjectDefinition == researchHatchObject && doorEntry.Lock != DoorLockType.ResearchHatch)
+                    {
+                        var hatchCode = door.CreationCode.GetGMLCode();
+                        bool flipped = hatchCode.Contains("facing = -1");
+                        if (flipped)
+                        {
+                            door.ScaleX *= -1;
+                            door.X += 16;
+                        }
+                    }
+
+                    if (door.ObjectDefinition != researchHatchObject && doorEntry.Lock == DoorLockType.ResearchHatch)
+                    {
+                        if (door.ScaleX < 0)
+                        {
+                            door.ScaleX = Math.Abs(door.ScaleX);
+                            door.X -= 16;
+                        }
+                    }
+
                     if (door.ObjectDefinition == waterTurbineObject && doorEntry.Lock != DoorLockType.A2WaterTurbine)
                     {
-                        door.ObjectDefinition = gmData.GameObjects.ByName("oDoorA5");
                         door.X += (24 * (int)door.ScaleX);
                         door.ScaleX *= -1;
                         bool leftFacing = door.ScaleX < 0;
@@ -139,8 +163,8 @@ public class DoorLockRando
 
                     if (door.ObjectDefinition != waterTurbineObject && doorEntry.Lock == DoorLockType.A2WaterTurbine)
                     {
-                        door.ObjectDefinition = waterTurbineObject;
-                        door.X += (24 * (int)door.ScaleX);
+                        int movingOffset = door.ObjectDefinition == researchHatchObject ? 48 : 24;
+                        door.X += (movingOffset * (int)door.ScaleX);
                         door.ScaleX *= -1;
                         if ((door.X - 48) == 0)
                             room.GameObjects.Add(CreateRoomObject(door.X-72, door.Y, gmData.GameObjects.ByName("oSolid1x4")));
@@ -149,18 +173,14 @@ public class DoorLockRando
 
                     }
 
-                    var researchHatchObject = gmData.GameObjects.ByName("oA3LabDoor");
-                    if (door.ObjectDefinition != researchHatchObject && doorEntry.Lock == DoorLockType.ResearchHatch)
-                    {
+                    if (doorEntry.Lock == DoorLockType.ResearchHatch)
                         door.ObjectDefinition = researchHatchObject;
-                        if (door.ScaleX < 0)
-                        {
-                            door.ScaleX = Math.Abs(door.ScaleX);
-                            door.X -= 16;
-                        }
-                    }
+                    else if (doorEntry.Lock == DoorLockType.A2WaterTurbine)
+                        door.ObjectDefinition = waterTurbineObject;
+                    else
+                        door.ObjectDefinition = doorObject;
 
-                    door.CreationCode.AppendGMLInCode( codeText);
+                    door.CreationCode.AppendGMLInCode(codeText);
                     doorEventIndex++;
                     break;
                 }
