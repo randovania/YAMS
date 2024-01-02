@@ -2390,7 +2390,7 @@ public class Patcher
                 ItemEnum.Speedbooster => "event_inherited(); if (active) { global.speedbooster = 1; global.hasSpeedbooster = 1; }",
                 ItemEnum.Hijump => "event_inherited(); if (active) { global.hijump = 1; global.hasHijump = 1; }",
                 ItemEnum.ProgressiveJump =>
-                    "event_inherited(); if (active) { if (global.hasSpacejump) exit; else if (global.hasHijump) { global.spacejump = 1; global.hasSpacejump = 1; } else { global.hijump = 1; global.hasHijump = 1; } }",
+                    "event_inherited(); if (active) { if (global.hasSpacejump) exit; else if (global.hasHijump) { global.spacejump = 1; global.hasSpacejump = 1; with (oCharacter) sfx_stop(spinjump_sound); } else { global.hijump = 1; global.hasHijump = 1; } }",
                 ItemEnum.Gravity => """
                                         event_inherited();
                                         global.SuitChange = !global.skipItemFanfare;
