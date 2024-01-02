@@ -6,7 +6,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [1.1.3] - 2024-01-02
 ### Fixed
 - Item fanfare and starting fanfare overlapping when starting with random items.
-- Don't look the spinjump sound effect, when spinjumping into a progressive Space Jump.
+- Don't loop the spinjump sound effect, when spinjumping into a progressive Space Jump.
 
 ## [1.1.2] - 2023-12-31
 ### Fixed
