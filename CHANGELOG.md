@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.1.4] - 2024-01-05
+### Fixed
+- Entering "Hatchling Room Underside" will now show the Metroid scan notification only once.
+
 ## [1.1.3] - 2024-01-02
 ### Fixed
 - Item fanfare and starting fanfare overlapping when starting with random items.
