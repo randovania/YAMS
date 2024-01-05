@@ -2804,7 +2804,7 @@ public class Patcher
         characterVarsCode.AppendGMLInCode("global.event[302] = global.skipCutscenes");
         // Also still increase the metroid counters from the hatchling cutscene
         gmData.Code.ByName("gml_Object_oEggTrigger_Create_0").PrependGMLInCode("""
-                                                                               if (global.skipCutscenes)
+                                                                               if (global.skipCutscenes && !global.event[302])
                                                                                {
                                                                                     if (oControl.mod_monstersextremecheck == 1)
                                                                                        oControl.mod_monstersextreme = 1
