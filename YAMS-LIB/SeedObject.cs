@@ -5,6 +5,8 @@ using System.Text.Json.Serialization;
 
 namespace YAMS_LIB;
 
+
+
 // TODO: There are lots of horrible names in here
 public class SeedObject
 {
@@ -323,6 +325,11 @@ public class ConfigurationIdentifier
     [JsonInclude]
     [JsonPropertyName("starting_memo")]
     public TextDetails? StartingMemoText;
+
+    // TODO: rename this json property
+    [JsonInclude]
+    [JsonPropertyName("session_uuid")]
+    public string WorldUUID = "";
 }
 
 
