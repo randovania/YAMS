@@ -2180,6 +2180,7 @@ public class Patcher
         bool alreadyAddedMissiles = false;
         bool alreadyAddedSupers = false;
         bool alreadyAddedPBombs = false;
+        characterVarsCode.AppendGMLInCode("oControl.collectedItems = \"items:\"");
         foreach ((ItemEnum item, int quantity) in seedObject.StartingItems)
         {
             int finalQuantity = quantity;
@@ -2317,6 +2318,7 @@ public class Patcher
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            characterVarsCode.AppendGMLInCode($"oControl.collectedItems += \"{item.GetEnumMemberValue()}|{quantity},\"");
         }
 
         // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
@@ -2407,6 +2409,9 @@ public class Patcher
         // Door locks
         DoorLockRando.Apply(gmData, decompileContext, seedObject);
 
+        // Add new item name variable for oItem, necessary for MW
+        gmData.Code.ByName("gml_Object_oItem_Create_0").AppendGMLInCode("itemName = \"\"; itemQuantity = 0;");
+
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((string pickupName, PickupObject pickup) in seedObject.PickupObjects)
         {
@@ -2420,8 +2425,7 @@ public class Patcher
             // First 0 is for creation event
             UndertaleCode? createCode = gmObject.Events[0][0].Actions[0].CodeId;
             createCode.AppendGMLInCode($"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\";" +
-                                       $"btn1_name = \"\"; btn2_name = \"\";");
-
+                                        $"btn1_name = \"\"; btn2_name = \"\"; itemName = \"{pickup.ItemEffect.GetEnumMemberValue()}\"; itemQuantity = {pickup.Quantity};");
             // First 4 is for Collision event
             UndertaleCode? collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
             string collisionCodeToBe = pickup.ItemEffect switch
@@ -3050,6 +3054,184 @@ public class Patcher
 
 
         // Multiworld stuff
+        // Needed variables
+        gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode($"""
+        socketServer = network_create_server_raw(0, 2016, 1)
+        packetNumber = 0
+        networkProtocolVersion = 1
+        currentGameUuid = "{seedObject.Identifier.WorldUUID}"
+        clientState = 0
+        clientSocket = 0
+        messageDisplay = ""
+        messageDisplayTimer = 0
+        // "collected indices should be saved/loaded from save file!"
+        collectedIndices = "locations:"
+        // "collected items should be saved/loaded from save file!"
+        collectedItems = "items:"
+        """);
+        // TODO: see the collected stuff above
+
+        // Send collected item and location when collecting items
+        gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("instance_destroy()", """
+        oControl.collectedIndices += (string(itemid) + ",")
+        oControl.collectedItems += (((string(itemName) + "|") + string(itemQuantity)) + ",")
+        show_debug_message(("indices: " + oControl.collectedIndices))
+        show_debug_message(("inventory: " + oControl.collectedItems))
+        if (oControl.socketServer >= 0 && oControl.clientState >= 1)
+        {
+            var collectedLocation = buffer_create(512, buffer_grow, 1)
+            buffer_seek(collectedLocation, buffer_seek_start, 0)
+            buffer_write(collectedLocation, buffer_u8, 6)
+            var currentPos = buffer_tell(collectedLocation)
+            buffer_write(collectedLocation, buffer_string, oControl.collectedIndices)
+            var length = (buffer_tell(collectedLocation) - currentPos)
+            buffer_seek(collectedLocation, buffer_seek_start, currentPos)
+            buffer_write(collectedLocation, buffer_u16, length)
+            buffer_write(collectedLocation, buffer_string, oControl.collectedIndices)
+            network_send_raw(oControl.clientSocket, collectedLocation, buffer_get_size(collectedLocation))
+            show_debug_message("send item id packet")
+            buffer_delete(collectedLocation)
+            var collectedItem = buffer_create(512, buffer_grow, 1)
+            buffer_seek(collectedItem, buffer_seek_start, 0)
+            buffer_write(collectedItem, buffer_u8, 5)
+            currentPos = buffer_tell(collectedItem)
+            buffer_write(collectedItem, buffer_string, oControl.collectedItems)
+            length = (buffer_tell(collectedItem) - currentPos)
+            buffer_seek(collectedItem, buffer_seek_start, currentPos)
+            buffer_write(collectedItem, buffer_u16, length)
+            buffer_write(collectedItem, buffer_string, oControl.collectedItems)
+            network_send_raw(oControl.clientSocket, collectedItem, buffer_get_size(collectedItem))
+            show_debug_message("send inventory packet")
+            buffer_delete(collectedItem)
+        }
+        instance_destroy();
+        """);
+
+        // Send room info when transition rooms
+        gmData.Code.ByName("gml_Object_oControl_Other_4").AppendGMLInCode("""
+        if (socketServer >= 0 && clientState >= 1)
+        {
+            var roomName = buffer_create(512, buffer_grow, 1)
+            buffer_seek(roomName, buffer_seek_start, 0)
+            buffer_write(roomName, buffer_u8, 8)
+            var currentPos = buffer_tell(roomName)
+            buffer_write(roomName, buffer_string, string(room_get_name(room)))
+            var length = (buffer_tell(roomName) - currentPos)
+            buffer_seek(roomName, buffer_seek_start, currentPos)
+            buffer_write(roomName, buffer_u16, length)
+            buffer_write(roomName, buffer_string, string(room_get_name(room)))
+            network_send_raw(clientSocket, roomName, buffer_get_size(roomName))
+            show_debug_message("send room packet")
+            buffer_delete(roomName)
+        }
+        """);
+
+        // Received network packet event.
+        var oControlNetworkReceived = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oControl_Other_68") };
+        // TODO: when the connects, we should send it inventory and pickup info! Also send it on save load!
+        oControlNetworkReceived.SubstituteGMLCode("""
+        var type_event, _buffer, bufferSize, msgid, handshake, socket, malformed, protocolVer, length, currentPos, i, upperLimit;
+        type_event = ds_map_find_value(async_load, "type")
+        switch type_event
+        {
+            case 1:
+                show_debug_message("initial connection")
+                clientSocket = ds_map_find_value(async_load, "socket")
+                // TODO: when the connects, we should send it inventory and pickup info!
+                break
+            case 2:
+                show_debug_message("client disconnected, resetting values")
+                clientSocket = 0
+                clientState = 0
+                packetNumber = 0
+                break
+            case 3:
+                socket = clientSocket
+                if (socket == undefined || socket == 0)
+                    exit
+                show_debug_message(("socket: " + string(socket)))
+                _buffer = ds_map_find_value(async_load, "buffer")
+                if (_buffer == undefined)
+                    exit
+                show_debug_message(("buffer : " + string(_buffer)))
+                bufferSize = buffer_get_size(_buffer)
+                msgid = buffer_read(_buffer, buffer_u8)
+                show_debug_message(("msg id is: " + string(msgid)))
+                switch msgid
+                {
+                    case 1:
+                        show_debug_message("rdv wants to handshake")
+                        show_debug_message(("client state: " + string(clientState)))
+                        if (clientState != 1)
+                        {
+                            show_debug_message("client is not connected")
+                            clientState = 1
+                            show_debug_message("client has been internally set to connected")
+                            handshake = buffer_create(2, buffer_grow, 1)
+                            buffer_seek(handshake, buffer_seek_start, 0)
+                            buffer_write(handshake, buffer_u8, 1)
+                            buffer_write(handshake, buffer_u8, string(packetNumber))
+                            network_send_raw(socket, handshake, buffer_get_size(handshake))
+                            buffer_delete(handshake)
+                            packetNumber = ((packetNumber + 1) % 256)
+                        }
+                        break
+                    case 2:
+                        show_debug_message("rdv wants to know protocol version and game id")
+                        if (clientState < 1)
+                            exit
+                        show_debug_message("client passed the handshake check")
+                        protocolVer = buffer_create(1024, buffer_grow, 1)
+                        buffer_seek(protocolVer, buffer_seek_start, 0)
+                        buffer_write(protocolVer, buffer_u8, 2)
+                        buffer_write(protocolVer, buffer_u8, string(packetNumber))
+                        currentPos = buffer_tell(protocolVer)
+                        buffer_write(protocolVer, buffer_string, ((((string(networkProtocolVersion) + ",") + string(currentGameUuid)) + ",") + "dummy"))
+                        length = (buffer_get_size(protocolVer) - currentPos)
+                        show_debug_message(((("total buffer size: " + string(buffer_get_size(protocolVer))) + " position of after packet number: ") + string(length)))
+                        buffer_seek(protocolVer, buffer_seek_start, currentPos)
+                        buffer_write(protocolVer, buffer_u16, length)
+                        buffer_write(protocolVer, buffer_string, ((((string(networkProtocolVersion) + ",") + string(currentGameUuid)) + ",") + "dummy"))
+                        network_send_raw(socket, protocolVer, buffer_get_size(protocolVer))
+                        show_debug_message("send protocol packet")
+                        buffer_delete(protocolVer)
+                        packetNumber = ((packetNumber + 1) % 256)
+                        break
+                    case 4:
+                        show_debug_message("keep alive from rdv")
+                        break
+                    case 9:
+                        show_debug_message("showing arbitrary message")
+                        messageDisplay = buffer_read(_buffer, buffer_string)
+                        upperLimit = 45
+                        if widescreen
+                            upperLimit = 50
+                        if (string_length(messageDisplay) > upperLimit)
+                            messageDisplay = string_insert("-#", messageDisplay, upperLimit)
+                        messageDisplayTimer = 360
+                        break
+                }
+
+                break
+            default:
+                show_debug_message("Unknown message id, let's send malformed packet as response")
+                malformed = buffer_create(1024, buffer_grow, 1)
+                buffer_seek(malformed, buffer_seek_start, 0)
+                buffer_write(malformed, buffer_u8, 10)
+                buffer_write(malformed, buffer_u8, 0)
+                network_send_raw(socket, malformed, buffer_get_size(malformed))
+                buffer_delete(malformed)
+                break
+        }
+        """);
+        gmData.Code.Add(oControlNetworkReceived);
+        var oControlCollisionList = gmData.GameObjects.ByName("oControl").Events[7];
+        var oControlAction = new UndertaleGameObject.EventAction();
+        oControlAction.CodeId = oControlNetworkReceived;
+        var oControlEvent = new UndertaleGameObject.Event();
+        oControlEvent.EventSubtype = 68;
+        oControlEvent.Actions.Add(oControlAction);
+        oControlCollisionList.Add(oControlEvent);
 
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
