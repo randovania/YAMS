@@ -1,6 +1,8 @@
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace YAMS_LIB;
 
@@ -84,5 +86,16 @@ public static class ExtensionMethods
             ScaleY = scaleY,
             InstanceID = id.Value
         };
+    }
+
+    public static string? GetEnumMemberValue<T>(this T value)
+        where T : Enum
+    {
+        return typeof(T)
+            .GetTypeInfo()
+            .DeclaredMembers
+            .SingleOrDefault(x => x.Name == value.ToString())
+            ?.GetCustomAttribute<EnumMemberAttribute>(false)
+            ?.Value;
     }
 }
