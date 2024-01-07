@@ -3298,7 +3298,7 @@ public class Patcher
                     case PACKET_DISPLAY_MESSAGE:
                         show_debug_message("showing arbitrary message")
                         var tempMessage = buffer_read(_buffer, buffer_string)
-                        upperLimit = 45
+                        var upperLimit = 45
                         if widescreen
                             upperLimit = 50
                         if (string_length(tempMessage) > upperLimit)
@@ -3441,11 +3441,17 @@ public class Patcher
                                 global.lastOffworldNumber--
                                 break;
                         }
-                        global.collectedItems += "name|quantity,"
+                        global.collectedItems += (name + "|" + string(quantity) + ",")
                         show_debug_message("after switch case in pickup")
                         if (knownItem)
                         {
-                            messageDisplay = "Received " + name + " from " + provider
+                            var tempMessage = "Received " + name + " from " + provider
+                            var upperLimit = 45
+                            if widescreen
+                                upperLimit = 50
+                            if (string_length(tempMessage) > upperLimit)
+                                tempMessage = string_insert("-#", tempMessage, upperLimit)
+                            messageDisplay = tempMessage
                             messageDisplayTimer = MESSAGE_DISPLAY_TIMER_INITIAL
                         }
                         global.lastOffworldNumber++
