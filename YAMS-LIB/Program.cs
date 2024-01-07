@@ -3460,6 +3460,7 @@ public class Patcher
                                 global.lastOffworldNumber--
                                 break;
                         }
+                        global.collectedItems += "name|quantity,"
                         show_debug_message("after switch case in pickup")
                         if (knownItem)
                         {
