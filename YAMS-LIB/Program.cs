@@ -553,6 +553,18 @@ public class Patcher
 
         gmData.Sprites.Add(new UndertaleSprite
         {
+            Name = gmData.Strings.MakeString("sItemWaveBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures = GetTexturePageItemsForSpriteName("sItemWaveBeamPrime_")
+        });
+
+        gmData.Sprites.Add(new UndertaleSprite
+        {
+            Name = gmData.Strings.MakeString("sItemWaveBusterPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
+            Textures = GetTexturePageItemsForSpriteName("sItemWaveBusterPrime_")
+        });
+
+        gmData.Sprites.Add(new UndertaleSprite
+        {
             Name = gmData.Strings.MakeString("sItemXrayVisorPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
             Textures = GetTexturePageItemsForSpriteName("sItemXrayVisorPrime_")
         });
