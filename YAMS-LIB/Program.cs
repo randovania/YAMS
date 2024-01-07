@@ -3243,7 +3243,7 @@ public class Patcher
 
         // Received network packet event.
         var oControlNetworkReceived = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oControl_Other_68") };
-        // TODO: when the connects, we should send it inventory and pickup info! Also send it on save load!
+        // TODO: when the connects, we should send it inventory and pickup info! Also send it on save load! see below
         oControlNetworkReceived.SubstituteGMLCode($$"""
         var type_event, _buffer, bufferSize, msgid, handshake, socket, malformed, protocolVer, length, currentPos, i, upperLimit;
         type_event = ds_map_find_value(async_load, "type")
@@ -3313,9 +3313,6 @@ public class Patcher
                         buffer_delete(protocolVer)
                         packetNumber = ((packetNumber + 1) % 256)
                         fetchPickupTimer = PICKUP_TIMER_INITIAL
-                        break
-                    case PACKET_KEEP_ALIVE:
-                        show_debug_message("keep alive from rdv")
                         break
                     case PACKET_DISPLAY_MESSAGE:
                         show_debug_message("showing arbitrary message")
