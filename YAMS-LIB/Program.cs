@@ -3036,7 +3036,8 @@ public class Patcher
         // Add DNA check to Baby trigger
         gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267").PrependGMLInCode(
             """
-            if (global.dna < 46){
+            if (global.dna < 46)
+            {
                 popup_text("Collect all the DNA to hatch the Baby")
                 instance_destroy()
                 exit
