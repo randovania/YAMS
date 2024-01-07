@@ -3033,6 +3033,15 @@ public class Patcher
         // Removes cutscenes for type 1's
         gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("display_itemmsg", "if (!global.skipItemFanfare) display_itemmsg");
 
+        // Add DNA check to Baby trigger
+        gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267").PrependGMLInCode(
+            """
+            if (global.dna < 46){
+                popup_text("Collect all the DNA to hatch the Baby")
+                instance_destroy()
+                exit
+            }
+            """);
 
         // Patch to add room name display near health
         DisplayRoomNameOnHUD.Apply(gmData, decompileContext, seedObject);
