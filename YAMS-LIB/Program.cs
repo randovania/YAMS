@@ -244,6 +244,15 @@ public class Patcher
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_8"]] });
         gmData.Sprites.ByName("sDoorA5").Textures.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict["sDoorAnim_9"]] });
 
+        void CreateAndAddItemSprite(string name)
+        {
+            gmData.Sprites.Add(new UndertaleSprite
+            {
+                Name = gmData.Strings.MakeString(name), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Textures = GetTexturePageItemsForSpriteName(name + "_")
+            });
+        }
+
         gmData.Sprites.Add(new UndertaleSprite
         {
             Name = gmData.Strings.MakeString("sItemShinyMissile"), Height = 16, Width = 16,
@@ -449,126 +458,28 @@ public class Patcher
         #region MW sprites
 
         #region Prime1
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemArtifact"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemArtifact_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemBoostBallPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemBoostBallPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemCombatVisorPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemCombatVisorPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemFlamethrowerPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemFlamethrowerPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemGrappleBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemGrappleBeamPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemGravitySuit"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemGravitySuit_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemIceBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemIceBeamPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemIceSpreaderPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemIceSpreaderPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemMorphBallPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemMorphBallPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemPhazonSuitPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemPhazonSuitPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemPlasmaBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemPlasmaBeamPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemPowerBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemPowerBeamPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemPowerBombLauncherPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemPowerBombLauncherPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemScanVisorPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemScanVisorPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemSuperMissilePrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemSuperMissilePrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemThermalVisorPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemThermalVisorPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemVariaSuitPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemVariaSuitPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemWaveBeamPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemWaveBeamPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemWaveBusterPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemWaveBusterPrime_")
-        });
-
-        gmData.Sprites.Add(new UndertaleSprite
-        {
-            Name = gmData.Strings.MakeString("sItemXrayVisorPrime"), Height = 16, Width = 16, MarginRight = 14, MarginBottom = 15, OriginX = 0, OriginY = 16,
-            Textures = GetTexturePageItemsForSpriteName("sItemXrayVisorPrime_")
-        });
+        CreateAndAddItemSprite("sItemArtifact");
+        CreateAndAddItemSprite("sItemBoostBallPrime");
+        CreateAndAddItemSprite("sItemCombatVisorPrime");
+        CreateAndAddItemSprite("sItemFlamethrowerPrime");
+        CreateAndAddItemSprite("sItemGrappleBeamPrime");
+        CreateAndAddItemSprite("sItemGravitySuit");
+        CreateAndAddItemSprite("sItemIceBeamPrime");
+        CreateAndAddItemSprite("sItemIceSpreaderPrime");
+        CreateAndAddItemSprite("sItemMorphBallPrime");
+        CreateAndAddItemSprite("sItemPhazonSuitPrime");
+        CreateAndAddItemSprite("sItemPlasmaBeamPrime");
+        CreateAndAddItemSprite("sItemPowerBeamPrime");
+        CreateAndAddItemSprite("sItemPowerBombLauncherPrime");
+        CreateAndAddItemSprite("sItemScanVisorPrime");
+        CreateAndAddItemSprite("sItemSuperMissilePrime");
+        CreateAndAddItemSprite("sItemThermalVisorPrime");
+        CreateAndAddItemSprite("sItemVariaSuitPrime");
+        CreateAndAddItemSprite("sItemWaveBeamPrime");
+        CreateAndAddItemSprite("sItemWaveBusterPrime");
+        CreateAndAddItemSprite("sItemXrayVisorPrime");
         #endregion
+        CreateAndAddItemSprite("");
         #endregion
 
         void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
