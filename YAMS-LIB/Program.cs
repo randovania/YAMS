@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using NaturalSort.Extension;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
@@ -155,7 +156,7 @@ public class Patcher
         UndertaleSimpleList<UndertaleSprite.TextureEntry> GetTexturePageItemsForSpriteName(string name)
         {
             var list = new UndertaleSimpleList<UndertaleSprite.TextureEntry>();
-            foreach (string key in nameToPageItemDict.Keys.OrderBy(k => k))
+            foreach (string key in nameToPageItemDict.Keys.OrderBy(k => k, StringComparison.OrdinalIgnoreCase.WithNaturalSort()))
             {
                 if (key.StartsWith(name)) list.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict[key]] });
             }
@@ -479,7 +480,27 @@ public class Patcher
         CreateAndAddItemSprite("sItemWaveBusterPrime");
         CreateAndAddItemSprite("sItemXrayVisorPrime");
         #endregion
-        CreateAndAddItemSprite("");
+        #region Prime 2 Echoes
+        CreateAndAddItemSprite("sItemAmberEchoes");
+        CreateAndAddItemSprite("sItemAnnihilatorEchoes");
+        CreateAndAddItemSprite("sItemBeamAmmoEchoes");
+        CreateAndAddItemSprite("sItemCobaltEchoes");
+        CreateAndAddItemSprite("sItemDarkAgonKeyEchoes");
+        CreateAndAddItemSprite("sItemDarkAmmoEchoes");
+        CreateAndAddItemSprite("sItemDarkSuitEchoes");
+        CreateAndAddItemSprite("sItemDarkTorvusKeyEchoes");
+        CreateAndAddItemSprite("sItemDarkVisorEchoes");
+        CreateAndAddItemSprite("sItemDarkburstEchoes");
+        CreateAndAddItemSprite("sItemEchoVisorEchoes");
+        CreateAndAddItemSprite("sItemEmeraldEchoes");
+        CreateAndAddItemSprite("sItemIngHiveKeyEchoes");
+        CreateAndAddItemSprite("sItemLightAmmoEchoes");
+        CreateAndAddItemSprite("sItemLightBeamEchoes");
+        CreateAndAddItemSprite("sItemLightSuitEchoes");
+        CreateAndAddItemSprite("sItemProgressiveSuitEchoes");
+        CreateAndAddItemSprite("sItemSkyTempleKeyEchoes");
+        CreateAndAddItemSprite("sItemVioletEchoes");
+        #endregion
         #endregion
 
         void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
