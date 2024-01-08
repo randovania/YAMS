@@ -487,6 +487,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemCobaltEchoes");
         CreateAndAddItemSprite("sItemDarkAgonKeyEchoes");
         CreateAndAddItemSprite("sItemDarkAmmoEchoes");
+        CreateAndAddItemSprite("sItemDarkBeam");
         CreateAndAddItemSprite("sItemDarkSuitEchoes");
         CreateAndAddItemSprite("sItemDarkTorvusKeyEchoes");
         CreateAndAddItemSprite("sItemDarkVisorEchoes");
@@ -498,7 +499,9 @@ public class Patcher
         CreateAndAddItemSprite("sItemLightBeamEchoes");
         CreateAndAddItemSprite("sItemLightSuitEchoes");
         CreateAndAddItemSprite("sItemProgressiveSuitEchoes");
+        CreateAndAddItemSprite("sItemSeekerMissileEchoes");
         CreateAndAddItemSprite("sItemSkyTempleKeyEchoes");
+        CreateAndAddItemSprite("sItemSonicBoomEchoes");
         CreateAndAddItemSprite("sItemVioletEchoes");
         #endregion
         #endregion
