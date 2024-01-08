@@ -1907,7 +1907,7 @@ public class Patcher
                                                 """);
 
         // Save current hash seed, so we can compare saves later
-        characterVarsCode.PrependGMLInCode($"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
+        characterVarsCode.PrependGMLInCode($"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"");
 
         // modify gravity pod room to *always* spawn an item
         gmData.Code.ByName("gml_Room_rm_a5a07_Create").ReplaceGMLInCode("if (oControl.mod_gravity != 9)", "");
@@ -2149,10 +2149,10 @@ public class Patcher
                                  """, "");
 
         //complain if invalid game hash
-        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\"");
+        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"");
         sv6load.ReplaceGMLInCode("global.playerhealth = global.maxhealth",
             "if (global.gameHash != uniqueGameHash) { " +
-            "show_message(\"Save file is from another seed! (\" + global.gameHash + \")\"); " +
+            "show_message(\"Save file is from another seed or Multiworld word! (\" + global.gameHash + \")\"); " +
             "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
             "} global.playerhealth = global.maxhealth");
         // TODO: instead of just show_messsage, have an actual proper in-game solution. Maybe do this after MW
@@ -3111,8 +3111,7 @@ public class Patcher
 
 
         // Multiworld stuff
-        // TODO: implement the message that gets shown in-game
-        // TODO: implement a warning if disconnected or socket cant be opened!!!
+        // TODO: show icon when lost connection
         // Needed variables
         gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode($"""
         PACKET_HANDSHAKE=1
@@ -3130,6 +3129,9 @@ public class Patcher
         networkProtocolVersion = 1
         currentGameUuid = "{seedObject.Identifier.WorldUUID}"
         clientState = 0
+        CLIENT_DISCONNECTED = 0
+        CLIENT_HANDSHAKE_CONNECTION = 1
+        CLIENT_FULLY_CONNECTED = 2
         clientSocket = 0
         messageDisplay = ""
         messageDisplayTimer = 0
@@ -3141,25 +3143,20 @@ public class Patcher
         show_debug_message(global.collectedIndices)
         global.collectedItems = "items:"
         """);
-        // TODO: see the collected stuff above
 
-        // Send collected item and location when collecting items
-        gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("instance_destroy()", """
-        global.collectedIndices += (string(itemid) + ",")
-        global.collectedItems += (((string(itemName) + "|") + string(itemQuantity)) + ",")
-        show_debug_message(("indices: " + global.collectedIndices))
-        show_debug_message(("inventory: " + global.collectedItems))
-        if (oControl.socketServer >= 0 && oControl.clientState >= 1)
+        // Add script to send location and inventory info
+        gmData.Scripts.AddScript("send_location_and_inventory_packet", """
+        if (oControl.socketServer >= 0 && oControl.clientState >= oControl.CLIENT_FULLY_CONNECTED)
         {
             var collectedLocation = buffer_create(512, buffer_grow, 1)
             buffer_seek(collectedLocation, buffer_seek_start, 0)
             buffer_write(collectedLocation, buffer_u8, oControl.PACKET_NEW_LOCATION)
             var currentPos = buffer_tell(collectedLocation)
-            buffer_write(collectedLocation, buffer_string, global.collectedIndices)
+            buffer_write(collectedLocation, buffer_text, global.collectedIndices)
             var length = (buffer_tell(collectedLocation) - currentPos)
             buffer_seek(collectedLocation, buffer_seek_start, currentPos)
             buffer_write(collectedLocation, buffer_u16, length)
-            buffer_write(collectedLocation, buffer_string, global.collectedIndices)
+            buffer_write(collectedLocation, buffer_text, global.collectedIndices)
             network_send_raw(oControl.clientSocket, collectedLocation, buffer_get_size(collectedLocation))
             show_debug_message("send item id packet")
             buffer_delete(collectedLocation)
@@ -3167,21 +3164,39 @@ public class Patcher
             buffer_seek(collectedItem, buffer_seek_start, 0)
             buffer_write(collectedItem, buffer_u8, oControl.PACKET_NEW_INVENTORY)
             currentPos = buffer_tell(collectedItem)
-            buffer_write(collectedItem, buffer_string, global.collectedItems)
+            buffer_write(collectedItem, buffer_text, global.collectedItems)
             length = (buffer_tell(collectedItem) - currentPos)
             buffer_seek(collectedItem, buffer_seek_start, currentPos)
             buffer_write(collectedItem, buffer_u16, length)
-            buffer_write(collectedItem, buffer_string, global.collectedItems)
+            buffer_write(collectedItem, buffer_text, global.collectedItems)
             network_send_raw(oControl.clientSocket, collectedItem, buffer_get_size(collectedItem))
             show_debug_message("send inventory packet")
             buffer_delete(collectedItem)
         }
+        """);
+
+
+        // Send collected item and location when collecting items
+        gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("instance_destroy()", """
+        global.collectedIndices += (string(itemid) + ",")
+        global.collectedItems += (((string(itemName) + "|") + string(itemQuantity)) + ",")
+        show_debug_message(("indices: " + global.collectedIndices))
+        show_debug_message(("inventory: " + global.collectedItems))
+        send_location_and_inventory_packet();
         instance_destroy();
+        """);
+
+        // Send collected items and locations when loading saves
+        gmData.Code.ByName("gml_Script_sv6_load").ReplaceGMLInCode("""
+        room_change(global.start_room, 1)
+        """, """
+        send_location_and_inventory_packet();
+        room_change(global.start_room, 1)
         """);
 
         // Send room info when transition rooms
         gmData.Code.ByName("gml_Object_oControl_Other_4").AppendGMLInCode("""
-        if (socketServer >= 0 && clientState >= 1)
+        if (socketServer >= 0 && clientState >= oControl.CLIENT_FULLY_CONNECTED)
         {
             var roomName = buffer_create(512, buffer_grow, 1)
             buffer_seek(roomName, buffer_seek_start, 0)
@@ -3200,7 +3215,7 @@ public class Patcher
 
         // Periodically send what our last received offworld item was
         gmData.Code.ByName("gml_Object_oControl_Step_0").AppendGMLInCode("""
-        if (socketServer >= 0 && clientState >= 1 && fetchPickupTimer == 0)
+        if (socketServer >= 0 && clientState >= oControl.CLIENT_FULLY_CONNECTED && fetchPickupTimer == 0)
         {
             fetchPickupTimer = PICKUP_TIMER_INITIAL
             var pickupBuffer = buffer_create(512, buffer_grow, 1)
@@ -3219,16 +3234,19 @@ public class Patcher
         fetchPickupTimer--
         """);
 
-        // Show MW messages
+        // Show MW messages + cant open port message
         gmData.Code.ByName("gml_Script_draw_gui").AppendGMLInCode("""
                                              if (oControl.socketServer < 0)
-                                                 draw_text(0, 30, "could not establish server!")
+                                             {
+                                                 draw_set_font(global.fontGUI2)
+                                                 draw_set_halign(fa_left)
+                                                 draw_cool_text(0, 50, "Could not open Port!#Please try reopening#the game after 2min.", c_black, c_white, c_white, 1)
+                                             }
                                              if (global.ingame && oControl.messageDisplay != "" && oControl.messageDisplayTimer > 0)
                                              {
-                                                 show_debug_message("start display")
                                                  draw_set_font(global.fontGUI2)
                                                  draw_set_halign(fa_center)
-                                                 draw_cool_text(160, 35, oControl.messageDisplay, c_black, c_white, c_white, 1)
+                                                 draw_cool_text(160, 40, oControl.messageDisplay, c_black, c_white, c_white, 1)
                                                  oControl.messageDisplayTimer--
                                                  if (oControl.messageDisplayTimer <= 0)
                                                  {
@@ -3237,14 +3255,21 @@ public class Patcher
                                                  }
                                                  draw_set_halign(fa_left)
                                                  draw_set_font(global.fontMenuTiny)
-                                                 show_debug_message("end display")
                                              }
                                              """);
 
         // Received network packet event.
         var oControlNetworkReceived = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oControl_Other_68") };
-        // TODO: when the connects, we should send it inventory and pickup info! Also send it on save load! see below
+        UndertaleCodeLocals locals = new UndertaleCodeLocals();
+        locals.Name = oControlNetworkReceived.Name;
+        UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
+        argsLocal.Name = gmData.Strings.MakeString("arguments");
+        argsLocal.Index = 0;
+        locals.Locals.Add(argsLocal);
+        oControlNetworkReceived.LocalsCount = 1;
+        gmData.CodeLocals.Add(locals);
         oControlNetworkReceived.SubstituteGMLCode($$"""
+        show_debug_message("enter async network event")
         var type_event, _buffer, bufferSize, msgid, handshake, socket, malformed, protocolVer, length, currentPos, i, upperLimit;
         type_event = ds_map_find_value(async_load, "type")
         switch type_event
@@ -3252,12 +3277,11 @@ public class Patcher
             case 1:
                 show_debug_message("initial connection")
                 clientSocket = ds_map_find_value(async_load, "socket")
-                // TODO: when the connects, we should send it inventory and pickup info!
                 break
             case 2:
                 show_debug_message("client disconnected, resetting values")
                 clientSocket = 0
-                clientState = 0
+                clientState = CLIENT_DISCONNECTED
                 packetNumber = 0
                 fetchPickupsTimer = -1
                 break
@@ -3278,12 +3302,12 @@ public class Patcher
                     case PACKET_HANDSHAKE:
                         show_debug_message("rdv wants to handshake")
                         show_debug_message(("client state: " + string(clientState)))
-                        if (clientState != 1)
+                        if (clientState == CLIENT_DISCONNECTED)
                         {
                             show_debug_message("client is not connected")
-                            clientState = 1
-                            show_debug_message("client has been internally set to connected")
-                            handshake = buffer_create(2, buffer_grow, 1)
+                            clientState = CLIENT_HANDSHAKE_CONNECTION
+                            show_debug_message("client has been internally set to initial connection")
+                            var handshake = buffer_create(2, buffer_grow, 1)
                             buffer_seek(handshake, buffer_seek_start, 0)
                             buffer_write(handshake, buffer_u8, PACKET_HANDSHAKE)
                             buffer_write(handshake, buffer_u8, string(packetNumber))
@@ -3294,7 +3318,7 @@ public class Patcher
                         break
                     case PACKET_UUID:
                         show_debug_message("rdv wants to know protocol version and game id")
-                        if (clientState < 1)
+                        if (clientState < CLIENT_HANDSHAKE_CONNECTION)
                             exit
                         show_debug_message("client passed the handshake check")
                         protocolVer = buffer_create(1024, buffer_grow, 1)
@@ -3302,17 +3326,20 @@ public class Patcher
                         buffer_write(protocolVer, buffer_u8, PACKET_UUID)
                         buffer_write(protocolVer, buffer_u8, string(packetNumber))
                         currentPos = buffer_tell(protocolVer)
-                        buffer_write(protocolVer, buffer_string, ((((string(networkProtocolVersion) + ",") + string(currentGameUuid)) + ",") + "dummy"))
-                        length = (buffer_get_size(protocolVer) - currentPos)
+                        buffer_write(protocolVer, buffer_text, string(networkProtocolVersion) + "," + string(currentGameUuid))
+                        length = (buffer_tell(protocolVer) - currentPos)
                         show_debug_message(((("total buffer size: " + string(buffer_get_size(protocolVer))) + " position of after packet number: ") + string(length)))
                         buffer_seek(protocolVer, buffer_seek_start, currentPos)
                         buffer_write(protocolVer, buffer_u16, length)
-                        buffer_write(protocolVer, buffer_string, ((((string(networkProtocolVersion) + ",") + string(currentGameUuid)) + ",") + "dummy"))
+                        buffer_write(protocolVer, buffer_text, string(networkProtocolVersion) + "," + string(currentGameUuid))
                         network_send_raw(socket, protocolVer, buffer_get_size(protocolVer))
                         show_debug_message("send protocol packet")
                         buffer_delete(protocolVer)
                         packetNumber = ((packetNumber + 1) % 256)
+                        clientState = CLIENT_FULLY_CONNECTED
+                        show_debug_message("client has been set internally as fully connected")
                         fetchPickupTimer = PICKUP_TIMER_INITIAL
+                        send_location_and_inventory_packet();
                         break
                     case PACKET_DISPLAY_MESSAGE:
                         show_debug_message("showing arbitrary message")
@@ -3474,7 +3501,8 @@ public class Patcher
                             messageDisplayTimer = MESSAGE_DISPLAY_TIMER_INITIAL
                         }
                         global.lastOffworldNumber++
-                        active = undefined
+                        send_location_and_inventory_packet()
+                        active = false
                         show_debug_message("end of pickup receive")
                         break;
                 }
@@ -3490,6 +3518,7 @@ public class Patcher
                 buffer_delete(malformed)
                 break
         }
+        show_debug_message("leave async networking event")
         """);
         gmData.Code.Add(oControlNetworkReceived);
         var oControlCollisionList = gmData.GameObjects.ByName("oControl").Events[7];
@@ -3499,7 +3528,7 @@ public class Patcher
         oControlEvent.EventSubtype = 68;
         oControlEvent.Actions.Add(oControlAction);
         oControlCollisionList.Add(oControlEvent);
-        // TODO: show icon when lost connection!
+
 
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
