@@ -479,7 +479,30 @@ public class Patcher
         CreateAndAddItemSprite("sItemWaveBusterPrime");
         CreateAndAddItemSprite("sItemXrayVisorPrime");
         #endregion
-        CreateAndAddItemSprite("");
+        #region Prime 2 Echoes
+        CreateAndAddItemSprite("sItemAmberEchoes");
+        CreateAndAddItemSprite("sItemAnnihilatorEchoes");
+        CreateAndAddItemSprite("sItemBeamAmmoEchoes");
+        CreateAndAddItemSprite("sItemCobaltEchoes");
+        CreateAndAddItemSprite("sItemDarkAgonKeyEchoes");
+        CreateAndAddItemSprite("sItemDarkAmmoEchoes");
+        CreateAndAddItemSprite("sItemDarkBeam");
+        CreateAndAddItemSprite("sItemDarkSuitEchoes");
+        CreateAndAddItemSprite("sItemDarkTorvusKeyEchoes");
+        CreateAndAddItemSprite("sItemDarkVisorEchoes");
+        CreateAndAddItemSprite("sItemDarkburstEchoes");
+        CreateAndAddItemSprite("sItemEchoVisorEchoes");
+        CreateAndAddItemSprite("sItemEmeraldEchoes");
+        CreateAndAddItemSprite("sItemIngHiveKeyEchoes");
+        CreateAndAddItemSprite("sItemLightAmmoEchoes");
+        CreateAndAddItemSprite("sItemLightBeamEchoes");
+        CreateAndAddItemSprite("sItemLightSuitEchoes");
+        CreateAndAddItemSprite("sItemProgressiveSuitEchoes");
+        CreateAndAddItemSprite("sItemSeekerMissileEchoes");
+        CreateAndAddItemSprite("sItemSkyTempleKeyEchoes");
+        CreateAndAddItemSprite("sItemSonicBoomEchoes");
+        CreateAndAddItemSprite("sItemVioletEchoes");
+        #endregion
         #endregion
 
         void RotateTextureAndSaveToTexturePage(int rotation, UndertaleTexturePageItem texture)
