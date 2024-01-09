@@ -3250,7 +3250,7 @@ public class Patcher
                                                  draw_set_halign(fa_left)
                                                  draw_cool_text(0, 50, "Could not open Port!#Please try reopening#the game after 2min.", c_black, c_white, c_white, 1)
                                              }
-                                             if (oControl.hasConnectedAtLeastOnce &&  (true || (oControl.socketServer >= 0 && clientState >= oControl.CLIENT_DISCONNECTED))  )
+                                             if (oControl.hasConnectedAtLeastOnce && (oControl.socketServer >= 0 && clientState >= oControl.CLIENT_DISCONNECTED))
                                              {
                                                 draw_set_font(global.fontGUI2)
                                                 draw_set_halign(fa_left)
