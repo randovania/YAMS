@@ -3092,8 +3092,13 @@ public class Patcher
 
 
         // Multiworld stuff
-        // TODO: show icon when lost connection
         // Needed variables
+        gmData.Sprites.Add(new UndertaleSprite
+        {
+            Name = gmData.Strings.MakeString("sDisconnected"), Height = 8, Width = 8, MarginRight = 7, MarginBottom = 7, OriginX = 0, OriginY = 8,
+            Textures = GetTexturePageItemsForSpriteName("sDisconnected")
+        });
+
         gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode($"""
         PACKET_HANDSHAKE=1
         PACKET_UUID=2
@@ -3108,6 +3113,9 @@ public class Patcher
         socketServer = network_create_server_raw(0, 2016, 1)
         packetNumber = 0
         networkProtocolVersion = 1
+        hasConnectedAtLeastOnce = false
+        hasConnectedAlpha = 1
+        hasConnectedAlphaDirection = 0
         currentGameUuid = "{seedObject.Identifier.WorldUUID}"
         clientState = 0
         CLIENT_DISCONNECTED = 0
@@ -3223,11 +3231,26 @@ public class Patcher
                                                  draw_set_halign(fa_left)
                                                  draw_cool_text(0, 50, "Could not open Port!#Please try reopening#the game after 2min.", c_black, c_white, c_white, 1)
                                              }
+                                             if (oControl.hasConnectedAtLeastOnce &&  (true || (oControl.socketServer >= 0 && clientState >= oControl.CLIENT_DISCONNECTED))  )
+                                             {
+                                                draw_set_font(global.fontGUI2)
+                                                draw_set_halign(fa_left)
+                                                draw_sprite_ext(sDisconnected, 0, 5, 61, 1, 1, 0, c_white, oControl.hasConnectedAlpha);
+                                                if (oControl.hasConnectedAlpha <= 0)
+                                                    oControl.hasConnectedAlphaDirection = 0
+                                                else if (oControl.hasConnectedAlpha >= 1.4)
+                                                    oControl.hasConnectedAlphaDirection = 1
+                                                if (oControl.hasConnectedAlphaDirection == 1)
+                                                    oControl.hasConnectedAlpha -= 0.025
+                                                else if (oControl.hasConnectedAlphaDirection == 0)
+                                                    oControl.hasConnectedAlpha += 0.025
+                                                draw_cool_text(15, 50, "Disconnected!", c_black, c_white, c_white, 1)
+                                             }
                                              if (global.ingame && oControl.messageDisplay != "" && oControl.messageDisplayTimer > 0)
                                              {
                                                  draw_set_font(global.fontGUI2)
                                                  draw_set_halign(fa_center)
-                                                 draw_cool_text(160, 40, oControl.messageDisplay, c_black, c_white, c_white, 1)
+                                                 draw_cool_text(160 + widescreen_space, 40, oControl.messageDisplay, c_black, c_white, c_white, 1)
                                                  oControl.messageDisplayTimer--
                                                  if (oControl.messageDisplayTimer <= 0)
                                                  {
@@ -3318,6 +3341,7 @@ public class Patcher
                         buffer_delete(protocolVer)
                         packetNumber = ((packetNumber + 1) % 256)
                         clientState = CLIENT_FULLY_CONNECTED
+                        hasConnectedAtLeastOnce = true
                         show_debug_message("client has been set internally as fully connected")
                         fetchPickupTimer = PICKUP_TIMER_INITIAL
                         send_location_and_inventory_packet();
