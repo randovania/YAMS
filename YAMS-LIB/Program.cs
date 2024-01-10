@@ -2454,9 +2454,14 @@ public class Patcher
                                               global.SuitChangeY = y;
                                               global.SuitChangeGravity = 0;
 
+                                              var hasOCharacter = false;
                                               global.hasVaria = 1;
                                               with (oCharacter)
+                                              {
+                                                  hasOCharacter = true
                                                   alarm[1] = 1;
+                                              }
+                                              if (!hasOCharacter) global.currentsuit = 1
                                               """);
         gmData.Scripts.AddScript("get_space_jump", "global.spacejump = 1; global.hasSpacejump = 1; with (oCharacter) sfx_stop(spinjump_sound);");
         gmData.Scripts.AddScript("get_speed_booster", "global.speedbooster = 1; global.hasSpeedbooster = 1;");
@@ -2476,8 +2481,13 @@ public class Patcher
                                                 global.SuitChangeGravity = 1;
 
                                                 global.hasGravity = 1;
+                                                var hasOCharacter = false;
                                                 with (oCharacter)
+                                                {
+                                                    hasOCharacter = true
                                                     alarm[4] = 1;
+                                                }
+                                                if (!hasOCharacter) global.currentsuit = 2
                                                 """);
         gmData.Scripts.AddScript("get_progressive_suit", """
                                                          global.SuitChange = !global.skipItemFanfare;
@@ -2502,11 +2512,22 @@ public class Patcher
                                                              global.hasVaria = 1;
                                                              global.SuitChangeGravity = 0;
                                                          }
+                                                         var hasOCharacter = false;
                                                          with (oCharacter)
+                                                         {
+                                                             hasOCharacter = true;
                                                              if (global.hasGravity)
                                                                  alarm[4] = 1;
                                                              else if (global.hasVaria)
                                                                  alarm[1] = 1;
+                                                         }
+                                                         if (!hasOCharacter)
+                                                         {
+                                                             if (global.hasGravity)
+                                                                 global.currentsuit = 2;
+                                                             else if (global.hasVaria)
+                                                                 global.currentsuit = 1;
+                                                         }
                                                          """);
         gmData.Scripts.AddScript("get_charge_beam", "global.cbeam = 1; global.hasCbeam = 1;");
         gmData.Scripts.AddScript("get_ice_beam", "global.ibeam = 1; global.hasIbeam = 1; ");
