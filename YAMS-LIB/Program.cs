@@ -3173,6 +3173,13 @@ public class Patcher
         global.collectedItems = "items:"
         """);
 
+        // Also add the save items to character vars
+        characterVarsCode.PrependGMLInCode("""
+        global.lastOffworldNumber = 0
+        global.collectedIndices = "locations:"
+        global.collectedItems = "items:"
+        """);
+
         // Add script to send location and inventory info
         gmData.Scripts.AddScript("send_location_and_inventory_packet", """
         if (oControl.socketServer >= 0 && oControl.clientState >= oControl.CLIENT_FULLY_CONNECTED)
