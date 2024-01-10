@@ -3250,7 +3250,7 @@ public class Patcher
                                              {
                                                  draw_set_font(global.fontGUI2)
                                                  draw_set_halign(fa_center)
-                                                 draw_cool_text(160 + widescreen_space, 40, oControl.messageDisplay, c_black, c_white, c_white, 1)
+                                                 draw_cool_text(160 + (widescreen_space / 2), 40, oControl.messageDisplay, c_black, c_white, c_white, 1)
                                                  oControl.messageDisplayTimer--
                                                  if (oControl.messageDisplayTimer <= 0)
                                                  {
@@ -3489,23 +3489,23 @@ public class Patcher
                                     break;
                                 }
                                 knownItem = false
-                                global.lastOffworldNumber--
                                 break;
                         }
-                        global.collectedItems += (name + "|" + string(quantity) + ",")
-                        show_debug_message("after switch case in pickup")
+                        var tempMessage = "Received " + name + " from " + provider
+                        if (!knownItem)
+                            tempMessage = "Unknown item from " + provider + "! Please report this!!!"
+                        var upperLimit = 45
+                        if widescreen
+                            upperLimit = 50
+                        if (string_length(tempMessage) > upperLimit)
+                            tempMessage = string_insert("-#", tempMessage, upperLimit)
+                        messageDisplay = tempMessage
+                        messageDisplayTimer = MESSAGE_DISPLAY_TIMER_INITIAL
                         if (knownItem)
                         {
-                            var tempMessage = "Received " + name + " from " + provider
-                            var upperLimit = 45
-                            if widescreen
-                                upperLimit = 50
-                            if (string_length(tempMessage) > upperLimit)
-                                tempMessage = string_insert("-#", tempMessage, upperLimit)
-                            messageDisplay = tempMessage
-                            messageDisplayTimer = MESSAGE_DISPLAY_TIMER_INITIAL
+                            global.collectedItems += (name + "|" + string(quantity) + ",")
+                            global.lastOffworldNumber++
                         }
-                        global.lastOffworldNumber++
                         send_location_and_inventory_packet()
                         active = false
                         show_debug_message("end of pickup receive")
