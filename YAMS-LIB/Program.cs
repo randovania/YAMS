@@ -2427,14 +2427,14 @@ public class Patcher
         // Add new item scripts
         gmData.Scripts.AddScript("get_etank", "scr_energytank_character_event()");
         gmData.Scripts.AddScript("get_missile_expansion", $"if (!global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; " +
-                                                          $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} scr_missile_character_event(argument0)");
-        gmData.Scripts.AddScript("get_missile_launcher", "global.missileLauncher = 1; global.maxmissiles += global.missileLauncherExpansion; global.missiles = global.maxmissiles;");
+                                                          $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} global.collectedItems += ({ItemEnum.Missile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_missile_character_event(argument0)");
+        gmData.Scripts.AddScript("get_missile_launcher", $"global.missileLauncher = 1; global.maxmissiles += argument0; global.missiles = global.maxmissiles; global.collectedItems += ({ItemEnum.Missile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_super_missile_expansion", $"if (!global.SMissileLauncher) {{ text1 = \"{seedObject.Patches.LockedSuperText.Header}\"; " +
-                                                                $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} scr_supermissile_character_event(argument0)");
-        gmData.Scripts.AddScript("get_super_missile_launcher", "global.SMissileLauncher = 1; global.maxsmissiles += global.SMissileLauncherExpansion; global.smissiles = global.maxsmissiles;");
+                                                                $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} global.collectedItems += ({ItemEnum.SuperMissile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_supermissile_character_event(argument0)");
+        gmData.Scripts.AddScript("get_super_missile_launcher", $"global.SMissileLauncher = 1; global.maxsmissiles += argument0; global.smissiles = global.maxsmissiles; global.collectedItems += ({ItemEnum.SuperMissile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_pb_expansion", $"if (!global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " +
-                                                     $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} scr_powerbomb_character_event(argument0)");
-        gmData.Scripts.AddScript("get_pb_launcher", "global.PBombLauncher = 1; global.maxpbombs += global.PBombLauncherExpansion; global.pbombs = global.maxpbombs;");
+                                                     $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} global.collectedItems += ({ItemEnum.PBomb.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_powerbomb_character_event(argument0)");
+        gmData.Scripts.AddScript("get_pb_launcher", $"global.PBombLauncher = 1; global.maxpbombs += argument0; global.pbombs = global.maxpbombs; global.collectedItems += ({ItemEnum.PBomb.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_dna", "global.dna++; check_areaclear(); ");
         gmData.Scripts.AddScript("get_bombs", "global.bomb = 1; global.hasBombs = 1;");
         gmData.Scripts.AddScript("get_power_grip", "global.powergrip = 1; global.hasPowergrip = 1;");
@@ -2565,13 +2565,13 @@ public class Patcher
                 ItemEnum.EnergyTank => "get_etank()",
                 ItemEnum.MissileExpansion => $"get_missile_expansion({pickup.Quantity})",
                 ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
-                                            "{ get_missile_launcher() }",
+                                            $"{{ get_missile_launcher({pickup.Quantity}) }}",
                 ItemEnum.SuperMissileExpansion => $"get_super_missile_expansion({pickup.Quantity})",
                 ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
-                                                 "{ get_super_missile_launcher() }",
+                                                 $"{{ get_super_missile_launcher({pickup.Quantity}) }}",
                 ItemEnum.PBombExpansion => $"get_pb_expansion({pickup.Quantity})",
                 ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
-                                          "{ get_pb_launcher() }",
+                                          $"{{ get_pb_launcher({pickup.Quantity}) }}",
                 var x when Enum.GetName(x).StartsWith("DNA") => "event_inherited(); if (active) { get_dna() }",
                 ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) { get_bombs(); }",
                 ItemEnum.Powergrip => "event_inherited(); if (active) { get_power_grip() }",
@@ -2658,26 +2658,6 @@ public class Patcher
                                              """, $"""
                                                        global.maxpbombs += argument0
                                                    """);
-
-
-        // Set how much items the launchers give
-        if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.MissileLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.missileLauncherExpansion = 30",
-                $"global.missileLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.MissileLauncher).Value.Quantity};");
-        }
-
-        if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.SuperMissileLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.SMissileLauncherExpansion = 2",
-                $"global.SMissileLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.SuperMissileLauncher).Value.Quantity};");
-        }
-
-        if (seedObject.PickupObjects.Any(p => p.Value.ItemEffect == ItemEnum.PBombLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.PBombLauncherExpansion = 2",
-                $"global.PBombLauncherExpansion = {seedObject.PickupObjects.First(p => p.Value.ItemEffect == ItemEnum.PBombLauncher).Value.Quantity};");
-        }
 
 
         // Also change how gui health is drawn
@@ -3437,19 +3417,19 @@ public class Patcher
                                 get_missile_expansion(quantity)
                                 break
                             case "{{ItemEnum.MissileLauncher.GetEnumMemberValue()}}":
-                                get_missile_launcher()
+                                get_missile_launcher(quantity)
                                 break
                             case "{{ItemEnum.SuperMissileExpansion.GetEnumMemberValue()}}":
                                 get_super_missile_expansion(quantity)
                                 break
                             case "{{ItemEnum.SuperMissileLauncher.GetEnumMemberValue()}}":
-                                get_super_missile_launcher()
+                                get_super_missile_launcher(quantity)
                                 break
                             case "{{ItemEnum.PBombExpansion.GetEnumMemberValue()}}":
                                 get_pb_expansion(quantity)
                                 break
                             case "{{ItemEnum.PBombLauncher.GetEnumMemberValue()}}":
-                                get_pb_launcher()
+                                get_pb_launcher(quantity)
                                 break
                             case "{{ItemEnum.Bombs.GetEnumMemberValue()}}":
                                 get_bombs()
