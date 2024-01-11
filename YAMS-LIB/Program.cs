@@ -464,7 +464,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemCombatVisorPrime");
         CreateAndAddItemSprite("sItemFlamethrowerPrime");
         CreateAndAddItemSprite("sItemGrappleBeamPrime");
-        CreateAndAddItemSprite("sItemGravitySuit");
+        CreateAndAddItemSprite("sItemGravitySuitPrime");
         CreateAndAddItemSprite("sItemIceBeamPrime");
         CreateAndAddItemSprite("sItemIceSpreaderPrime");
         CreateAndAddItemSprite("sItemMorphBallPrime");
