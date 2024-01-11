@@ -3192,12 +3192,12 @@ public class Patcher
         """);
 
         // Send room info when transition rooms
-        gmData.Code.ByName("gml_Object_oControl_Other_4").AppendGMLInCode("""
-        if (socketServer >= 0 && clientState >= oControl.CLIENT_FULLY_CONNECTED)
+        gmData.Scripts.AddScript("send_room_info_packet", """
+        if (oControl.socketServer >= 0 && oControl.clientState >= oControl.CLIENT_FULLY_CONNECTED)
         {
             var roomName = buffer_create(512, buffer_grow, 1)
             buffer_seek(roomName, buffer_seek_start, 0)
-            buffer_write(roomName, buffer_u8, PACKET_GAME_STATE)
+            buffer_write(roomName, buffer_u8, oControl.PACKET_GAME_STATE)
             var currentPos = buffer_tell(roomName)
             buffer_write(roomName, buffer_text, string(room_get_name(room)))
             var length = (buffer_tell(roomName) - currentPos)
@@ -3208,6 +3208,10 @@ public class Patcher
             show_debug_message("send room packet")
             buffer_delete(roomName)
         }
+        """);
+
+        gmData.Code.ByName("gml_Object_oControl_Other_4").AppendGMLInCode("""
+        send_room_info_packet();
         """);
 
         // Periodically send what our last received offworld item was
@@ -3352,6 +3356,7 @@ public class Patcher
                         hasConnectedAtLeastOnce = true
                         show_debug_message("client has been set internally as fully connected")
                         fetchPickupTimer = PICKUP_TIMER_INITIAL
+                        send_room_info_packet();
                         send_location_and_inventory_packet();
                         break
                     case PACKET_DISPLAY_MESSAGE:
