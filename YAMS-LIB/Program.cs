@@ -2408,14 +2408,14 @@ public class Patcher
         // Add new item scripts
         gmData.Scripts.AddScript("get_etank", "scr_energytank_character_event()");
         gmData.Scripts.AddScript("get_missile_expansion", $"if (!global.missileLauncher) {{ text1 = \"{seedObject.Patches.LockedMissileText.Header}\"; " +
-                                                          $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} global.collectedItems += ({ItemEnum.Missile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_missile_character_event(argument0)");
-        gmData.Scripts.AddScript("get_missile_launcher", $"global.missileLauncher = 1; global.maxmissiles += argument0; global.missiles = global.maxmissiles; global.collectedItems += ({ItemEnum.Missile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
+                                                          $"text2 = \"{seedObject.Patches.LockedMissileText.Description}\" }} global.collectedItems += (\"{ItemEnum.Missile.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\"); scr_missile_character_event(argument0)");
+        gmData.Scripts.AddScript("get_missile_launcher", $"global.missileLauncher = 1; global.maxmissiles += argument0; global.missiles = global.maxmissiles; global.collectedItems += (\"{ItemEnum.Missile.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_super_missile_expansion", $"if (!global.SMissileLauncher) {{ text1 = \"{seedObject.Patches.LockedSuperText.Header}\"; " +
-                                                                $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} global.collectedItems += ({ItemEnum.SuperMissile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_supermissile_character_event(argument0)");
-        gmData.Scripts.AddScript("get_super_missile_launcher", $"global.SMissileLauncher = 1; global.maxsmissiles += argument0; global.smissiles = global.maxsmissiles; global.collectedItems += ({ItemEnum.SuperMissile.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
+                                                                $"text2 = \"{seedObject.Patches.LockedSuperText.Description}\" }} global.collectedItems += (\"{ItemEnum.SuperMissile.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\"); scr_supermissile_character_event(argument0)");
+        gmData.Scripts.AddScript("get_super_missile_launcher", $"global.SMissileLauncher = 1; global.maxsmissiles += argument0; global.smissiles = global.maxsmissiles; global.collectedItems += (\"{ItemEnum.SuperMissile.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_pb_expansion", $"if (!global.PBombLauncher) {{ text1 = \"{seedObject.Patches.LockedPBombText.Header}\"; " +
-                                                     $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} global.collectedItems += ({ItemEnum.PBomb.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\"); scr_powerbomb_character_event(argument0)");
-        gmData.Scripts.AddScript("get_pb_launcher", $"global.PBombLauncher = 1; global.maxpbombs += argument0; global.pbombs = global.maxpbombs; global.collectedItems += ({ItemEnum.PBomb.GetEnumMemberValue()} + \"|\" + string(argument0) + \",\")");
+                                                     $"text2 = \"{seedObject.Patches.LockedPBombText.Description}\" }} global.collectedItems += (\"{ItemEnum.PBomb.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\"); scr_powerbomb_character_event(argument0)");
+        gmData.Scripts.AddScript("get_pb_launcher", $"global.PBombLauncher = 1; global.maxpbombs += argument0; global.pbombs = global.maxpbombs; global.collectedItems += (\"{ItemEnum.PBomb.GetEnumMemberValue()}\" + \"|\" + string(argument0) + \",\")");
         gmData.Scripts.AddScript("get_dna", "global.dna++; check_areaclear(); ");
         gmData.Scripts.AddScript("get_bombs", "global.bomb = 1; global.hasBombs = 1;");
         gmData.Scripts.AddScript("get_power_grip", "global.powergrip = 1; global.hasPowergrip = 1;");
