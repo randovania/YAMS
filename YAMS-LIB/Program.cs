@@ -3203,27 +3203,28 @@ public class Patcher
         """);
 
         // Send collected items and locations when loading saves
-        gmData.Code.ByName("gml_Script_sv6_load").ReplaceGMLInCode("""
-        room_change(global.start_room, 1)
-        """, """
+        gmData.Code.ByName("gml_Object_oLoadGame_Other_10").AppendGMLInCode("""
+        send_room_info_packet(global.start_room);
         send_location_and_inventory_packet();
-        room_change(global.start_room, 1)
         """);
 
         // Send room info when transition rooms
         gmData.Scripts.AddScript("send_room_info_packet", """
+        var rm = argument0;
+        if (rm == undefined)
+            rm = room
         if (oControl.socketServer >= 0 && oControl.clientState >= oControl.CLIENT_FULLY_CONNECTED)
         {
             var roomName = buffer_create(512, buffer_grow, 1)
             buffer_seek(roomName, buffer_seek_start, 0)
             buffer_write(roomName, buffer_u8, oControl.PACKET_GAME_STATE)
             var currentPos = buffer_tell(roomName)
-            buffer_write(roomName, buffer_text, string(room_get_name(room)))
+            buffer_write(roomName, buffer_text, string(room_get_name(rm)))
             var length = (buffer_tell(roomName) - currentPos)
             buffer_seek(roomName, buffer_seek_start, currentPos)
             buffer_write(roomName, buffer_u16, length)
-            buffer_write(roomName, buffer_text, string(room_get_name(room)))
-            network_send_raw(clientSocket, roomName, buffer_get_size(roomName))
+            buffer_write(roomName, buffer_text, string(room_get_name(rm)))
+            network_send_raw(oControl.clientSocket, roomName, buffer_get_size(roomName))
             show_debug_message("send room packet")
             buffer_delete(roomName)
         }
