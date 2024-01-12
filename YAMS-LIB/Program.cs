@@ -3270,7 +3270,7 @@ public class Patcher
                                              }
                                              if (oControl.hasConnectedAtLeastOnce && (oControl.socketServer >= 0 && clientState == oControl.CLIENT_DISCONNECTED))
                                              {
-                                                if (oControl.tempTimer % 60)
+                                                if (oControl.tempTimer % 60 == 0)
                                                     mw_debug("Showing 'game is disconnected' message.")
                                                 draw_set_font(global.fontGUI2)
                                                 draw_set_halign(fa_left)
@@ -3287,7 +3287,7 @@ public class Patcher
                                              }
                                              if (global.ingame && oControl.messageDisplay != "" && oControl.messageDisplayTimer > 0)
                                              {
-                                                 if (oControl.tempTimer % 60)
+                                                 if (oControl.tempTimer % 60 == 0)
                                                     mw_debug("Showing message display; message: " + string(oControl.messageDisplay) + " timer: " + string(oControl.messageDisplayTimer))
                                                  draw_set_font(global.fontGUI2)
                                                  draw_set_halign(fa_center)
