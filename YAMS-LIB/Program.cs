@@ -458,8 +458,11 @@ public class Patcher
 
         #region MW sprites
 
+        CreateAndAddItemSprite("sItemRDV");
+
         #region Prime1
         CreateAndAddItemSprite("sItemArtifact");
+        CreateAndAddItemSprite("sItemBombsPrime");
         CreateAndAddItemSprite("sItemBoostBallPrime");
         CreateAndAddItemSprite("sItemCombatVisorPrime");
         CreateAndAddItemSprite("sItemFlamethrowerPrime");
@@ -484,6 +487,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemAmberEchoes");
         CreateAndAddItemSprite("sItemAnnihilatorEchoes");
         CreateAndAddItemSprite("sItemBeamAmmoEchoes");
+        CreateAndAddItemSprite("sItemCannonBallEchoes");
         CreateAndAddItemSprite("sItemCobaltEchoes");
         CreateAndAddItemSprite("sItemDarkAgonKeyEchoes");
         CreateAndAddItemSprite("sItemDarkAmmoEchoes");
@@ -498,11 +502,26 @@ public class Patcher
         CreateAndAddItemSprite("sItemLightAmmoEchoes");
         CreateAndAddItemSprite("sItemLightBeamEchoes");
         CreateAndAddItemSprite("sItemLightSuitEchoes");
+        CreateAndAddItemSprite("sItemPowerBombLauncherEchoes");
         CreateAndAddItemSprite("sItemProgressiveSuitEchoes");
+        CreateAndAddItemSprite("sItemScrewAttackEchoes");
         CreateAndAddItemSprite("sItemSeekerMissileEchoes");
         CreateAndAddItemSprite("sItemSkyTempleKeyEchoes");
+        CreateAndAddItemSprite("sItemSuperMissileEchoes");
         CreateAndAddItemSprite("sItemSonicBoomEchoes");
         CreateAndAddItemSprite("sItemVioletEchoes");
+        #endregion
+
+        #region Metroid Dread
+        CreateAndAddItemSprite("sItemCrossBombsDread");
+        CreateAndAddItemSprite("sItemEPartDread");
+        CreateAndAddItemSprite("sItemGrappleBeamDread");
+        CreateAndAddItemSprite("sItemIceMissilesDread");
+        CreateAndAddItemSprite("sItemMorphBallDread");
+        CreateAndAddItemSprite("sItemSpeedBoosterDread");
+        CreateAndAddItemSprite("sItemSpiderMagnetDread");
+        CreateAndAddItemSprite("sItemSpinBoostDread");
+        CreateAndAddItemSprite("sItemStormMissilesDread");
         #endregion
         #endregion
 
