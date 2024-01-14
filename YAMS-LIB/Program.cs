@@ -461,7 +461,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemRDV");
 
         #region Prime1
-        CreateAndAddItemSprite("sItemArtifact");
+        CreateAndAddItemSprite("sItemArtifactPrime");
         CreateAndAddItemSprite("sItemBombsPrime");
         CreateAndAddItemSprite("sItemBoostBallPrime");
         CreateAndAddItemSprite("sItemCombatVisorPrime");
@@ -491,7 +491,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemCobaltEchoes");
         CreateAndAddItemSprite("sItemDarkAgonKeyEchoes");
         CreateAndAddItemSprite("sItemDarkAmmoEchoes");
-        CreateAndAddItemSprite("sItemDarkBeam");
+        CreateAndAddItemSprite("sItemDarkBeamEchoes");
         CreateAndAddItemSprite("sItemDarkSuitEchoes");
         CreateAndAddItemSprite("sItemDarkTorvusKeyEchoes");
         CreateAndAddItemSprite("sItemDarkVisorEchoes");
