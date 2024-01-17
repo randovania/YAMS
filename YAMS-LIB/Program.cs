@@ -2466,7 +2466,7 @@ public class Patcher
         gmData.Scripts.AddScript("get_space_jump", "global.spacejump = 1; global.hasSpacejump = 1; with (oCharacter) sfx_stop(spinjump_sound);");
         gmData.Scripts.AddScript("get_speed_booster", "global.speedbooster = 1; global.hasSpeedbooster = 1;");
         gmData.Scripts.AddScript("get_hijump", "global.hijump = 1; global.hasHijump = 1;");
-        gmData.Scripts.AddScript("get_progressive_jump", "if (global.hasSpacejump) exit; else if (global.hasHijump) { global.spacejump = 1; global.hasSpacejump = 1; with (oCharacter) sfx_stop(spinjump_sound); } else { global.hijump = 1; global.hasHijump = 1;} ");
+        gmData.Scripts.AddScript("get_progressive_jump", $"if (global.hasSpacejump) exit; else if (global.hasHijump) {{ global.spacejump = 1; global.hasSpacejump = 1; with (oCharacter) sfx_stop(spinjump_sound); itemName = \"{ItemEnum.Spacejump.GetEnumMemberValue()}\";}} else {{ global.hijump = 1; global.hasHijump = 1; itemName = \"{ItemEnum.Hijump.GetEnumMemberValue()}\";}} ");
         gmData.Scripts.AddScript("get_gravity", """
                                                 global.SuitChange = !global.skipItemFanfare;
                                                 // If any Metroid exists, force suit cutscene to be off
@@ -2489,7 +2489,7 @@ public class Patcher
                                                 }
                                                 if (!hasOCharacter) global.currentsuit = 2
                                                 """);
-        gmData.Scripts.AddScript("get_progressive_suit", """
+        gmData.Scripts.AddScript("get_progressive_suit", $$"""
                                                          global.SuitChange = !global.skipItemFanfare;
                                                          // If any Metroid exists, force suit cutscene to be off
                                                          if (!((instance_number(oMAlpha) <= 0) && (instance_number(oMGamma) <= 0) && (instance_number(oMZeta) <= 0) && (instance_number(oMOmega) <= 0)))
@@ -2506,11 +2506,13 @@ public class Patcher
                                                          {
                                                              global.hasGravity = 1;
                                                              global.SuitChangeGravity = 1;
+                                                             itemName = "{{ItemEnum.Gravity.GetEnumMemberValue()}}"
                                                          }
                                                          else
                                                          {
                                                              global.hasVaria = 1;
                                                              global.SuitChangeGravity = 0;
+                                                             itemName = "{{ItemEnum.Varia.GetEnumMemberValue()}}"
                                                          }
                                                          var hasOCharacter = false;
                                                          with (oCharacter)
@@ -2589,7 +2591,7 @@ public class Patcher
                 ItemEnum.Speedbooster => "event_inherited(); if (active) { get_speed_booster() }",
                 ItemEnum.Hijump => "event_inherited(); if (active) { get_hijump() }",
                 ItemEnum.ProgressiveJump =>
-                    "event_inherited(); if (active) { get_progressive_jump() }",
+                    "if (active) { get_progressive_jump() }; event_inherited(); ",
                 ItemEnum.Gravity => """
                                         event_inherited();
                                         if (active)
@@ -2598,11 +2600,11 @@ public class Patcher
                                         }
                                     """,
                 ItemEnum.ProgressiveSuit => """
-                                                event_inherited();
                                                 if (active)
                                                 {
                                                     get_progressive_suit()
-                                                }
+                                                };
+                                                event_inherited();
                                             """,
                 ItemEnum.Charge => "btn1_name = \"Fire\"; event_inherited(); if (active) { get_charge_beam() }",
                 ItemEnum.Ice => "event_inherited(); if (active) { get_ice_beam() }",
