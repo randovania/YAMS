@@ -161,6 +161,9 @@ public class Patcher
                 if (key.StartsWith(name)) list.Add(new UndertaleSprite.TextureEntry { Texture = gmData.TexturePageItems[nameToPageItemDict[key]] });
             }
 
+            if (!list.Any())
+                throw new Exception("Could not find any sprites for " + name);
+
             return list;
         }
 
