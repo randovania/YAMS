@@ -5,7 +5,11 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [1.2.1] - 2021-01-??
 ### Changed
-- Rename `sItemDarkBeam` to `sItemDarkBeamEchoes` and `sItemArtifact` to `sItemArtifactPrime`
+- Rename `sItemDarkBeam` to `sItemDarkBeamEchoes` and `sItemArtifact` to `sItemArtifactPrime`.
+
+### Fixed
+- Ammo and Launchers will not give a bunch ammo to Multiworld trackers.
+- Progressives should now always display correctly on Multiworld trackers.
 
 ## [1.2.0] - 2024-01-14
 ### Added
