@@ -2946,8 +2946,6 @@ public class Patcher
         characterVarsCode.AppendGMLInCode("global.event[205] = global.skipCutscenes");
         // Omega Mutation cutscene - event 300
         characterVarsCode.AppendGMLInCode("global.event[300] = global.skipCutscenes");
-        // Hatchling cutscene - 302
-        characterVarsCode.AppendGMLInCode("global.event[302] = global.skipCutscenes");
         // Also still increase the metroid counters from the hatchling cutscene
         gmData.Code.ByName("gml_Object_oEggTrigger_Create_0").PrependGMLInCode("""
                                                                                if (global.skipCutscenes && !global.event[302])
