@@ -27,7 +27,7 @@ Offworld items
 - The RDV item sprite (`offworld items/default`) was made by [Miepee](https://github.com/Miepee). It's a modification of the Unknown sprite by [AbyssalCreature](https://github.com/AbyssalCreature) and the [Randovania logo](https://github.com/randovania/randovania/tree/main/tools/icons) by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
 
 Dread items:
-- The Cross Bomb (`offworld items/dread/crossBombs`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Cross Bomb (`offworld items/dread/crossBombs`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Diffusion Beam (`offworld items/dread/diffusionBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Energy Part (`offworld items/dread/energyPart`) sprites were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Flash Shift (`offworld items/dread/flashShift`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)

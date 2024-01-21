@@ -6,7 +6,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [1.2.3] - 2024-01-21
 
 ### Added
-- New Dread sprites: diffusion beam, Flash Shift, Pulse Radar and Phantom Cloak.
+- New Dread sprites: Diffusion beam, Flash Shift, Pulse Radar, Phantom Cloak and Space Jump.
 - New Prime 1 sprites: Seperate sprites for all individual artifacts.
 
 ### Fixed
