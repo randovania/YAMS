@@ -3119,7 +3119,7 @@ public class Patcher
         gmData.Scripts.AddScript("mw_debug", """
         var totalString = string(current_hour) + ":" + string(current_minute) + "." + string(current_second) + " - " + argument0
         show_debug_message(totalString);
-        exit; 
+        exit;
         var f = file_text_open_append(working_directory + "/mw-debug-" + oControl.year + oControl.month + oControl.day + oControl.hour + oControl.minute + ".txt")
         file_text_write_string(f, totalString)
         file_text_writeln(f)
