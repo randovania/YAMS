@@ -27,15 +27,21 @@ Offworld items
 - The RDV item sprite (`offworld items/default`) was made by [Miepee](https://github.com/Miepee). It's a modification of the Unknown sprite by [AbyssalCreature](https://github.com/AbyssalCreature) and the [Randovania logo](https://github.com/randovania/randovania/tree/main/tools/icons) by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
 
 Dread items:
-- The Cross Bomb (`offworld items/dread/crossBombs`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
+- The Cross Bomb (`offworld items/dread/crossBombs`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Diffusion Beam (`offworld items/dread/diffusionBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Energy Part (`offworld items/dread/energyPart`) sprites were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Flash Shift (`offworld items/dread/flashShift`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Grapple Beam (`offworld items/dread/grappleBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Ice Missiles (`offworld items/dread/iceMissiles`) sprites were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
 - The Morph Ball sprites (`offworld items/dread/morphBall`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Phantom Cloak (`offworld items/dread/phantomCloak`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Pulse Radar (`offworld items/dread/pulseRadar`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Space Jump(`offworld items/dread/spaceJump`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Speed Booster sprites (`offworld items/dread/speedBooster`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Spider Magnet sprites (`offworld items/dread/spiderMagnet`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), modified from the Spin Boost sprites by ShirtyScarab554
 - The Spin Boost sprites (`offworld items/dread/spinBoost`) were made by ShirtyScarab554
 - The Storm Missile sprites (`offworld items/dread/stormMissiles`) were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
+- The Wide Beam (`offworld items/dread/wideBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 
 Echoes items:
 - The Amber translator sprites (`offworld items/primes/echoes/amber`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
@@ -67,7 +73,7 @@ Echoes items:
 
 
 Prime items:
-- The Artifact sprites (`offworld items/primes/prime1/artifact`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Artifact sprites (`offworld items/primes/prime1/artifact` as well as the suffixes) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Bomb sprites (`offworld items/primes/prime1/bombs`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Boost Ball sprites (`offworld items/primes/prime1/boostBall`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Combat Visor sprites (`offworld items/primes/prime1/combatVisor`) were made by [Uncle Reggie](https://www.threads.net/@unclereggiegames)

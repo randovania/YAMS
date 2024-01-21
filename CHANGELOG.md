@@ -5,8 +5,13 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [1.2.3] - 2024-01-21
 
+### Added
+- New Dread sprites: diffusion beam, Flash Shift, Pulse Radar and Phantom Cloak.
+- New Prime 1 sprites: Seperate sprites for all individual artifacts.
+
 ### Fixed
 - ELM wil now work again.
+- Getting progressive items in Multiworlds will now properly work for external item trackers.
 
 ## [1.2.2] - 2024-01-17
 
