@@ -13,6 +13,9 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - ELM wil now work again.
 - Getting progressive items in Multiworlds will now properly work for external item trackers.
 
+### Removed
+- The game will not log Multiworld occurences to a debug log anymore.
+
 ## [1.2.2] - 2024-01-17
 
 ### Fixed
