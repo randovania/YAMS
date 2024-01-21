@@ -3452,11 +3452,11 @@ public class Patcher
                         }
 
                         var provider = splitted[0]
-                        var name = splitted[1]
+                        var itemName = splitted[1]
                         var model = splitted[2]
                         var quantity = real(splitted[3])
                         var remoteItemNumber = real(splitted[4])
-                        mw_debug("prov:" + provider + " name:" + name + " model: " + model + " quant: " + string(quantity) + " remote num: " + string(remoteItemNumber))
+                        mw_debug("prov:" + provider + " itemName:" + itemName + " model: " + model + " quant: " + string(quantity) + " remote num: " + string(remoteItemNumber))
                         if (remoteItemNumber <= global.lastOffworldNumber)
                         {
                             mw_debug("We have already received this item. Bailing out. Our current item is " + string(global.lastOffworldNumber))
@@ -3464,7 +3464,7 @@ public class Patcher
                         }
                         var knownItem = true
                         active = true       // workaround for some scripts
-                        switch (name)
+                        switch (itemName)
                         {
                             case "{{ItemEnum.EnergyTank.GetEnumMemberValue()}}":
                                 get_etank()
@@ -3566,7 +3566,7 @@ public class Patcher
                                 get_speed_booster_upgrade(quantity)
                                 break
                             default:
-                                if (string_count("Metroid DNA", name) > 0)
+                                if (string_count("Metroid DNA", itemName) > 0)
                                 {
                                     get_dna()
                                     break;
@@ -3575,7 +3575,7 @@ public class Patcher
                                 knownItem = false
                                 break;
                         }
-                        var tempMessage = "Received " + name + " from " + provider
+                        var tempMessage = "Received " + itemName + " from " + provider
                         if (!knownItem)
                             tempMessage = "Unknown item from " + provider + "! Please report this!!!"
                         var upperLimit = 45
@@ -3589,7 +3589,7 @@ public class Patcher
                         if (knownItem)
                         {
                             mw_debug("Item that we received was known to us. Attempting to increase inventory; current: " + string(global.collectedItems))
-                            global.collectedItems += (name + "|" + string(quantity) + ",")
+                            global.collectedItems += (itemName + "|" + string(quantity) + ",")
                             global.lastOffworldNumber = remoteItemNumber
                             mw_debug("Inventory and lastoffworld set. offworld: " + string(global.lastOffworldNumber) + " inventory: " + string(global.collectedItems))
                         }
