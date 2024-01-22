@@ -465,6 +465,18 @@ public class Patcher
 
         #region Prime1
         CreateAndAddItemSprite("sItemArtifactPrime");
+        CreateAndAddItemSprite("sItemArtifactElderPrime");
+        CreateAndAddItemSprite("sItemArtifactChozoPrime");
+        CreateAndAddItemSprite("sItemArtifactLifegiverPrime");
+        CreateAndAddItemSprite("sItemArtifactNaturePrime");
+        CreateAndAddItemSprite("sItemArtifactNewbornPrime");
+        CreateAndAddItemSprite("sItemArtifactSpiritPrime");
+        CreateAndAddItemSprite("sItemArtifactStrengthPrime");
+        CreateAndAddItemSprite("sItemArtifactSunPrime");
+        CreateAndAddItemSprite("sItemArtifactTruthPrime");
+        CreateAndAddItemSprite("sItemArtifactWarriorPrime");
+        CreateAndAddItemSprite("sItemArtifactWildPrime");
+        CreateAndAddItemSprite("sItemArtifactWorldPrime");
         CreateAndAddItemSprite("sItemBombsPrime");
         CreateAndAddItemSprite("sItemBoostBallPrime");
         CreateAndAddItemSprite("sItemCombatVisorPrime");
@@ -517,14 +529,20 @@ public class Patcher
 
         #region Metroid Dread
         CreateAndAddItemSprite("sItemCrossBombsDread");
+        CreateAndAddItemSprite("sItemDiffusionBeamDread");
         CreateAndAddItemSprite("sItemEPartDread");
+        CreateAndAddItemSprite("sItemFlashShiftDread");
         CreateAndAddItemSprite("sItemGrappleBeamDread");
         CreateAndAddItemSprite("sItemIceMissilesDread");
         CreateAndAddItemSprite("sItemMorphBallDread");
+        CreateAndAddItemSprite("sItemPhantomCloakDread");
+        CreateAndAddItemSprite("sItemPulseRadarDread");
+        CreateAndAddItemSprite("sItemSpaceJumpDread");
         CreateAndAddItemSprite("sItemSpeedBoosterDread");
         CreateAndAddItemSprite("sItemSpiderMagnetDread");
         CreateAndAddItemSprite("sItemSpinBoostDread");
         CreateAndAddItemSprite("sItemStormMissilesDread");
+        CreateAndAddItemSprite("sItemWideBeamDread");
         #endregion
         #endregion
 
