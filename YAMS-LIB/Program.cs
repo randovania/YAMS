@@ -3471,7 +3471,7 @@ public class Patcher
                         }
 
                         var provider = splitted[0]
-                        var itemName = splitted[1]
+                        itemName = splitted[1]      // needs to be an instance variable due to some scripts expecting it to be.
                         var model = splitted[2]
                         var quantity = real(splitted[3])
                         var remoteItemNumber = real(splitted[4])
@@ -3614,6 +3614,7 @@ public class Patcher
                         }
                         send_location_and_inventory_packet()
                         active = false
+                        itemName = undefined
                         mw_debug("End of Pickup receive handling.")
                         break;
                 }
