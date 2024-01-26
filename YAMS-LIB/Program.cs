@@ -451,6 +451,9 @@ public class Patcher
             Textures = GetTexturePageItemsForSpriteName("sItemDNA_")
         });
 
+        CreateAndAddItemSprite("sItemProgressiveJump");
+        CreateAndAddItemSprite("sItemProgressiveSuit");
+
         // New sprites for dna septogg
         gmData.Sprites.Add(new UndertaleSprite
         {
@@ -543,6 +546,10 @@ public class Patcher
         CreateAndAddItemSprite("sItemSpinBoostDread");
         CreateAndAddItemSprite("sItemStormMissilesDread");
         CreateAndAddItemSprite("sItemWideBeamDread");
+        #endregion
+
+        #region Cave Story
+        CreateAndAddItemSprite("sItemGenericCS");
         #endregion
         #endregion
 
