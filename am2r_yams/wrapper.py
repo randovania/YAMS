@@ -66,7 +66,8 @@ class Wrapper:
             wrapper_file: str = os.fspath(tempdir_Path.joinpath("start-rando.sh"))
             with open(wrapper_file, "w+") as f:
                 f.write("#!/usr/bin/env bash\n")
-                f.write(f"flatpak run --command=\"{os.fspath(output_path)}/runner\" io.github.am2r_community_developers.AM2RLauncher")
+                f.write('script_dir="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"\n')
+                f.write('flatpak run --command="${script_dir}/runner" io.github.am2r_community_developers.AM2RLauncher\n')
             os.chmod(wrapper_file, 0o775)
 
         # AM2RLauncher installations usually have a profile.xml file. For less confusion, remove it if it exists
