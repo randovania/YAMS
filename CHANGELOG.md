@@ -7,6 +7,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
 - Changed sprites for Flashlight, Blindfold, Light Beam, Sonic Boom, Prime 1 Super Missiles, Flamethrower, Ice Spreader and Wave Buster
+- The yams.json file is now deleted for race seeds.
 
 ## [1.2.8] - 2024-01-27
 
