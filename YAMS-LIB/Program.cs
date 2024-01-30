@@ -2594,14 +2594,14 @@ public class Patcher
             {
                 ItemEnum.EnergyTank => "get_etank()",
                 ItemEnum.MissileExpansion => $"get_missile_expansion({pickup.Quantity})",
-                ItemEnum.MissileLauncher => "event_inherited(); if (active) " +
-                                            $"{{ get_missile_launcher({pickup.Quantity}) }}",
+                ItemEnum.MissileLauncher => "if (active) " +
+                                            $"{{ get_missile_launcher({pickup.Quantity}) }} event_inherited(); ",
                 ItemEnum.SuperMissileExpansion => $"get_super_missile_expansion({pickup.Quantity})",
-                ItemEnum.SuperMissileLauncher => "event_inherited(); if (active) " +
-                                                 $"{{ get_super_missile_launcher({pickup.Quantity}) }}",
+                ItemEnum.SuperMissileLauncher => "if (active) " +
+                                                 $"{{ get_super_missile_launcher({pickup.Quantity}) }} event_inherited(); ",
                 ItemEnum.PBombExpansion => $"get_pb_expansion({pickup.Quantity})",
-                ItemEnum.PBombLauncher => "event_inherited(); if (active) " +
-                                          $"{{ get_pb_launcher({pickup.Quantity}) }}",
+                ItemEnum.PBombLauncher => "if (active) " +
+                                          $"{{ get_pb_launcher({pickup.Quantity}) }} event_inherited(); ",
                 var x when Enum.GetName(x).StartsWith("DNA") => "event_inherited(); if (active) { get_dna() }",
                 ItemEnum.Bombs => "btn1_name = \"Fire\"; event_inherited(); if (active) { get_bombs(); }",
                 ItemEnum.Powergrip => "event_inherited(); if (active) { get_power_grip() }",
