@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [1.2.13] - 2024-02-07
+
+### Fixed
+- When receiving a suit in a Multiworld, the suit transition cutscene will not place you at a room's (0,0) coordinate anymore.
+
 ## [1.2.12] - 2024-02-03
 
 ### Fixed
