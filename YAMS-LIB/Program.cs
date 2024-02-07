@@ -2478,7 +2478,7 @@ public class Patcher
                                                   global.SuitChange = 0;
                                               if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
                                                   global.SuitChange = 0;
-                                              if (room == rm_transition || room == rm_loading || room == itemroom)
+                                              if (room == rm_transition || room == rm_loading || room == itemroom || object_index == oControl)
                                                   global.SuitChange = 0;
                                               global.SuitChangeX = x;
                                               global.SuitChangeY = y;
@@ -2506,7 +2506,7 @@ public class Patcher
                                                     global.SuitChange = 0;
                                                 if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
                                                     global.SuitChange = 0;
-                                                if (room == rm_transition || room == rm_loading || room == itemroom)
+                                                if (room == rm_transition || room == rm_loading || room == itemroom || object_index == oControl)
                                                     global.SuitChange = 0;
                                                 global.SuitChangeX = x;
                                                 global.SuitChangeY = y;
@@ -2530,7 +2530,7 @@ public class Patcher
                                                              global.SuitChange = 0;
                                                          if (!(collision_point((x + 8), (y + 8), oSolid, 0, 1)))
                                                              global.SuitChange = 0;
-                                                         if (room == rm_transition || room == rm_loading || room == itemroom)
+                                                         if (room == rm_transition || room == rm_loading || room == itemroom || object_index == oControl)
                                                              global.SuitChange = 0;
                                                          global.SuitChangeX = x;
                                                          global.SuitChangeY = y;
