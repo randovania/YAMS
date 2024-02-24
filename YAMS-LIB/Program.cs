@@ -535,10 +535,15 @@ public class Patcher
         CreateAndAddItemSprite("sItemCrossBombsDread");
         CreateAndAddItemSprite("sItemDiffusionBeamDread");
         CreateAndAddItemSprite("sItemEPartDread");
+        CreateAndAddItemSprite("sItemETankDread");
         CreateAndAddItemSprite("sItemFlashShiftDread");
         CreateAndAddItemSprite("sItemGrappleBeamDread");
         CreateAndAddItemSprite("sItemIceMissilesDread");
+        CreateAndAddItemSprite("sItemMissileTankDread");
+        CreateAndAddItemSprite("sItemMissileTankPlusDread");
         CreateAndAddItemSprite("sItemMorphBallDread");
+        CreateAndAddItemSprite("sItemPowerBombLauncherDread");
+        CreateAndAddItemSprite("sItemPowerBombTankDread");
         CreateAndAddItemSprite("sItemPhantomCloakDread");
         CreateAndAddItemSprite("sItemPulseRadarDread");
         CreateAndAddItemSprite("sItemSpaceJumpDread");
@@ -546,6 +551,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemSpiderMagnetDread");
         CreateAndAddItemSprite("sItemSpinBoostDread");
         CreateAndAddItemSprite("sItemStormMissilesDread");
+        CreateAndAddItemSprite("sItemVariaSuitDread");
         CreateAndAddItemSprite("sItemWideBeamDread");
         #endregion
 

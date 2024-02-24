@@ -27,49 +27,56 @@ Offworld items
 - The RDV item sprite (`offworld items/default`) was made by [Miepee](https://github.com/Miepee). It's a modification of the Unknown sprite by [AbyssalCreature](https://github.com/AbyssalCreature) and the [Randovania logo](https://github.com/randovania/randovania/tree/main/tools/icons) by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
 
 Dread items:
-- The Cross Bomb (`offworld items/dread/crossBombs`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
-- The Diffusion Beam (`offworld items/dread/diffusionBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
-- The Energy Part (`offworld items/dread/energyPart`) sprites were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Flash Shift (`offworld items/dread/flashShift`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Grapple Beam (`offworld items/dread/grappleBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Ice Missiles (`offworld items/dread/iceMissiles`) sprites were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
+- The Cross Bomb sprites (`offworld items/dread/crossBombs`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
+- The Diffusion Beam sprites (`offworld items/dread/diffusionBeam`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
+- The Energy Part sprites (`offworld items/dread/energyPart`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and [radzo73](https://github.com/radzo73)
+- The Energy Tank sprites (`offworld items/dread/energyTank`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and [radzo73](https://github.com/radzo73)
+- The Flash Shift sprites (`offworld items/dread/flashShift`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Grapple Beam sprites (`offworld items/dread/grappleBeam`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Ice Missiles sprites (`offworld items/dread/iceMissiles`) were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
+- The Missile Tank sprites (`offworld items/dread/missileTank`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and Samario
+- The Missile Tank+ sprites (`offworld items/dread/missileTankPlus`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and Samario
 - The Morph Ball sprites (`offworld items/dread/morphBall`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Phantom Cloak (`offworld items/dread/phantomCloak`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Pulse Radar (`offworld items/dread/pulseRadar`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Space Jump(`offworld items/dread/spaceJump`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Missile Tank sprites (`offworld items/dread/missileTank`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and Samario
+- The Power Bomb Launcher sprites (`offworld items/dread/pbLauncher`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and Samario
+- The Power Bomb Tank sprites (`offworld items/dread/pbTank`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), ShirtyScarab554 and Samario
+- The Phantom Cloak sprites (`offworld items/dread/phantomCloak`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Pulse Radar sprites (`offworld items/dread/pulseRadar`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Space Jump sprites (`offworld items/dread/spaceJump`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Speed Booster sprites (`offworld items/dread/speedBooster`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Spider Magnet sprites (`offworld items/dread/spiderMagnet`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), modified from the Spin Boost sprites by ShirtyScarab554
 - The Spin Boost sprites (`offworld items/dread/spinBoost`) were made by ShirtyScarab554
 - The Storm Missile sprites (`offworld items/dread/stormMissiles`) were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
-- The Wide Beam (`offworld items/dread/wideBeam`) sprites were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Varia Suit sprites (`offworld items/dread/variaSuit`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Wide Beam sprites (`offworld items/dread/wideBeam`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 
 Echoes items:
-- The Amber translator sprites (`offworld items/primes/echoes/amber`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Annihilator sprites (`offworld items/primes/echoes/annihilator`) were made by JKMaxx and [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Amber translator sprites (`offworld items/primes/echoes/amber`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and [Uncle Reggie](https://www.threads.net/@unclereggiegames)
+- The Annihilator sprites (`offworld items/primes/echoes/annihilator`) were made by JKMaxx, [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Beam Ammo sprites (`offworld items/primes/echoes/beamAmmo`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Cannon Ball sprites (`offworld items/primes/echoes/cannonBall`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Cobalt translator sprites (`offworld items/primes/echoes/cobalt`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Dark Agon Key sprites (`offworld items/primes/echoes/darkAgon`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q)
+- The Cobalt translator sprites (`offworld items/primes/echoes/cobalt`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and [Uncle Reggie](https://www.threads.net/@unclereggiegames)
+- The Dark Agon Key sprites (`offworld items/primes/echoes/darkAgon`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Dark Beam Ammo sprites (`offworld items/primes/echoes/darkAmmo`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Dark Beam sprites (`offworld items/primes/echoes/darkBeam`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
-- The Dark Burst sprites (`offworld items/primes/echoes/darkBurst`) were made by [JeffGainsNGames](https://www.youtube.com/@jeffgainsngames)
+- The Dark Burst sprites (`offworld items/primes/echoes/darkBurst`) were made by [JeffGainsNGames](https://www.youtube.com/@jeffgainsngames), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Dark Suit sprites (`offworld items/primes/echoes/darkSuit`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Dark Torvus Key sprites (`offworld items/primes/echoes/darkTorvus`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q)
+- The Dark Torvus Key sprites (`offworld items/primes/echoes/darkTorvus`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Dark Visor sprites (`offworld items/primes/echoes/darkVisor`) were made by [JeffGainsNGames](https://www.youtube.com/@jeffgainsngames)
 - The Echo Visor sprites (`offworld items/primes/echoes/echoVisor`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Emerald Translator sprites (`offworld items/primes/echoes/emerald`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Ing Hive Key sprites (`offworld items/primes/echoes/ingHive`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Emerald Translator sprites (`offworld items/primes/echoes/emerald`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia) and [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Ing Hive Key sprites (`offworld items/primes/echoes/ingHive`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Light Beam Ammo sprites (`offworld items/primes/echoes/lightAmmo`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Light Beam sprites (`offworld items/primes/echoes/lightBeam`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Light Suit sprites (`offworld items/primes/echoes/lightSuit`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Power Bomb Launcher (`offworld items/primes/echoes/powerBombLauncher`) sprites were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Power Bomb Launcher sprites (`offworld items/primes/echoes/powerBombLauncher`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Progressive Suit sprites (`offworld items/primes/echoes/progressiveSuit`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Screw Attack sprites (`offworld items/primes/echoes/screwAttack`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Seeker Missile sprites (`offworld items/primes/echoes/seekers`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Sky Temple Key sprites (`offworld items/primes/echoes/skyTempleKey`) were made [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q)
+- The Sky Temple Key sprites (`offworld items/primes/echoes/skyTempleKey`) were made [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Sonic Boom sprites (`offworld items/primes/echoes/sonicBoom`) were made by [Schwartz Ghandi](https://www.youtube.com/channel/UCTm7a6JWDeTiHkWa8xR9W-Q), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
-- The Super Missile sprites (`offworld items/primes/echoes/superMissile`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
-- The Violet translator sprites (`offworld items/primes/echoes/violet`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Super Missile sprites (`offworld items/primes/echoes/superMissile`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia) and [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Violet translator sprites (`offworld items/primes/echoes/violet`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia) and [AbyssalCreature](https://github.com/AbyssalCreature)
 
 
 Prime items:
@@ -86,7 +93,7 @@ Prime items:
 - The Phazon Suit sprites (`offworld items/primes/prime1/phazonSuit`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Plasma Beam sprites (`offworld items/primes/prime1/plasmaBeam`) were made by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
 - The Power Beam sprites (`offworld items/primes/prime1/powerBeam`) were made by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
-- The Power Bomb Launcher (`offworld items/primes/prime1/powerBombLauncher`) sprites were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
+- The Power Bomb Launcher sprites (`offworld items/primes/prime1/powerBombLauncher`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia)
 - The Scan Visor sprites (`offworld items/primes/prime1/scanVisor`) were made by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
 - The Super Missile sprites (`offworld items/primes/prime1/superMissile`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia) and [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Thermal Visor sprites (`offworld items/primes/prime1/thermalVisor`) were made by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
