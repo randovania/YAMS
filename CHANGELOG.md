@@ -5,6 +5,13 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [1.2.14] - 2024-02-??
 
+### Added
+- When hitting a Metroid with Charge Beams, but the other items not disabled, a message will appear
+- The following sprites were added for Dread: Energy Tanks, Missile Tanks, Missile Tank+, Power Bomb Launcher, Power Bomb Tank, Varia Suit
+
+### Changed
+- The following sprites were changed in order to fit more with AM2R's art style: Dread's Energy Part, Dread's Wide Beam, Echoes' Amber Translator, Echoes' Cobalt Translator, Echoes' Dark Agon Key, Echoes' Darkburst, Echoes' Dark Torvus Key, Echoes' Emerald Translator, Echoes' Ing Hive Key, Echoes' Sky Temple Key, Echoes' Super Missiles, Echoes' Violet Translator
+
 ### Fixed
 - Rare crash when receiving a flashlight/blindfold in a Multiworld session.
 
