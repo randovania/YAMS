@@ -438,11 +438,11 @@ public enum ItemEnum
     [EnumMember(Value = "Metroid DNA 46")]
     DNA46,
 
-    [EnumMember(Value = "Missile Expansion")]
+    [EnumMember(Value = "Missile Tank")]
     MissileExpansion,
-    [EnumMember(Value = "Super Missile Expansion")]
+    [EnumMember(Value = "Super Missile Tank")]
     SuperMissileExpansion,
-    [EnumMember(Value = "Power Bomb Expansion")]
+    [EnumMember(Value = "Power Bomb Tank")]
     PBombExpansion,
     [EnumMember(Value = "Energy Tank")]
     EnergyTank,
