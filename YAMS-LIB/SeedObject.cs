@@ -526,6 +526,8 @@ public enum ItemEnum
     SpeedBoosterUpgrade,
     [EnumMember(Value = "Walljump")]
     Walljump,
+    [EnumMember(Value = "Infinite Bomb Jump")]
+    InfiniteBombJump,
 }
 
 public class PickupObject
