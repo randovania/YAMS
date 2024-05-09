@@ -507,6 +507,7 @@ public enum ItemEnum
     Morphball,
     [EnumMember(Value = "Nothing")]
     Nothing,
+
     [EnumMember(Value = "Small Health Drop")]
     SmallHealthDrop,
     [EnumMember(Value = "Big Health Drop")]
@@ -523,6 +524,8 @@ public enum ItemEnum
     Blindfold,
     [EnumMember(Value = "Speed Booster Upgrade")]
     SpeedBoosterUpgrade,
+    [EnumMember(Value = "Walljump")]
+    Walljump,
 }
 
 public class PickupObject
