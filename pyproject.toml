@@ -2,6 +2,52 @@
 requires = ["setuptools>=62.3"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "am2r_yams"
+version = "2.0.0"
+authors = [
+    {name = "Miepee"},
+]
+description = "An open source randomizer patcher for AM2R."
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3.11"
+
+]
+dependencies = [
+    "pythonnet",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+]
+
+
+[project.urls]
+Repository = "https://github.com/randovania/YAMS"
+
+
+# Entry Points for PyInstaller
+[project.entry-points."pyinstaller40"]
+hook-dirs = "am2r_yams.__pyinstaller:get_hook_dirs"
+
+
+[tool.setuptools]
+packages = ["am2r_yams"]
+
+[tool.setuptools.package-data]
+"*" = ["yams/**"]
+"yams_py.yams" = ["**"]
+
+
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = [
