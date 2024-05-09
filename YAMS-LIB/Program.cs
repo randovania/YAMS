@@ -1974,6 +1974,23 @@ public class Patcher
             "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0)",
             "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0 && global.hasWJ)");
 
+        // Add IBJ as item
+        characterVarsCode.PrependGMLInCode("global.hasIBJ = 0;");
+        gmData.Code.ByName("gml_Script_characterCreateEvent").AppendGMLInCode("IBJ_MIDAIR_MAX = 3; IBJLaidInAir = IBJ_MIDAIR_MAX;");
+        gmData.Code.ByName("gml_Object_oCharacter_Collision_435").ReplaceGMLInCode("if (isCollisionTop(6) == 0)",
+            """
+            if (!global.hasIBJ)
+            {
+                if (state == AIRBALL)
+                    IBJLaidInAir--
+                else
+                    IBJLaidInAir = IBJ_MIDAIR_MAX
+                if (IBJLaidInAir <= 0)
+                    exit
+            }
+            if (isCollisionTop(6) == 0)
+            """);
+
         // Save current hash seed, so we can compare saves later
         characterVarsCode.PrependGMLInCode($"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"");
 
@@ -2396,6 +2413,9 @@ public class Patcher
                 case ItemEnum.Walljump:
                     characterVarsCode.ReplaceGMLInCode("global.hasWJ = 0", $"global.hasWJ = {quantity}");
                     break;
+                case ItemEnum.InfiniteBombJump:
+                    characterVarsCode.ReplaceGMLInCode("global.hasIBJ = 0", $"global.hasIBJ = {quantity}");
+                    break;
                 case ItemEnum.Nothing:
                     break;
                 default:
@@ -2623,6 +2643,7 @@ public class Patcher
         gmData.Scripts.AddScript("get_blindfold", "global.flashlightLevel -= argument0; with (oLightEngine) instance_destroy(); with (oFlashlight64) instance_destroy(); if (instance_exists(oCharacter)) ApplyLightPreset();");
         gmData.Scripts.AddScript("get_speed_booster_upgrade", "global.speedBoosterFramesReduction += argument0;");
         gmData.Scripts.AddScript("get_walljump_upgrade", "global.hasWJ = 1;");
+        gmData.Scripts.AddScript("get_IBJ_upgrade", "global.hasIBJ = 1;");
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((string pickupName, PickupObject pickup) in seedObject.PickupObjects)
@@ -2706,6 +2727,7 @@ public class Patcher
                     $"event_inherited(); if (active) {{ get_blindfold({pickup.Quantity}); }}",
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ get_speed_booster_upgrade({pickup.Quantity}); }}",
                 ItemEnum.Walljump => "event_inherited(); if (active) { get_walljump_upgrade(); }",
+                ItemEnum.InfiniteBombJump => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };
@@ -3644,6 +3666,9 @@ public class Patcher
                                 break
                             case "{{ItemEnum.Walljump.GetEnumMemberValue()}}":
                                 get_walljump_upgrade()
+                                break
+                            case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
+                                get_IBJ_upgrade()
                                 break
                             default:
                                 if (string_count("Metroid DNA", itemName) > 0)
