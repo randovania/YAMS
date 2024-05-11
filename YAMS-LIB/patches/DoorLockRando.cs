@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -42,6 +43,32 @@ public class DoorLockRando
         // Also fix depth value for them
         a5Door.Depth = -99;
 
+        // Remove foreground tiles in water turbine station and the alpha room to make doors more readable, and then fix the black tile holes
+        var pipes3 = gmData.Backgrounds.ByName("tlPipes3");
+        foreach (string roomName in new[] {"rm_a2a08", "rm_a2a09"})
+        {
+            var room = gmData.Rooms.ByName(roomName);
+            var tilesToRemove = roomName switch
+            {
+                "rm_a2a08" => room.Tiles.Where(t => t.BackgroundDefinition == pipes3 && (t.X is 288 or 336)),
+                "rm_a2a09" => room.Tiles.Where(t => t.BackgroundDefinition == pipes3 && t.X == 0),
+                _ => throw new InvalidOperationException("Source code was changed to not account for new rooms?")
+            };
+            foreach (var tile in tilesToRemove.ToList())
+            {
+                room.Tiles.Remove(tile);
+            }
+
+            if (roomName == "rm_a2a08")
+            {
+                room.Tiles.Add(CreateRoomTile(288, 384, 100, pipes3, 0, 48, 16, 64));
+            }
+            else if (roomName == "rm_a2a09")
+            {
+                room.Tiles.Add(CreateRoomTile(0, 144, 100, pipes3, 0, 48, 16, 64));
+            }
+        }
+
 
         var doorEventIndex = 350;
         foreach ((var id, var doorEntry) in seedObject.DoorLocks)
@@ -70,7 +97,25 @@ public class DoorLockRando
                     if (isGotoObject)
                     {
                         // Place tiles
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, -100, gmData.Backgrounds.ByName("tlDoor"), doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
+                        int tileDepth = -80;
+                        var doorTileset = gmData.Backgrounds.ByName("tlDoor");
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
+                        // Extend the tiles if goto object is on the edge of room or on special cases
+                        bool shouldExtendTiles = gameObject.X == 0 || gameObject.X == room.Width || door.InstanceID switch
+                        {
+                            102617 => true, // Bottom transition in Grave Grotto
+                            _ => false
+                        };
+
+                        if (shouldExtendTiles)
+                        {
+                            for (int i = 1; i <= 5; i++)
+                            {
+                                int tilesetCounter = i + (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 1);
+                                room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? (uint)96 : 80, 0, 16, 80));
+                            }
+                        }
+
                         // Place door
                         door = CreateRoomObject(gameObject.X - ((doorEntry.FacingDirection == DoorFacingDirection.Left ? 1 : -1) * 24), gameObject.Y-64, gmData.GameObjects.ByName("oDoorA5"), null, doorEntry.FacingDirection == DoorFacingDirection.Left ? -1 : 1);
                         room.GameObjects.Add(door);
