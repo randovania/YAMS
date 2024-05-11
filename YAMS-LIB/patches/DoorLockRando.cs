@@ -184,6 +184,12 @@ public class DoorLockRando
                             door.ScaleX *= -1;
                             door.X += 16;
                         }
+
+                        // Move door to be more visible and place tiles
+                        door.X -= 16 * (flipped ? 1 : -1);
+                        var doorTileset = gmData.Backgrounds.ByName("tlDoor");
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (flipped ? 8 : 24), gameObject.Y, -95, doorTileset, flipped ? (uint)64 : 96, 0, 32, 64));
+
                     }
 
                     if (door.ObjectDefinition != researchHatchObject && doorEntry.Lock == DoorLockType.ResearchHatch)
@@ -208,7 +214,7 @@ public class DoorLockRando
 
                     if (door.ObjectDefinition != waterTurbineObject && doorEntry.Lock == DoorLockType.A2WaterTurbine)
                     {
-                        int movingOffset = door.ObjectDefinition == researchHatchObject ? 48 : 24;
+                        int movingOffset = door.ObjectDefinition == researchHatchObject ? 32 : 24;
                         door.X += (movingOffset * (int)door.ScaleX);
                         door.ScaleX *= -1;
                         if ((door.X - 48) == 0)
