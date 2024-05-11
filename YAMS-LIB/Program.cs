@@ -69,62 +69,29 @@ public class Patcher
 
         // Import new Sprites
         var nameToPageItemDict = new Dictionary<string, int>();
-        const int pageDimension = 1024;
-        int lastUsedX = 0, lastUsedY = 0, currentShelfHeight = 0;
-        var newTexturePage = new Image<Rgba32>(pageDimension, pageDimension);
         UndertaleEmbeddedTexture? utTexturePage = new UndertaleEmbeddedTexture();
-        utTexturePage.TextureHeight = utTexturePage.TextureWidth = pageDimension;
-        gmData.EmbeddedTextures.Add(utTexturePage);
 
-        void AddAllSpritesFromDir(string dirPath)
-        {
-            // Recursively add sprites from subdirs
-            foreach (string subDir in Directory.GetDirectories(dirPath))
-            {
-                AddAllSpritesFromDir(subDir);
-            }
-
-            foreach (string filePath in Directory.GetFiles(dirPath))
-            {
-                string extension = new FileInfo(filePath).Extension;
-                if (String.IsNullOrWhiteSpace(extension) || extension == ".md" || extension == ".txt") continue;
-
-                Image sprite = Image.Load(filePath);
-                currentShelfHeight = Math.Max(currentShelfHeight, sprite.Height);
-                if (lastUsedX + sprite.Width > pageDimension)
-                {
-                    lastUsedX = 0;
-                    lastUsedY += currentShelfHeight;
-                    currentShelfHeight = sprite.Height + 1; // One pixel padding
-
-                    if (sprite.Width > pageDimension)
-                    {
-                        throw new NotSupportedException($"Currently a sprite ({filePath}) is bigger than the max size of a {pageDimension} texture page!");
-                    }
-                }
-
-                if (lastUsedY + sprite.Height > pageDimension) throw new NotSupportedException($"Currently all the sprites would be above a {pageDimension} texture page!");
-
-                int xCoord = lastUsedX;
-                int yCoord = lastUsedY;
-                newTexturePage.Mutate(i => i.DrawImage(sprite, new Point(xCoord, yCoord), 1));
-                UndertaleTexturePageItem pageItem = new UndertaleTexturePageItem();
-                pageItem.SourceX = (ushort)xCoord;
-                pageItem.SourceY = (ushort)yCoord;
-                pageItem.SourceWidth = pageItem.TargetWidth = pageItem.BoundingWidth = (ushort)sprite.Width;
-                pageItem.SourceHeight = pageItem.TargetHeight = pageItem.BoundingHeight = (ushort)sprite.Height;
-                pageItem.TexturePage = utTexturePage;
-                gmData.TexturePageItems.Add(pageItem);
-                lastUsedX += sprite.Width + 1; //One pixel padding
-                nameToPageItemDict.Add(Path.GetFileNameWithoutExtension(filePath), gmData.TexturePageItems.Count - 1);
-            }
-        }
-
-        AddAllSpritesFromDir(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites");
         using (MemoryStream ms = new MemoryStream())
         {
-            newTexturePage.Save(ms, PngFormat.Instance);
+            var texturePage = Image.Load(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites/texturepage.png");
+            utTexturePage.TextureWidth = texturePage.Width;
+            utTexturePage.TextureHeight = texturePage.Height;
+            texturePage.Save(ms, PngFormat.Instance);
             utTexturePage.TextureData = new UndertaleEmbeddedTexture.TexData { TextureBlob = ms.ToArray() };
+        }
+        gmData.EmbeddedTextures.Add(utTexturePage);
+
+        List<PageItem> pageItemInfo = JsonSerializer.Deserialize<List<PageItem>>(File.ReadAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites/texturepageiteminfo.json"));
+        foreach (var item in pageItemInfo)
+        {
+            UndertaleTexturePageItem pageItem = new UndertaleTexturePageItem();
+            pageItem.SourceX = item.X;
+            pageItem.SourceY = item.Y;
+            pageItem.SourceWidth = pageItem.TargetWidth = pageItem.BoundingWidth = item.Width;
+            pageItem.SourceHeight = pageItem.TargetHeight = pageItem.BoundingHeight = item.Height;
+            pageItem.TexturePage = utTexturePage;
+            gmData.TexturePageItems.Add(pageItem);
+            nameToPageItemDict.Add(item.Name, gmData.TexturePageItems.Count - 1);
         }
 
         // Replace A4 doors
