@@ -2113,6 +2113,8 @@ public class Patcher
                                           ds_list_add(list, global.lastOffworldNumber)
                                           ds_list_add(list, global.collectedIndices)
                                           ds_list_add(list, global.collectedItems)
+                                          ds_list_add(list, global.hasWJ)
+                                          ds_list_add(list, global.hasIBJ)
                                           str_list = ds_list_write(list)
                                           ds_list_clear(list)
                                           return str_list;
@@ -2171,6 +2173,12 @@ public class Patcher
                                           global.collectedItems = readline();
                                           if (global.collectedItems == undefined || global.collectedItems == 0)
                                             global.collectedItems = "items:"
+                                          global.hasWJ = readline()
+                                          if (global.hasWJ == undefined)
+                                            global.hasWJ = 1
+                                          global.hasIBJ = readline()
+                                          if (global.hasIBJ == undefined)
+                                            global.hasIBJ = 1
                                           ds_list_clear(list)
                                           """);
         gmData.Code.Add(loadGlobalsCode);
