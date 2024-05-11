@@ -36,6 +36,9 @@ jobs:
       - name: Install Python packages
         run: python -m pip install --upgrade pip build
 
+      - name: Generate Texture Page
+        run: dotnet run --project ./GenerateTexturePage/GenerateTexturePage.csproj
+
       - name: Build YAMS-Lib into proper directory
         run: dotnet publish YAMS-LIB -c Release -o am2r_yams/yams
 

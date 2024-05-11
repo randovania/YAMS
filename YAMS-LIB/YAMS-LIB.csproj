@@ -12,19 +12,24 @@
     <ItemGroup>
         <ProjectReference Include="..\UndertaleModTool\UndertaleModLib\UndertaleModLib.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="sprites\"/>
-        <Content Include="sprites/**">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        </Content>
-    </ItemGroup>
+    
 
     <ItemGroup>
         <PackageReference Include="Macross.Json.Extensions" Version="3.0.0"/>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4"/>
         <PackageReference Include="NaturalSort.Extension" Version="4.3.0" />
+    </ItemGroup>
+    
+
+    <ItemGroup>
+      <Content Include="sprites\texturepageiteminfo.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
+      <Content Include="sprites\texturepage.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </Content>
     </ItemGroup>
 
 </Project>
