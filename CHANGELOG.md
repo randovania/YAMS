@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.1.0] - 2024-05-12
+
+### Added
+
+- There is now an option to have a different amount of DNA to unlock the lab.
+- The following sprites have been added: Spider Ball for Prime 1, Missile Launcher, Speed Booster Upgrades and Super Missile Launcher for Dread, Baby Metroid, Beam Burst, Lightning Armor, Phase Drift, Scan Pulse and Spider Ball for Metroid Samus Returns, and Grapple Beam for Super Metroid.
+
+### Changed
+
+- Removed Background Pillars in Water Turbine Station, to avoid issues when placing doors over these open transitions.
+- When Doors are shuffled over Research Site Hatches, they are now not obscured by the rock background.
+- The following sprites were changed in order to fit more with AM2R's art style: Ice Missiles for Dread, Dark Suit, Dark Visor, Echo Visor, Light Suit and Progressive Suit for Echoes, Gravity Suit, Phazon Suit and Varia Suit for Prime 1.
+
+### Fixed
+
+- Several things when placing doors on open transitions: they're now more in the background and stick out less.
+- When Research Site Hatches are shuffled to Ammo doors (Missile, Super Missile, Power Bomb), they will now get unlocked automatically when going through them.
+- Pipe rooms keeping their previous water or darkness level in pipe shuffle.
+
 ## [2.0.0] - 2024-04-09
 
 ### Changed
