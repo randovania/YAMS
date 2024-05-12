@@ -302,6 +302,10 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("locked_pb_text")]
     public TextDetails LockedPBombText;
+
+    [JsonInclude]
+    [JsonPropertyName("required_amount_of_dna")]
+    public int RequiredDNAmount = 46;
 }
 
 public class ConfigurationIdentifier
