@@ -48,7 +48,7 @@ Dread items:
 - The Speed Booster Upgrade sprites (`offworld items/dread/speedBoosterUpgrade`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554
 - The Spider Magnet sprites (`offworld items/dread/spiderMagnet`) were made by [AbyssalCreature](https://github.com/AbyssalCreature), modified from the Spin Boost sprites by ShirtyScarab554
 - The Spin Boost sprites (`offworld items/dread/spinBoost`) were made by ShirtyScarab554
-- The Storm Missile sprites (`offworld items/dread/stormMissiles`) were made by [Shale](https://cohost.org/RaffiTheOwl), modified from the Missile Launcher sprites by ShirtyScarab554
+- The Storm Missile sprites (`offworld items/dread/stormMissiles`) were made by [Shale](https://cohost.org/RaffiTheOwl) and [AbyssalCreature](https://github.com/AbyssalCreature), modified from the Missile Launcher sprites by ShirtyScarab554
 - The Super Missile Launcher sprites (`offworld items/dread/superMissileLauncher`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554 
 - The Varia Suit sprites (`offworld items/dread/variaSuit`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Wide Beam sprites (`offworld items/dread/wideBeam`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554

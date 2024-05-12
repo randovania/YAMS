@@ -14,7 +14,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Removed Background Pillars in Water Turbine Station, to avoid issues when placing doors over these open transitions.
 - When Doors are shuffled over Research Site Hatches, they are now not obscured by the rock background.
-- The following sprites were changed in order to fit more with AM2R's art style: Ice Missiles for Dread, Dark Suit, Dark Visor, Echo Visor, Light Suit and Progressive Suit for Echoes, Gravity Suit, Phazon Suit and Varia Suit for Prime 1.
+- The following sprites were changed in order to fit more with AM2R's art style: Ice Missiles and Storm Missiles for Dread, Annihilator Beam, Dark Suit, Dark Visor, Echo Visor, Light Suit and Progressive Suit for Echoes, Gravity Suit, Phazon Suit and Varia Suit for Prime 1.
 
 ### Fixed
 
