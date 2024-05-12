@@ -462,6 +462,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemPowerBeamPrime");
         CreateAndAddItemSprite("sItemPowerBombLauncherPrime");
         CreateAndAddItemSprite("sItemScanVisorPrime");
+        CreateAndAddItemSprite("sItemSpiderBallPrime");
         CreateAndAddItemSprite("sItemSuperMissilePrime");
         CreateAndAddItemSprite("sItemThermalVisorPrime");
         CreateAndAddItemSprite("sItemVariaSuitPrime");
@@ -469,6 +470,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemWaveBusterPrime");
         CreateAndAddItemSprite("sItemXrayVisorPrime");
         #endregion
+
         #region Prime 2 Echoes
         CreateAndAddItemSprite("sItemAmberEchoes");
         CreateAndAddItemSprite("sItemAnnihilatorEchoes");
@@ -506,6 +508,7 @@ public class Patcher
         CreateAndAddItemSprite("sItemFlashShiftDread");
         CreateAndAddItemSprite("sItemGrappleBeamDread");
         CreateAndAddItemSprite("sItemIceMissilesDread");
+        CreateAndAddItemSprite("sItemMissileLauncherDread");
         CreateAndAddItemSprite("sItemMissileTankDread");
         CreateAndAddItemSprite("sItemMissileTankPlusDread");
         CreateAndAddItemSprite("sItemMorphBallDread");
@@ -515,15 +518,30 @@ public class Patcher
         CreateAndAddItemSprite("sItemPulseRadarDread");
         CreateAndAddItemSprite("sItemSpaceJumpDread");
         CreateAndAddItemSprite("sItemSpeedBoosterDread");
+        CreateAndAddItemSprite("sItemSpeedBoosterUpgradeDread");
         CreateAndAddItemSprite("sItemSpiderMagnetDread");
         CreateAndAddItemSprite("sItemSpinBoostDread");
         CreateAndAddItemSprite("sItemStormMissilesDread");
+        CreateAndAddItemSprite("sItemSuperMissileLauncherDread");
         CreateAndAddItemSprite("sItemVariaSuitDread");
         CreateAndAddItemSprite("sItemWideBeamDread");
         #endregion
 
         #region Cave Story
         CreateAndAddItemSprite("sItemGenericCS");
+        #endregion
+
+        #region Samus Returns
+        CreateAndAddItemSprite("sItemBabyMetroidMSR");
+        CreateAndAddItemSprite("sItemBeamBurstMSR");
+        CreateAndAddItemSprite("sItemLightningArmorMSR");
+        CreateAndAddItemSprite("sItemPhaseDriftMSR");
+        CreateAndAddItemSprite("sItemScanPulseMSR");
+        CreateAndAddItemSprite("sItemSpiderBallMSR");
+        #endregion
+
+        #region Super Metroid
+        CreateAndAddItemSprite("sItemGrappleBeamSuper");
         #endregion
         #endregion
 
