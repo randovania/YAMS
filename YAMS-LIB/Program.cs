@@ -1195,7 +1195,7 @@ public class Patcher
         // Replace Metroids counters with DNA counters
         UndertaleCode? drawGuiCode = gmData.Code.ByName("gml_Script_draw_gui");
         drawGuiCode.ReplaceGMLInCode("global.monstersleft", "global.dna");
-        drawGuiCode.ReplaceGMLInCode("global.monstersarea", "46 - global.dna");
+        drawGuiCode.ReplaceGMLInCode("global.monstersarea", $"(max((46 - global.dna), 0))");
         gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_14").ReplaceGMLInCode("get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
         gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_10").ReplaceGMLInCode("get_text(\"OptionsDisplay\", \"MonsterCounter\")", "\"DNA Counter\"");
         gmData.Code.ByName("gml_Object_oOptionsDisplay_Other_13").ReplaceGMLInCode("get_text(\"OptionsDisplay\", \"MonsterCounter_Tip\")",
@@ -2416,6 +2416,8 @@ public class Patcher
             }
             characterVarsCode.AppendGMLInCode($"global.collectedItems += \"{item.GetEnumMemberValue()}|{quantity},\"");
         }
+        // After we have gotten our starting items, adjust the DNA counter
+        characterVarsCode.ReplaceGMLInCode("global.dna = ", $"global.dna = (46 - {seedObject.Patches.RequiredDNAmount}) + ");
 
         // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
         if (!seedObject.Patches.RequireMissileLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.MissileLauncher))
