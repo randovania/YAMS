@@ -1953,14 +1953,14 @@ public class Patcher
                                                             global.curropt = 0
                                                 """);
 
-        // Add WJ as item
-        characterVarsCode.PrependGMLInCode("global.hasWJ = 0;");
+        // Add WJ as item - TODO: set this to 0 when we have sprites!!!
+        characterVarsCode.PrependGMLInCode("global.hasWJ = 1;");
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode(
             "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0)",
             "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0 && global.hasWJ)");
 
-        // Add IBJ as item
-        characterVarsCode.PrependGMLInCode("global.hasIBJ = 0;");
+        // Add IBJ as item - TODO: set this to 0 when we have sprites!!!
+        characterVarsCode.PrependGMLInCode("global.hasIBJ = 1;");
         gmData.Code.ByName("gml_Script_characterCreateEvent").AppendGMLInCode("IBJ_MIDAIR_MAX = 3; IBJLaidInAir = IBJ_MIDAIR_MAX;");
         gmData.Code.ByName("gml_Object_oCharacter_Collision_435").ReplaceGMLInCode("if (isCollisionTop(6) == 0)",
             """
