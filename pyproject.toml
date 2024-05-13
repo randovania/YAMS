@@ -36,7 +36,7 @@ Repository = "https://github.com/randovania/YAMS"
 
 
 # Entry Points for PyInstaller
-[project.entry-points."pyinstaller40"]
+[project.entry-points.pyinstaller40]
 hook-dirs = "am2r_yams.__pyinstaller:get_hook_dirs"
 
 
