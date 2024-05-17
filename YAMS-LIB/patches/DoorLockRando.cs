@@ -103,7 +103,11 @@ public class DoorLockRando
                         // Extend the tiles if goto object is on the edge of room or on special cases
                         bool shouldExtendTiles = gameObject.X == 0 || gameObject.X == room.Width || door.InstanceID switch
                         {
-                            102617 => true, // Bottom transition in Grave Grotto
+                            138494 or       // Top transition in hideout alpha nest
+                                144652 or   // Top transition in waterfalls entryway
+                                105815 or   // Bottom transition in Skreek Street
+                                102617      // Bottom transition in Grave Grotto
+                                => true,
                             _ => false
                         };
 
