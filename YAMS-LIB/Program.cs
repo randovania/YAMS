@@ -1902,7 +1902,7 @@ public class Patcher
                     break;
                 case ItemEnum.LongBeam:
                     characterVarsCode.ReplaceGMLInCode("global.hasLongBeam = 0", $"global.hasLongBeam = {quantity}");
-                    break
+                    break;
                 case ItemEnum.Nothing:
                     break;
                 default:
