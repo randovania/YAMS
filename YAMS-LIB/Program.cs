@@ -1436,17 +1436,24 @@ public class Patcher
 
         // Add IBJ as item - TODO: set this to 0 when we have sprites!!!
         characterVarsCode.PrependGMLInCode("global.hasIBJ = 1;");
-        gmData.Code.ByName("gml_Script_characterCreateEvent").AppendGMLInCode("IBJ_MIDAIR_MAX = 3; IBJLaidInAir = IBJ_MIDAIR_MAX;");
+        gmData.Code.ByName("gml_Script_characterCreateEvent").AppendGMLInCode("IBJ_MIDAIR_MAX = 5; IBJLaidInAir = IBJ_MIDAIR_MAX; IBJ_MAX_BOMB_SEPERATE_TIMER = 4; IBJBombSeperateTimer = -1;");
+        gmData.Code.ByName("gml_Object_oCharacter_Step_0").AppendGMLInCode("if (IBJBombSeperateTimer >= 0) IBJBombSeperateTimer-- if (!platformCharacterIs(IN_AIR)) IBJLaidInAir = IBJ_MIDAIR_MAX;");
         gmData.Code.ByName("gml_Object_oCharacter_Collision_435").ReplaceGMLInCode("if (isCollisionTop(6) == 0)",
             """
             if (!global.hasIBJ)
             {
                 if (state == AIRBALL)
-                    IBJLaidInAir--
+                {
+                    if (IBJBombSeperateTimer < 0)
+                        IBJLaidInAir--;
+                }
                 else
-                    IBJLaidInAir = IBJ_MIDAIR_MAX
+                {
+                    IBJLaidInAir = IBJ_MIDAIR_MAX;
+                }
                 if (IBJLaidInAir <= 0)
-                    exit
+                    exit;
+                IBJBombSeperateTimer = IBJ_MAX_BOMB_SEPERATE_TIMER;
             }
             if (isCollisionTop(6) == 0)
             """);
