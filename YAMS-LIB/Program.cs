@@ -2684,7 +2684,15 @@ public class Patcher
                      "rm_a7a07"
                  })
         {
-            gmData.Rooms.ByName(roomName).CreationCodeId.PrependGMLInCode("global.darkness = 0; global.waterlevel = 0; global.watertype = 0; mus_change(musItemAmb); ");
+            string musicCode = roomName switch
+            {
+                var s when s.StartsWith("rm_a5b") || (s.StartsWith("rm_a5c") && s != "rm_a5c14") => "if (global.event[250] > 0) mus_change(musArea5B) else mus_change(musArea5A);",
+                "rm_a6b03" or "rm_a6b11" or "rm_a7a07" => "mus_change(musArea6A);",
+                "rm_a6a11" => "mus_change(mus_get_main_song());",
+                _ => "mus_change(musItemAmb);",
+            };
+
+            gmData.Rooms.ByName(roomName).CreationCodeId.PrependGMLInCode($"global.darkness = 0; global.waterlevel = 0; global.watertype = 0; {musicCode}");
         }
 
 
