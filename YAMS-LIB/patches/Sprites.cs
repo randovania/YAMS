@@ -94,6 +94,8 @@ public class Sprites
         gmData.Backgrounds.Add(new UndertaleBackground { Name = gmData.Strings.MakeString("bgLogDNA5"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA5"]] });
         gmData.Backgrounds.Add(new UndertaleBackground { Name = gmData.Strings.MakeString("bgLogDNA6"), Texture = gmData.TexturePageItems[nameToPageItemDict["bgLogDNA6"]] });
 
+        gmData.Backgrounds.Add(new UndertaleBackground { Name = gmData.Strings.MakeString("tlDoorsExtended"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlDoorsExtended"]] });
+
         gmData.Backgrounds.Add(
             new UndertaleBackground { Name = gmData.Strings.MakeString("tlWarpHideout"), Texture = gmData.TexturePageItems[nameToPageItemDict["tlWarpHideout"]] });
         gmData.Backgrounds.Add(new UndertaleBackground

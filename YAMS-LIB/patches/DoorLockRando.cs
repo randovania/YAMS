@@ -98,8 +98,8 @@ public class DoorLockRando
                     {
                         // Place tiles
                         int tileDepth = -80;
-                        var doorTileset = gmData.Backgrounds.ByName("tlDoor");
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)64 : 96, 0, 32, 64));
+                        var doorTileset = gmData.Backgrounds.ByName("tlDoorsExtended");
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)0 : 128, 96, 32, 64));
                         // Extend the tiles if goto object is on the edge of room or on special cases
                         bool shouldExtendTiles = gameObject.X == 0 || gameObject.X == room.Width || door.InstanceID switch
                         {
@@ -116,7 +116,7 @@ public class DoorLockRando
                             for (int i = 1; i <= 5; i++)
                             {
                                 int tilesetCounter = i + (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 1);
-                                room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? (uint)96 : 80, 0, 16, 80));
+                                room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? (uint)32 : 16, 96, 16, 80));
                             }
                         }
 
