@@ -532,6 +532,8 @@ public enum ItemEnum
     Walljump,
     [EnumMember(Value = "Infinite Bomb Jump")]
     InfiniteBombJump,
+    [EnumMember(Value = "Long Beam")]
+    LongBeam,
 }
 
 public class PickupObject

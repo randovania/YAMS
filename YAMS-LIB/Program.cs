@@ -1428,6 +1428,11 @@ public class Patcher
                                                             global.curropt = 0
                                                 """);
 
+        // Add Long Beam as an item
+        characterVarsCode.PrependGMLInCode("global.hasLongBeam = 0;");
+        gmData.Code.ByName("gml_Object_oBeam_Create_0").AppendGMLInCode("existingTimer = 12;");
+        gmData.Code.ByName("gml_Object_oBeam_Step_0").PrependGMLInCode("if (existingTimer > 0) existingTimer--; if (existingTimer <= 0 && !global.hasLongBeam) instance_destroy()");
+
         // Add WJ as item - TODO: set this to 0 when we have sprites!!!
         characterVarsCode.PrependGMLInCode("global.hasWJ = 1;");
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode(
@@ -1615,6 +1620,7 @@ public class Patcher
                                           ds_list_add(list, global.collectedItems)
                                           ds_list_add(list, global.hasWJ)
                                           ds_list_add(list, global.hasIBJ)
+                                          ds_list_add(list, global.hasLongBeam)
                                           str_list = ds_list_write(list)
                                           ds_list_clear(list)
                                           return str_list;
@@ -1679,6 +1685,9 @@ public class Patcher
                                           global.hasIBJ = readline()
                                           if (global.hasIBJ == undefined)
                                             global.hasIBJ = 1
+                                          global.hasLongBeam = readline()
+                                          if (global.hasLongBeam == undefined)
+                                            global.hasLongBeam = 1
                                           ds_list_clear(list)
                                           """);
         gmData.Code.Add(loadGlobalsCode);
@@ -1891,6 +1900,8 @@ public class Patcher
                 case ItemEnum.InfiniteBombJump:
                     characterVarsCode.ReplaceGMLInCode("global.hasIBJ = 0", $"global.hasIBJ = {quantity}");
                     break;
+                case ItemEnum.LongBeam:
+                    characterVarsCode.ReplaceGMLInCode("global.hasLongBeam = 0", $"global.hasLongBeam = {quantity}");
                 case ItemEnum.Nothing:
                     break;
                 default:
@@ -2121,6 +2132,7 @@ public class Patcher
         gmData.Scripts.AddScript("get_speed_booster_upgrade", "global.speedBoosterFramesReduction += argument0;");
         gmData.Scripts.AddScript("get_walljump_upgrade", "global.hasWJ = 1;");
         gmData.Scripts.AddScript("get_IBJ_upgrade", "global.hasIBJ = 1;");
+        gmData.Scripts.AddScript("get_long_beam", "global.hasLongBeam = 1;");
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((string pickupName, PickupObject pickup) in seedObject.PickupObjects)
@@ -2205,6 +2217,7 @@ public class Patcher
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ get_speed_booster_upgrade({pickup.Quantity}); }}",
                 ItemEnum.Walljump => "event_inherited(); if (active) { get_walljump_upgrade(); }",
                 ItemEnum.InfiniteBombJump => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
+                ItemEnum.LongBeam => "event_inherited(); if (active) { get_long_beam(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)
             };

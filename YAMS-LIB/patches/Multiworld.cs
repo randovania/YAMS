@@ -462,6 +462,9 @@ public class Multiworld
                             case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
                                 get_IBJ_upgrade()
                                 break
+                            case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
+                                get_long_beam()
+                                break
                             default:
                                 if (string_count("Metroid DNA", itemName) > 0)
                                 {

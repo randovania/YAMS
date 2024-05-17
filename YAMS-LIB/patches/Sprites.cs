@@ -225,6 +225,8 @@ public class Sprites
             Textures = GetTexturePageItemsForSpriteName("sItemSpeedBoosterUpgrade_")
         });
 
+        CreateAndAddItemSprite("sItemLongBeam");
+
         gmData.Sprites.Add(new UndertaleSprite
         {
             // TODO: sprite is offset by a bit? Double check whether thats still the case
