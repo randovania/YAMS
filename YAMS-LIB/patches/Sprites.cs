@@ -228,6 +228,8 @@ public class Sprites
         });
 
         CreateAndAddItemSprite("sItemLongBeam");
+        CreateAndAddItemSprite("sItemIBJ");
+        CreateAndAddItemSprite("sItemWallJump");
 
         gmData.Sprites.Add(new UndertaleSprite
         {
