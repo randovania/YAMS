@@ -462,7 +462,7 @@ public class Multiworld
                             case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
                                 get_IBJ_upgrade()
                                 break
-                            case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
+                            case "{{ItemEnum.LongBeam.GetEnumMemberValue()}}":
                                 get_long_beam()
                                 break
                             default:
