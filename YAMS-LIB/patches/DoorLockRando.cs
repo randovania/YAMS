@@ -111,9 +111,15 @@ public class DoorLockRando
                             _ => false
                         };
 
+                        int maxIteration = door.InstanceID switch
+                        {
+                            144652 => 8,   // Top transition in waterfalls entryway
+                            _ => 5
+                        };
+
                         if (shouldExtendTiles)
                         {
-                            for (int i = 1; i <= 5; i++)
+                            for (int i = 1; i <= maxIteration; i++)
                             {
                                 int tilesetCounter = i + (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 1);
                                 room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? (uint)32 : 16, 96, 16, 80));
