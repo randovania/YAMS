@@ -1897,7 +1897,7 @@ public class Patcher
                 case ItemEnum.SpeedBoosterUpgrade:
                     characterVarsCode.ReplaceGMLInCode("global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
                     break;
-                case ItemEnum.Walljump:
+                case ItemEnum.WalljumpBoots:
                     characterVarsCode.ReplaceGMLInCode("global.hasWJ = 0", $"global.hasWJ = {quantity}");
                     break;
                 case ItemEnum.InfiniteBombJump:
@@ -2219,7 +2219,7 @@ public class Patcher
                 ItemEnum.Blindfold =>
                     $"event_inherited(); if (active) {{ get_blindfold({pickup.Quantity}); }}",
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ get_speed_booster_upgrade({pickup.Quantity}); }}",
-                ItemEnum.Walljump => "event_inherited(); if (active) { get_walljump_upgrade(); }",
+                ItemEnum.WalljumpBoots => "event_inherited(); if (active) { get_walljump_upgrade(); }",
                 ItemEnum.InfiniteBombJump => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
                 ItemEnum.LongBeam => "event_inherited(); if (active) { get_long_beam(); }",
                 ItemEnum.Nothing => "event_inherited();",

@@ -456,7 +456,7 @@ public class Multiworld
                             case "{{ItemEnum.SpeedBoosterUpgrade.GetEnumMemberValue()}}":
                                 get_speed_booster_upgrade(quantity)
                                 break
-                            case "{{ItemEnum.Walljump.GetEnumMemberValue()}}":
+                            case "{{ItemEnum.WalljumpBoots.GetEnumMemberValue()}}":
                                 get_walljump_upgrade()
                                 break
                             case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":

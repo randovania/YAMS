@@ -528,8 +528,8 @@ public enum ItemEnum
     Blindfold,
     [EnumMember(Value = "Speed Booster Upgrade")]
     SpeedBoosterUpgrade,
-    [EnumMember(Value = "Walljump")]
-    Walljump,
+    [EnumMember(Value = "Walljump Boots")]
+    WalljumpBoots,
     [EnumMember(Value = "Infinite Bomb Jump")]
     InfiniteBombJump,
     [EnumMember(Value = "Long Beam")]
