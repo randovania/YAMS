@@ -8,6 +8,15 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 - Added ammo drops to Queen
 
+### Changed
+- The Walljump item has been renamed to Walljump Boots.
+- The Infinite Bomb Jump item has been renamed to Infinite Bomb Propulsion.
+- The sprites for the Infinite Bomb Jump item have been changed to stand out less.
+
+### Fixed
+- Long Beam now doesn't cause an error message when received in a Multiworld.
+- The Open Transition in Waterfalls Entryway now looks less odd when it's shuffled as a door.
+
 ## [2.2.0] - 2024-05-19
 
 ### Added
