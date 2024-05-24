@@ -10,6 +10,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added Infinite Bomb Jumping as an Item
 - Added Walljumping as an Item
 - Make it possible to use colored text for logbooks.
+- Added ammo drops to Queen
 
 ### Changed
 - Doors that have been shuffled over open transitions look slightly nicer.
