@@ -530,8 +530,8 @@ public enum ItemEnum
     SpeedBoosterUpgrade,
     [EnumMember(Value = "Walljump Boots")]
     WalljumpBoots,
-    [EnumMember(Value = "Infinite Bomb Jump")]
-    InfiniteBombJump,
+    [EnumMember(Value = "Infinite Bomb Propulsion")]
+    InfiniteBombPropulsion,
     [EnumMember(Value = "Long Beam")]
     LongBeam,
 }

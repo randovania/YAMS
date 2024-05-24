@@ -1903,7 +1903,7 @@ public class Patcher
                 case ItemEnum.WalljumpBoots:
                     characterVarsCode.ReplaceGMLInCode("global.hasWJ = 0", $"global.hasWJ = {quantity}");
                     break;
-                case ItemEnum.InfiniteBombJump:
+                case ItemEnum.InfiniteBombPropulsion:
                     characterVarsCode.ReplaceGMLInCode("global.hasIBJ = 0", $"global.hasIBJ = {quantity}");
                     break;
                 case ItemEnum.LongBeam:
@@ -2223,7 +2223,7 @@ public class Patcher
                     $"event_inherited(); if (active) {{ get_blindfold({pickup.Quantity}); }}",
                 ItemEnum.SpeedBoosterUpgrade => $"event_inherited(); if (active) {{ get_speed_booster_upgrade({pickup.Quantity}); }}",
                 ItemEnum.WalljumpBoots => "event_inherited(); if (active) { get_walljump_upgrade(); }",
-                ItemEnum.InfiniteBombJump => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
+                ItemEnum.InfiniteBombPropulsion => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
                 ItemEnum.LongBeam => "event_inherited(); if (active) { get_long_beam(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect)

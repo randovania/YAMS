@@ -459,7 +459,7 @@ public class Multiworld
                             case "{{ItemEnum.WalljumpBoots.GetEnumMemberValue()}}":
                                 get_walljump_upgrade()
                                 break
-                            case "{{ItemEnum.InfiniteBombJump.GetEnumMemberValue()}}":
+                            case "{{ItemEnum.InfiniteBombPropulsion.GetEnumMemberValue()}}":
                                 get_IBJ_upgrade()
                                 break
                             case "{{ItemEnum.LongBeam.GetEnumMemberValue()}}":
