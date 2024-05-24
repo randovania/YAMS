@@ -159,7 +159,7 @@ public class Patcher
         gmData.Code.ByName("gml_RoomCC_rm_a0h01_3762_Create").AppendGMLInCode("instance_destroy()");
         gmData.Code.ByName("gml_Room_rm_a0h01_Create").AppendGMLInCode("tile_layer_delete(-119)");
 
-        // Killing Queen spawns pickups (helps prevent softlocks with DLR
+        // Killing Queen spawns pickups (helps prevent softlocks with DLR)
         gmData.Code.ByName("gml_Object_oQueen_Other_20").AppendGMLInCode("spawn_many_powerups(x, y-70, 100, 60)");
 
         // Make Logbook colored
@@ -2735,6 +2735,9 @@ public class Patcher
                 }
             }
         }
+
+        // Make Bosses now spawns PB drops on death
+        gmData.Code.ByName("gml_Script_spawn_many_powerups").ReplaceGMLInCode("if ((global.hasBombs == 0 && global.maxpbombs > 0) || (oControl.mod_insanitymode == 1 && global.maxpbombs > 0))", "if (global.maxpbombs > 0)");
 
         // Add patch to see room names on minimap
         DisplayRoomNamesOnMap.Apply(gmData, decompileContext, seedObject);

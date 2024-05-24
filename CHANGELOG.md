@@ -7,6 +7,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 - Added ammo drops to Queen
+- Added PB drops to all bosses
 
 ### Changed
 - The Walljump item has been renamed to Walljump Boots.
