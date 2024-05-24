@@ -3,11 +3,13 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.4.0] - 2024-05-xx
+- Added PB drops to all bosses
+
 ## [2.3.0] - 2024-05-xx
 
 ### Added
 - Added ammo drops to Queen
-- Added PB drops to all bosses
 
 ### Changed
 - The Walljump item has been renamed to Walljump Boots.
