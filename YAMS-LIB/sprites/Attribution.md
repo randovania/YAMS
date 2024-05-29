@@ -22,8 +22,8 @@ Authors are as follows:
   mentioned above.
 - The Speed Booster Upgrade sprites (`items/speedboosterUpgrade`) were made by BastionB56 and modified
   by [Miepee](https://github.com/Miepee)
-- The Walljump sprites (`items/walljump`) were made by jakoliath.
-- The Infinite Bomb Jump sprites (`items/ibj`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554.
+- The Walljump Boots sprites (`items/walljump`) were made by jakoliath and [AbyssalCreature](https://github.com/AbyssalCreature).
+- The Infinite Bomb Propulsion sprites (`items/ibj`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554.
 
 Offworld items
 - The RDV item sprite (`offworld items/default`) was made by [Miepee](https://github.com/Miepee). It's a modification of the Unknown sprite by [AbyssalCreature](https://github.com/AbyssalCreature) and the [Randovania logo](https://github.com/randovania/randovania/tree/main/tools/icons) by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
