@@ -1,5 +1,6 @@
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
+using UndertaleModLib.Models;
 using static YAMS_LIB.ExtensionMethods;
 
 namespace YAMS_LIB.patches;
@@ -137,7 +138,18 @@ public class AddInGameHints
             """);
 
         // Add wisdom septoggs into rooms
-        var oWisdomSeptogg = gmData.GameObjects.ByName("oWisdomSeptogg");
+        // Create new wisdom septogg object
+        UndertaleGameObject oWisdomSeptogg = new UndertaleGameObject
+        {
+            Name = gmData.Strings.MakeString("oWisdomSeptogg"),
+            Sprite = gmData.Sprites.ByName("sWisdomSeptogg"),
+            Depth = 90,
+        };
+        var wisdomSeptoggCreate = oWisdomSeptogg.EventHandlerFor(EventType.Create, gmData.Strings, gmData.Code, gmData.CodeLocals);
+        wisdomSeptoggCreate.SubstituteGMLCode("image_speed = 0.1666; origY = y; timer = 0;");
+        UndertaleCode wisdomSeptoggStep = oWisdomSeptogg.EventHandlerFor(EventType.Step, EventSubtypeStep.Step, gmData.Strings, gmData.Code, gmData.CodeLocals);
+        wisdomSeptoggStep.SubstituteGMLCode("y = origY + (sin((timer) * 0.08) * 2); timer++; if (timer > 9990) timer = 0;");
+        gmData.GameObjects.Add(oWisdomSeptogg);
 
         // A0
         gmData.Rooms.ByName("rm_a0h13").GameObjects.Add(CreateRoomObject(55, 194, oWisdomSeptogg));

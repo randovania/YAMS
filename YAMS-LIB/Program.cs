@@ -11,6 +11,9 @@ using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
 using YAMS_LIB.patches;
+using YAMS_LIB.patches.decompilerWorkarounds;
+using YAMS_LIB.patches.geometry;
+using YAMS_LIB.patches.misc;
 using YAMS_LIB.patches.qol;
 using static YAMS_LIB.ExtensionMethods;
 
@@ -67,46 +70,23 @@ public class Patcher
         bool useAnyVersion = Environment.GetEnvironmentVariable("YAMS_USE_ANY_AM2R_VERSION") == "true";
         if (!useAnyVersion && !controlCreate.Contains("global.am2r_version = \"V1.5.5\"")) throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
 
+        // Important invasive modifications done first
+        // Fixes character step event for further modification
+        FixCharacterStepEvent.Apply(gmData, decompileContext, seedObject);
+
+        // Decouple the item locations from the actual items
+        DecoupleItemsFromLocations.Apply(gmData, decompileContext, seedObject);
+
         // Import new Sprites
         Sprites.Apply(gmData, decompileContext, seedObject);
         // Apply cosmetic patches
         CosmeticHud.Apply(gmData, decompileContext, seedObject);
         // Shuffle Music
         MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
-        
-        // Fix annoying overlapping songs when fanfare is long song.
-        gmData.Code.ByName("gml_Object_oMusicV2_Alarm_0").PrependGMLInCode("if (sfx_isplaying(musFanfare)) audio_stop_sound(musFanfare)");
-        gmData.Code.ByName("gml_Script_mus_intro_fanfare").ReplaceGMLInCode("alarm[0] = 60", "alarm[0] = 330");
 
+        // Fix songs that break if they're too long
+        FixOverlappingSongs.Apply(gmData, decompileContext, seedObject);
 
-        // Create new wisdom septogg object
-        UndertaleGameObject oWisdomSeptogg = new UndertaleGameObject
-        {
-            Name = gmData.Strings.MakeString("oWisdomSeptogg"),
-            Sprite = gmData.Sprites.ByName("sWisdomSeptogg"),
-            Depth = 90
-        };
-        UndertaleCode wisdomSeptoggCreate = new UndertaleCode { Name = gmData.Strings.MakeString("gml_Object_oWisdomSeptogg_Create_0") };
-        wisdomSeptoggCreate.SubstituteGMLCode("image_speed = 0.1666; origY = y; timer = 0;");
-        gmData.Code.Add(wisdomSeptoggCreate);
-        var wisdomSeptoggCreateList = oWisdomSeptogg.Events[0];
-        UndertaleGameObject.EventAction wisdomSeptoggAction = new UndertaleGameObject.EventAction();
-        wisdomSeptoggAction.CodeId = wisdomSeptoggCreate;
-        UndertaleGameObject.Event wisdomSeptoggEvent = new UndertaleGameObject.Event();
-        wisdomSeptoggEvent.EventSubtype = 0;
-        wisdomSeptoggEvent.Actions.Add(wisdomSeptoggAction);
-        wisdomSeptoggCreateList.Add(wisdomSeptoggEvent);
-        UndertaleCode wisdomSeptoggStep = new UndertaleCode { Name = gmData.Strings.MakeString("gml_Object_oWisdomSeptogg_Step_0") };
-        wisdomSeptoggStep.SubstituteGMLCode("y = origY + (sin((timer) * 0.08) * 2); timer++; if (timer > 9990) timer = 0;");
-        gmData.Code.Add(wisdomSeptoggStep);
-        var wisdomSeptoggStepList = oWisdomSeptogg.Events[3];
-        wisdomSeptoggAction = new UndertaleGameObject.EventAction();
-        wisdomSeptoggAction.CodeId = wisdomSeptoggStep;
-        wisdomSeptoggEvent = new UndertaleGameObject.Event();
-        wisdomSeptoggEvent.EventSubtype = 0;
-        wisdomSeptoggEvent.Actions.Add(wisdomSeptoggAction);
-        wisdomSeptoggStepList.Add(wisdomSeptoggEvent);
-        gmData.GameObjects.Add(oWisdomSeptogg);
 
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
@@ -396,31 +376,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").ReplaceGMLInCode("sfx_play(sndMessage)",
             "popup_text(global.itmtext1); sfx_play(sndMessage);");
 
-        // Fixes character step event for further modification
-        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("""
-                                                                                 if (yVel < 0 && state == AIRBALL)
-                                                                                 {
-                                                                                     if (isCollisionUpRight() == 1 && kRight == 0)
-                                                                                         x -= ((1 + statetime < 2) + statetime < 4)
-                                                                                     if (isCollisionUpLeft() == 1 && kLeft == 0)
-                                                                                         x += ((1 + statetime < 2) + statetime < 4)
-                                                                                 }
-                                                                             """, """
-                                                                                      if (yVel < 0 && state == AIRBALL)
-                                                                                      {
-                                                                                  		var st1, st2;
-                                                                                  		st1 = 0
-                                                                                  		st2 = 0
-                                                                                  		if (statetime < 2)
-                                                                                  			st1 = 1
-                                                                                  		if (statetime < 4)
-                                                                                  			st2 = 1
-                                                                                  		if (isCollisionUpRight() == 1 && kRight == 0)
-                                                                                              x -= ((1 + st1) + st2)
-                                                                                          if (isCollisionUpLeft() == 1 && kLeft == 0)
-                                                                                              x += ((1 + st1) + st2)
-                                                                                      }
-                                                                                  """);
+
 
         // Add doors to gfs thoth bridge
         UndertaleCode thothLeftDoorCC = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create") };
@@ -1083,10 +1039,6 @@ public class Patcher
                                                 """);
         chStepControlCode.ReplaceGMLInCode("if (global.maxmissiles > 0 && (state", "if ((state");
 
-        // TODO: change samus arm cannon to different sprite, when no missile launcher. This requires delving into state machine tho and that is *pain*
-        // For that, also make her not arm the cannon if you have missile launcher but no missiles
-        // ALTERNATIVE: if missile equipped, but no launcher, make EMP effect display that usually appears in gravity area
-
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         characterVarsCode.PrependGMLInCode(
             "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipSaveCutscene = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
@@ -1190,250 +1142,8 @@ public class Patcher
             characterVarsCode.ReplaceGMLInCode("global.startingText = \"\"", $"global.startingText = \"{seedObject.Identifier.StartingMemoText.Description}\"");
         }
 
-        // Decouple Major items from item locations
-        characterVarsCode.PrependGMLInCode("global.dna = 0; global.hasBombs = 0; global.hasPowergrip = 0; global.hasSpiderball = 0; global.hasJumpball = 0; global.hasHijump = 0;" +
-                                           "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
-                                           "global.hasCbeam = 0; global.hasIbeam = 0; global.hasWbeam = 0; global.hasSbeam  = 0; global.hasPbeam = 0; global.hasMorph = 0;");
-
-        // Make all item activation dependant on whether the main item is enabled.
-        characterVarsCode.ReplaceGMLInCode("""
-                                           global.morphball = 1
-                                           global.jumpball = 0
-                                           global.powergrip = 1
-                                           global.spacejump = 0
-                                           global.screwattack = 0
-                                           global.hijump = 0
-                                           global.spiderball = 0
-                                           global.speedbooster = 0
-                                           global.bomb = 0
-                                           global.ibeam = 0
-                                           global.wbeam = 0
-                                           global.pbeam = 0
-                                           global.sbeam = 0
-                                           global.cbeam = 0
-                                           """, """
-                                                global.morphball = global.hasMorph;
-                                                global.jumpball = global.hasJumpball;
-                                                global.powergrip = global.hasPowergrip;
-                                                global.spacejump = global.hasSpacejump;
-                                                global.screwattack = global.hasScrewattack;
-                                                global.hijump = global.hasHijump;
-                                                global.spiderball = global.hasSpiderball;
-                                                global.speedbooster = global.hasSpeedbooster;
-                                                global.bomb = global.hasBombs;
-                                                global.ibeam = global.hasIbeam;
-                                                global.wbeam = global.hasWbeam;
-                                                global.pbeam = global.hasPbeam;
-                                                global.sbeam = global.hasSbeam;
-                                                global.cbeam = global.hasCbeam;
-                                                """);
-        characterVarsCode.ReplaceGMLInCode("global.currentsuit = 0",
-            "global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
-
-        // Fix spring showing up for a brief moment when killing arachnus
-        gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("if (temp_randitem == oItemJumpBall)", "if (false)");
-
-        // Bombs
-        UndertaleCode? subscreenMenuStep = gmData.Code.ByName("gml_Object_oSubscreenMenu_Step_0");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[0] == 0", "!global.hasBombs");
-        UndertaleCode? subscreenMiscDaw = gmData.Code.ByName("gml_Object_oSubScreenMisc_Draw_0");
-        subscreenMiscDaw.ReplaceGMLInCode("global.item[0]", "global.hasBombs");
-
-        foreach (string code in new[]
-                 {
-                     "gml_Script_spawn_rnd_pickup", "gml_Script_spawn_rnd_pickup_at", "gml_Script_spawn_many_powerups",
-                     "gml_Script_spawn_many_powerups_tank", "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create",
-                     "gml_RoomCC_rm_a3h03_5279_Create", "gml_Room_rm_a3b08_Create"
-                 })
-        {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[0]", "global.hasBombs");
-        }
-
-        UndertaleGameObject? elderSeptogg = gmData.GameObjects.ByName("oElderSeptogg");
-        foreach (UndertaleRoom room in gmData.Rooms)
-        {
-            foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
-            {
-                go.CreationCode.ReplaceGMLInCode("global.item[0]", "global.hasBombs", true);
-            }
-        }
-
-
-        // Powergrip
-        subscreenMiscDaw.ReplaceGMLInCode("global.item[1]", "global.hasPowergrip");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[1] == 0", "!global.hasPowergrip");
-
-        // Spiderball
-        subscreenMiscDaw.ReplaceGMLInCode("global.item[2]", "global.hasSpiderball");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[2] == 0", "!global.hasSpiderball");
-        foreach (UndertaleCode code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                               c.Name.Content.Contains('2')) || c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
-        {
-            code.ReplaceGMLInCode("global.item[2]", "global.hasSpiderball");
-        }
-
-        // Jumpball
-        subscreenMiscDaw.ReplaceGMLInCode("global.item[3]", "global.hasJumpball");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[3] == 0", "!global.hasJumpball");
-        gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create").ReplaceGMLInCode("global.item[3] == 0", "!global.hasJumpball");
-
-        // Hijump
-        UndertaleCode? subcreenBootsDraw = gmData.Code.ByName("gml_Object_oSubScreenBoots_Draw_0");
-        subcreenBootsDraw.ReplaceGMLInCode("global.item[4]", "global.hasHijump");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[4] == 0", "!global.hasHijump");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('4')) || c.Name.Content == "gml_Room_rm_a3b08_Create" ||
-                                                               c.Name.Content == "gml_RoomCC_rm_a5c17_7779_Create"))
-        {
-            code.ReplaceGMLInCode("global.item[4]", "global.hasHijump");
-        }
-
-        // Varia
-        UndertaleCode? subscreenSuitDraw = gmData.Code.ByName("gml_Object_oSubScreenSuit_Draw_0");
-        subscreenSuitDraw.ReplaceGMLInCode("global.item[5]", "global.hasVaria");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[5] == 0", "!global.hasVaria");
-        foreach (string code in new[]
-                 {
-                     "gml_Script_characterStepEvent", "gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown",
-                     "gml_Object_oQueenHead_Step_0"
-                 })
-        {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[5]", "global.hasVaria");
-        }
-
-        // Spacejump
-        subcreenBootsDraw.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[6] == 0", "!global.hasSpacejump");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('6')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5a03_") ||
-                                                               c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
-        {
-            code.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump", true);
-        }
-
-        // Speedbooster
-        subcreenBootsDraw.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[7] == 0", "!global.hasSpeedbooster");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('7')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5c08_")))
-        {
-            code.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster", true);
-        }
-
-
-        // Screwattack
-        subscreenMiscDaw.ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[8] == 0", "!global.hasScrewattack");
-        foreach (string code in new[]
-                 {
-                     "gml_Script_scr_septoggs_2468", "gml_Script_scr_septoggs_48", "gml_RoomCC_rm_a1a06_4447_Create",
-                     "gml_RoomCC_rm_a1a06_4448_Create", "gml_RoomCC_rm_a1a06_4449_Create", "gml_RoomCC_rm_a3a04_5499_Create", "gml_RoomCC_rm_a3a04_5500_Create",
-                     "gml_RoomCC_rm_a3a04_5501_Create", "gml_RoomCC_rm_a4a01_6476_Create", "gml_RoomCC_rm_a4a01_6477_Create", "gml_RoomCC_rm_a4a01_6478_Create",
-                     "gml_RoomCC_rm_a5c13_7639_Create", "gml_RoomCC_rm_a5c13_7640_Create", "gml_RoomCC_rm_a5c13_7641_Create", "gml_RoomCC_rm_a5c13_7642_Create",
-                     "gml_RoomCC_rm_a5c13_7643_Create", "gml_RoomCC_rm_a5c13_7644_Create"
-                 })
-        {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
-        }
-
-
-        // Gravity
-        subscreenSuitDraw.ReplaceGMLInCode("global.item[9]", "global.hasGravity");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[9] == 0", "!global.hasGravity");
-
-        foreach (string code in new[]
-                 {
-                     "gml_Script_scr_variasuitswap", "gml_Object_oGravitySuitChangeFX_Step_0", "gml_Object_oGravitySuitChangeFX_Other_10",
-                     "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create", "gml_RoomCC_rm_a5a03_8631_Create", "gml_RoomCC_rm_a5a03_8632_Create",
-                     "gml_RoomCC_rm_a5a03_8653_Create", "gml_RoomCC_rm_a5a03_8654_Create", "gml_RoomCC_rm_a5a03_8655_Create", "gml_RoomCC_rm_a5a03_8656_Create",
-                     "gml_RoomCC_rm_a5a03_8657_Create", "gml_RoomCC_rm_a5a03_8674_Create", "gml_RoomCC_rm_a5a05_8701_Create", "gml_RoomCC_rm_a5a06_8704_Create"
-                 })
-        {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[9]", "global.hasGravity");
-        }
-
-        // Charge
-        UndertaleCode? itemsSwapScript = gmData.Code.ByName("gml_Script_scr_itemsmenu_swap");
-        itemsSwapScript.ReplaceGMLInCode("global.item[10]", "global.hasCbeam");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[10] == 0", "!global.hasCbeam");
-
-        // Ice
-        itemsSwapScript.ReplaceGMLInCode("global.item[11]", "global.hasIbeam");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[11] == 0", "!global.hasIbeam");
-        foreach (string code in new[] { "gml_Object_oEris_Create_0", "gml_Object_oErisBody1_Create_0", "gml_Object_oErisHead_Create_0", "gml_Object_oErisSegment_Create_0" })
-        {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[11] == 0", "!global.hasIbeam");
-        }
-
-        // Wave
-        itemsSwapScript.ReplaceGMLInCode("global.item[12]", "global.hasWbeam");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[12] == 0", "!global.hasWbeam");
-
-        // Spazer
-        itemsSwapScript.ReplaceGMLInCode("global.item[13]", "global.hasSbeam");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[13] == 0", "!global.hasSbeam");
-
-        // Plasma
-        itemsSwapScript.ReplaceGMLInCode("global.item[14]", "global.hasPbeam");
-        subscreenMenuStep.ReplaceGMLInCode("global.item[14] == 0", "!global.hasPbeam");
-
-        // Morph Ball
-        subscreenMiscDaw.ReplaceGMLInCode("""
-                                          draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
-                                          draw_text((x - 20), ((y + 15) + oControl.subScrItemOffset), morph)
-                                          """, """
-                                               if (global.hasMorph) {
-                                                   draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
-                                                   draw_text((x - 20), ((y + 15) + oControl.subScrItemOffset), morph)
-                                               }
-                                               """);
-        subscreenMenuStep.ReplaceGMLInCode("""
-                                           if (global.curropt == 7 && (!global.hasIbeam))
-                                                   global.curropt += 1
-                                           """, """
-                                                if (global.curropt == 7 && (!global.hasIbeam))
-                                                        global.curropt += 1
-                                                if (global.curropt == 8 && (!global.hasMorph))
-                                                        global.curropt += 1
-                                                """);
-        subscreenMenuStep.ReplaceGMLInCode("""
-                                           if (global.curropt == 7 && (!global.hasIbeam))
-                                                   global.curropt -= 1
-                                           """, """
-                                                if (global.curropt == 8 && (!global.hasMorph))
-                                                        global.curropt -= 1
-                                                if (global.curropt == 7 && (!global.hasIbeam))
-                                                        global.curropt -= 1
-                                                """);
-        subscreenMenuStep.ReplaceGMLInCode("""
-                                               else
-                                                   global.curropt = 14
-                                           """, """
-                                                    else
-                                                        global.curropt = 14
-                                                    if (global.curropt == 8 && (!global.hasMorph))
-                                                        global.curropt += 1
-                                                    if (global.curropt == 9 && (!global.hasSpiderball))
-                                                        global.curropt += 1
-                                                    if (global.curropt == 10 && (!global.hasJumpball))
-                                                        global.curropt += 1
-                                                    if (global.curropt == 11 && (!global.hasBombs))
-                                                        global.curropt += 1
-                                                    if (global.curropt == 12 && (!global.hasPowergrip))
-                                                        global.curropt += 1
-                                                    if (global.curropt == 13 && (!global.hasScrewattack))
-                                                        global.curropt += 1
-                                                """);
-
-        subscreenMenuStep.ReplaceGMLInCode("""
-                                               if (global.curropt > 16)
-                                                   global.curropt = 8
-                                           """, """
-                                                    if (global.curropt > 16)
-                                                        global.curropt = 8
-                                                    if (global.curropt == 8 && (!global.hasMorph))
-                                                            global.curropt = 0
-                                                """);
+        // TODO: put this somewhere Decouple Major items from item locations
+        characterVarsCode.PrependGMLInCode("global.dna = 0;");
 
         // Add Long Beam as an item
         characterVarsCode.PrependGMLInCode("global.hasLongBeam = 0;");
@@ -2306,6 +2016,7 @@ public class Patcher
             code.PrependGMLInCode("if (!global.septoggHelpers) return true; else return false;");
         }
 
+        UndertaleGameObject? elderSeptogg = gmData.GameObjects.ByName("oElderSeptogg");
         foreach (UndertaleRoom room in gmData.Rooms)
         {
             foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
@@ -2324,190 +2035,12 @@ public class Patcher
 
 
         // Options to turn off the random room geometry changes!
-        // screw+pipes related
-        if (seedObject.Patches.ScrewPipeBlocks) characterVarsCode.ReplaceGMLInCode("global.screwPipeBlocks = 0", "global.screwPipeBlocks = 1");
+        MandatoryGeometryChanges.Apply(gmData, decompileContext, seedObject);
+        ScrewPipeBlocks.Apply(gmData, decompileContext, seedObject);
+        BombBeforeA3.Apply(gmData, decompileContext, seedObject);
+        SoftlockPrevention.Apply(gmData, decompileContext, seedObject);
+        DontRespawnBombBlocks.Apply(gmData, decompileContext, seedObject);
 
-        // Screw blocks before normal pipe rooms
-        foreach (string codeName in new[]
-                 {
-                     "gml_Room_rm_a1a06_Create", "gml_Room_rm_a2a08_Create", "gml_Room_rm_a2a09_Create", "gml_Room_rm_a2a12_Create", "gml_Room_rm_a3a04_Create",
-                     "gml_Room_rm_a4h01_Create", "gml_Room_rm_a4a01_Create"
-                 })
-        {
-            gmData.Code.ByName(codeName).AppendGMLInCode("if (!global.screwPipeBlocks) {with (oBlockScrew) instance_destroy();}");
-        }
-
-        foreach (string roomName in new[] { "rm_a1a06", "rm_a3a04", "rm_a4a01" })
-        {
-            foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName(roomName).GameObjects.Where(g => g.ObjectDefinition.Name.Content == "oBlockScrew"))
-            {
-                if (gameObject.CreationCode is null) continue;
-
-                gameObject.CreationCode.ReplaceGMLInCode("global.hasScrewattack == 0", "false");
-            }
-        }
-
-        // A bunch of tiles in a5c13 - screw blocks before pipe hub
-        for (int i = 39; i <= 44; i++)
-        {
-            gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create").SubstituteGMLCode("if (!global.screwPipeBlocks) instance_destroy();");
-        }
-
-        // Bomb block before a3 entry
-        if (seedObject.Patches.A3EntranceBlocks)
-        {
-            characterVarsCode.ReplaceGMLInCode("global.a3Block = 0", "global.a3Block = 1;");
-        }
-
-        gmData.Code.ByName("gml_RoomCC_rm_a3h03_5279_Create").ReplaceGMLInCode(
-            "if ((oControl.mod_randomgamebool == 1 || oControl.mod_splitrandom == 1) && global.hasBombs == 0 && global.ptanks == 0)",
-            "if (!global.a3Block)");
-
-        // Softlock prevention blocks
-        if (seedObject.Patches.SoftlockPrevention) characterVarsCode.ReplaceGMLInCode("global.softlockPrevention = 0", "global.softlockPrevention = 1;");
-
-        // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
-        // Also change these to chain bomb blocks
-        foreach (UndertaleRoom.GameObject? go in gmData.Rooms.ByName("rm_a3b08").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockShootChain"))
-        {
-            go.ObjectDefinition = gmData.GameObjects.ByName("oBlockBombChain");
-        }
-
-        gmData.Code.ByName("gml_Room_rm_a3b08_Create").ReplaceGMLInCode("""
-                                                                            if (oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1)
-                                                                            {
-                                                                                with (121234)
-                                                                                    instance_destroy()
-                                                                                with (121235)
-                                                                                    instance_destroy()
-                                                                                with (121236)
-                                                                                    instance_destroy()
-                                                                            }
-                                                                            else if (global.item[2] == 1 || global.item[6] == 1 || global.hasHijump == 1)
-                                                                            {
-                                                                                with (121234)
-                                                                                    instance_destroy()
-                                                                                with (121235)
-                                                                                    instance_destroy()
-                                                                                with (121236)
-                                                                                    instance_destroy()
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                with (121151)
-                                                                                    instance_destroy()
-                                                                                tile_layer_delete_at(-105, 848, 192)
-                                                                            }
-                                                                        """, """
-                                                                             if (global.softlockPrevention)
-                                                                             {
-                                                                                 with (121151)
-                                                                                     instance_destroy()
-                                                                                 tile_layer_delete_at(-105, 848, 192)
-                                                                             }
-                                                                             else
-                                                                             {
-                                                                                 with (121234)
-                                                                                     instance_destroy()
-                                                                                 with (121235)
-                                                                                     instance_destroy()
-                                                                                 with (121236)
-                                                                                     instance_destroy()
-                                                                             }
-                                                                             """);
-
-        // speed booster blocks near a5 activation
-        UndertaleRoom? a5c08 = gmData.Rooms.ByName("rm_a5c08");
-        foreach (UndertaleRoom.GameObject? gameObject in a5c08.GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockSpeed"))
-        {
-            // Y 32 is the top row of speed blocks. we need to remove am2random behaviour from them
-            if (gameObject.Y == 32)
-            {
-                gameObject.CreationCode.ReplaceGMLInCode("""
-                                                         if (oControl.mod_randomgamebool == 1 && global.hasSpeedbooster == 0)
-                                                             instance_destroy()
-                                                         """, "");
-            }
-
-            // X 960 are the right pillars which we want to remove.
-            if (gameObject.X >= 960) gameObject.CreationCode.AppendGMLInCode("if (global.softlockPrevention) instance_destroy();");
-        }
-
-        // screw blocks in bullet hell room
-        foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5c22").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockScrew"))
-        {
-            if (gameObject.X == 48 || gameObject.X == 64)
-            {
-                gameObject.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 268 && global.screwattack == 0 && global.item[scr_itemchange(8)] == 1",
-                    "global.softlockPrevention");
-            }
-        }
-
-        // Crumble blocks and shoot block before Ice chamber
-        foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5c31").GameObjects.Where(o => o.ObjectDefinition.Name.Content is "oBlockStep" or "oBlockShoot"))
-        {
-            gameObject.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 277 && global.ibeam == 0 && global.item[scr_itemchange(11)] == 1",
-                "global.softlockPrevention");
-        }
-
-        // Crumble blocks in gravity area one way room
-        foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
-        {
-            if (gameObject.X == 96 || gameObject.X == 112)
-            {
-                gameObject.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 298 && (global.hasGravity == 0 || global.hasSpacejump == 0)",
-                    "global.softlockPrevention");
-            }
-        }
-
-
-        // Gravity chamber access, have bottom bomb block be open
-        foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5a06").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockBombChain"))
-        {
-            // Top bomb block
-            if (gameObject.Y == 64)
-            {
-                gameObject.CreationCode.ReplaceGMLInCode("""
-                                                         if (oControl.mod_randomgamebool == 1 && oControl.mod_previous_room == 301 && global.hasGravity == 0 && global.item[oControl.mod_gravity] == 1 && global.ptanks == 0)
-                                                             instance_destroy()
-                                                         else
-                                                         """, "");
-            }
-
-            // Bottom bomb block
-            if (gameObject.Y == 176) gameObject.CreationCode.AppendGMLInCode("if (global.softlockPrevention) instance_destroy();");
-        }
-
-        // Crumble blocks in plasma chamber
-        gmData.Code.ByName("gml_Room_rm_a4a10_Create").AppendGMLInCode("if (global.softlockPrevention) { with (oBlockStep) instance_destroy(); }");
-
-        // A4 exterior top, always remove the bomb blocks when coming from that entrance
-        foreach (string codeName in new[] { "gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create" })
-        {
-            gmData.Code.ByName(codeName).ReplaceGMLInCode("oControl.mod_previous_room == 214 && global.spiderball == 0", "global.targetx == 416");
-        }
-
-        // Super Missile chamber - make first two crumble blocks shoot blocks
-        gmData.Code.ByName("gml_Room_rm_a3a23a_Create").AppendGMLInCode("if (global.softlockPrevention) { with (119465) instance_destroy(); with (119465) instance_destroy(); instance_create(304, 96, oBlockShoot); instance_create(304, 112, oBlockShoot);}");
-
-        // The bomb block puzzle in the room before varia dont need to be done anymore because it's already now covered by "dont regen bomb blocks" option
-        gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create").ReplaceGMLInCode(
-            "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",
-            "if (false)");
-        gmData.Code.ByName("gml_RoomCC_rm_a2a06_4759_Create").ReplaceGMLInCode("if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && global.hasGravity == 0)",
-            "if (false)");
-
-        // When going down from thoth, make PB blocks disabled
-        gmData.Code.ByName("gml_Room_rm_a0h13_Create").PrependGMLInCode("if (global.targety == 16) {global.event[176] = 1; with (oBlockPBombChain) event_user(0); }");
-
-        // When coming from right side in Drill, always make drill event done
-        gmData.Code.ByName("gml_Room_rm_a0h17e_Create").PrependGMLInCode("if (global.targety == 160) global.event[172] = 3");
-
-        // Stop Bomb blocks from respawning
-        if (seedObject.Patches.RespawnBombBlocks) characterVarsCode.ReplaceGMLInCode("global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
-
-        // The position here is for a puzzle in a2, that when not respawned makes it a tad hard.
-        gmData.Code.ByName("gml_Object_oBlockBomb_Other_10").PrependGMLInCode("if (!global.respawnBombBlocks && !(room == rm_a2a06 && x == 624 && y == 128)) regentime = -1");
 
         // On start, make all rooms show being "unexplored" similar to prime/super rando
         ShowFullyUnexploredMap.Apply(gmData, decompileContext, seedObject);
@@ -2518,92 +2051,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oSolid_Alarm_5").AppendGMLInCode("if (global.unveilBlocks && sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
                                                                         "{ event_user(1); visible = true; }");
 
-        // Skip most cutscenes when enabled
-        if (seedObject.Patches.SkipCutscenes) characterVarsCode.ReplaceGMLInCode("global.skipCutscenes = 0", "global.skipCutscenes = 1");
-
-        // Skip Intro cutscene instantly
-        gmData.Code.ByName("gml_Object_oIntroCutscene_Create_0").PrependGMLInCode("room_change(15, 0)");
-        // First Alpha cutscene - event 0
-        characterVarsCode.AppendGMLInCode("global.event[0] = global.skipCutscenes");
-        // Gamma mutation cutscene - event 109
-        gmData.Code.ByName("gml_Object_oMGammaFirstTrigger_Collision_267").PrependGMLInCode("""
-                                                                                            if (global.skipCutscenes)
-                                                                                            {
-                                                                                                global.event[109] = 1;
-                                                                                                mus_current_fadeout();
-                                                                                                mutat = instance_create(144, 96, oMGammaMutate);
-                                                                                                mutat.state = 3;
-                                                                                                mutat.statetime = 90;
-                                                                                                instance_destroy();
-                                                                                                exit;
-                                                                                            }
-                                                                                            """);
-        // Zeta mutation cutscene - event 205
-        characterVarsCode.AppendGMLInCode("global.event[205] = global.skipCutscenes");
-        // Omega Mutation cutscene - event 300
-        characterVarsCode.AppendGMLInCode("global.event[300] = global.skipCutscenes");
-        // Also still increase the metroid counters from the hatchling cutscene
-        gmData.Code.ByName("gml_Object_oEggTrigger_Create_0").PrependGMLInCode("""
-                                                                               if (global.skipCutscenes && !global.event[302])
-                                                                               {
-                                                                                    if (oControl.mod_monstersextremecheck == 1)
-                                                                                       oControl.mod_monstersextreme = 1
-                                                                                   global.event[302] = 1
-                                                                                   global.monstersleft = 9
-                                                                                   if (global.difficulty == 2)
-                                                                                       global.monstersleft = 16
-                                                                                   if (oControl.mod_fusion == 1)
-                                                                                       global.monstersleft = 21
-                                                                                   if (oControl.mod_monstersextreme == 1)
-                                                                                       global.monstersleft = 47
-                                                                                   if (!instance_exists(oScanMonster))
-                                                                                   {
-                                                                                       scan = instance_create(0, 0, oScanMonster)
-                                                                                       scan.ammount = 9
-                                                                                       if (global.difficulty == 2)
-                                                                                           scan.ammount = 16
-                                                                                       if (oControl.mod_fusion == 1)
-                                                                                           scan.ammount = 21
-                                                                                       if (oControl.mod_monstersextreme == 1)
-                                                                                           scan.ammount = 47
-                                                                                       scan.eventno = 700
-                                                                                       scan.alarm[0] = 15
-                                                                                   }
-                                                                               }
-                                                                               """);
-        // Drill cutscene - event 172 to 3
-        characterVarsCode.AppendGMLInCode("global.event[172] = global.skipCutscenes * 3");
-        // 1 Orb cutscene
-        gmData.Code.ByName("gml_Object_oClawOrbFirst_Other_11")
-            .AppendGMLInCode(
-                "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(768, 48, oSolid2x2); block2.material = 3; with (oA1MovingPlatform2) with (myblock) instance_destroy()}");
-        // 3 Orb cutscene
-        gmData.Code.ByName("gml_Object_oClawPuzzle_Alarm_0")
-            .AppendGMLInCode(
-                "if (global.skipCutscenes) {with (ecam) instance_destroy(); global.enablecontrol = 1; view_object[0] = oCamera; block2 = instance_create(608, 112, oSolid2x2); block2.material = 3; with (oA1MovingPlatform) with (myblock) instance_destroy()}");
-        // Fix audio for the orb cutscenes
-        gmData.Code.ByName("gml_Object_oMusicV2_Other_4").AppendGMLInCode("sfx_stop(sndStoneLoop)");
-        // Skip baby collected cutscene
-        gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267")
-            .PrependGMLInCode("if (global.skipCutscenes) { global.event[304] = 1; instance_create(x, y, oHatchling); instance_destroy(); exit; }");
-        // Skip A5 activation cutscene to not have to wait a long time
-        gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("""
-                                                                                       if (oCharacter.x < 480)
-                                                                                       {
-                                                                                           with (oCharacter)
-                                                                                               x += 1
-                                                                                       }
-                                                                               """, """
-                                                                                            if (oCharacter.x < 480)
-                                                                                            {
-                                                                                                with (oCharacter)
-                                                                                                    x += 1
-                                                                                            }
-                                                                                            if (oCharacter.x == 480 && global.skipCutscenes)
-                                                                                                statetime = 119
-                                                                                    """);
-        gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("instance_create(x, y, oA5BotSpawnCutscene)",
-            "instance_create(x, y, oA5BotSpawnCutscene); if (global.skipCutscenes) statetime = 319");
+        GameplayCutsceneSkip.Apply(gmData, decompileContext, seedObject);
 
         // Shorten save animation
         if (seedObject.Patches.SkipSaveCutscene) characterVarsCode.ReplaceGMLInCode("global.skipSaveCutscene = 0", "global.skipSaveCutscene = 1");

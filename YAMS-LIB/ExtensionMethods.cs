@@ -117,4 +117,21 @@ public static class ExtensionMethods
         var script = new UndertaleScript() { Code = codeEntry, Name = gmData.Strings.MakeString(name)};
         gmData.Scripts.Add(script);
     }
+
+    public static void AddCodeEntry(this IList<UndertaleCode> list, string name, string code)
+    {
+        var codeEntry = new UndertaleCode() { Name = gmData.Strings.MakeString(name) };
+        gmData.Code.Add(codeEntry);
+        // Add locals
+        UndertaleCodeLocals locals = new UndertaleCodeLocals();
+        locals.Name = codeEntry.Name;
+        UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
+        argsLocal.Name = gmData.Strings.MakeString("arguments");
+        argsLocal.Index = 0;
+        locals.Locals.Add(argsLocal);
+        codeEntry.LocalsCount = 1;
+        gmData.CodeLocals.Add(locals);
+
+        codeEntry.SubstituteGMLCode(code);
+    }
 }
