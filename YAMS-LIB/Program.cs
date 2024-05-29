@@ -64,15 +64,16 @@ public class Patcher
 
         // Check for 1.5.5 before doing *anything*
         string controlCreate = gmData.Code.ByName("gml_Object_oControl_Create_0").GetGMLCode();
-        if (!controlCreate.Contains("global.am2r_version = \"V1.5.5\"")) throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
+        bool useAnyVersion = Environment.GetEnvironmentVariable("YAMS_USE_ANY_AM2R_VERSION") == "true";
+        if (!useAnyVersion && !controlCreate.Contains("global.am2r_version = \"V1.5.5\"")) throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
 
         // Import new Sprites
         Sprites.Apply(gmData, decompileContext, seedObject);
-
+        // Apply cosmetic patches
         CosmeticHud.Apply(gmData, decompileContext, seedObject);
-
         // Shuffle Music
         MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
+        
         // Fix annoying overlapping songs when fanfare is long song.
         gmData.Code.ByName("gml_Object_oMusicV2_Alarm_0").PrependGMLInCode("if (sfx_isplaying(musFanfare)) audio_stop_sound(musFanfare)");
         gmData.Code.ByName("gml_Script_mus_intro_fanfare").ReplaceGMLInCode("alarm[0] = 60", "alarm[0] = 330");
