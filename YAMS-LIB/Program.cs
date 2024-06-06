@@ -1,12 +1,6 @@
-﻿using System.ComponentModel.Design;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
-using NaturalSort.Extension;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -69,7 +63,7 @@ public class Patcher
 
         // Import new Sprites
         Sprites.Apply(gmData, decompileContext, seedObject);
-        // Apply cosmetic patches
+        // Apply cosmetic patches - TODO: run this in parallel?
         CosmeticHud.Apply(gmData, decompileContext, seedObject);
         // Shuffle Music - TODO: run this in parallel?
         MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
