@@ -29,6 +29,8 @@ public class Patcher
 
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
+        // TODO: go through all the patches, remove *all* instance/creation code ID references
+
         // Change this to not have to deal with floating point madness
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
