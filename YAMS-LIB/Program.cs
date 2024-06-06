@@ -35,16 +35,6 @@ public class Patcher
 
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
     {
-        // TODO: import jes tester display to make tester fight better
-
-        const uint ThothBridgeLeftDoorID = 400000;
-        const uint ThothBridgeRightDoorID = 400001;
-        const uint A2WaterTurbineLeftDoorID = 400002;
-        const uint PipeInHideoutID = 400003;
-        const uint PipeInDepthsLowerID = 400004;
-        const uint PipeInDepthsUpperID = 400005;
-        const uint PipeInWaterfallsID = 400006;
-
         // Change this to not have to deal with floating point madness
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -81,7 +71,7 @@ public class Patcher
         Sprites.Apply(gmData, decompileContext, seedObject);
         // Apply cosmetic patches
         CosmeticHud.Apply(gmData, decompileContext, seedObject);
-        // Shuffle Music
+        // Shuffle Music - TODO: run this in parallel?
         MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
 
         // Fix songs that break if they're too long
@@ -118,23 +108,13 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0").ReplaceGMLInCode("bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
         gmData.Code.ByName("gml_Object_oSuitChangeFX2_Create_0").ReplaceGMLInCode("image_index = 1133", "sprite_index = sSuitChangeFX2_fusion");
 
-        // Make beams not instantly despawn when out of screen
-        gmData.Code.ByName("gml_Object_oBeam_Step_0").ReplaceGMLInCode(
-            "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
-            "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
-
-        // Make Missiles not instantly despawn when out of screen
-        gmData.Code.ByName("gml_Object_oMissile_Step_0").ReplaceGMLInCode(
-            "if (x < ((view_xview[0] - 48) - (oControl.widescreen_space / 2)) || x > (((view_xview[0] + view_wview[0]) + 48) + (oControl.widescreen_space / 2)) || y < (view_yview[0] - 48) || y > ((view_yview[0] + view_hview[0]) + 48))",
-            "if (x > (room_width + 80) || x < -80 || y > (room_height + 80) || y < -160)");
+        DontDespawnWeaponsOffscreen.Apply(gmData, decompileContext, seedObject);
 
         // Fix arachnus event value doing x coordinate BS
         gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("global.event[103] = x", "global.event[103] = 1");
         // Make arachnus item location always spawn in center
         gmData.Code.ByName("gml_Room_rm_a2a04_Create").ReplaceGMLInCode("instance_create(global.event[103]", "instance_create(room_width / 2");
 
-        //No more Out of Bounds oSmallsplash crashes
-        gmData.Code.ByName("gml_Object_oSmallSplash_Step_0").ReplaceGMLInCode("if (global.watertype == 0)", "if (global.watertype == 0 && instance_exists(oWater))");
 
         // Killing queen should not lock you out of the rest of the game
         gmData.Code.ByName("gml_RoomCC_rm_a0h01_3762_Create").AppendGMLInCode("instance_destroy()");
@@ -180,44 +160,6 @@ public class Patcher
         {
             gmData.Code.ByName(codeName).SubstituteGMLCode("lock = 0;");
         }
-
-        // Make water turbine generic where it can be shuffled
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").PrependGMLInCode("facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("""
-                                                                                 if (global.event[101] > 0)
-                                                                                     instance_destroy()
-                                                                                 """,
-            """
-            eventToSet = 101;
-            if (((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) ||
-                (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] != 0))
-            {
-                if (global.event[eventToSet] < 1)
-                    global.event[eventToSet] = 1;
-                wasAlreadyDestroyed = 1;
-                instance_destroy();
-            }
-            """);
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("wall = instance_create((x + 16), y, oSolid1x4)",
-            "var xWallOffset = 16; if (facingDirection == -1) xWallOffset = -32; wall = instance_create(x + xWallOffset, y, oSolid1x4);");
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Other_11").ReplaceGMLInCode(
-            """
-            o = instance_create(x, y, oMoveWater)
-            o.targety = 1552
-            o.delay = 2
-            global.event[101] = 1
-            instance_create((x - 120), y, oBubbleSpawner)
-            """,
-            """
-            global.event[eventToSet] = 1;
-            if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 1)
-            {
-                o = instance_create(x, y, oMoveWater)
-                o.targety = 1552
-                o.delay = 2
-                instance_create((x - 120), y, oBubbleSpawner)
-            }
-            """);
 
         // Fix Tower activation unlocking right door for door lock rando
         if (seedObject.DoorLocks.ContainsKey(127890)) gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("lock = 0", "lock = lock;");
@@ -267,19 +209,11 @@ public class Patcher
 
         // Implement other weapon doors (bomb = 10, spider = 11, screw = 12)
         gmData.Code.ByName("gml_Object_oDoor_Collision_435").ReplaceGMLInCode("lock == 0", "(lock == 0 || lock == 10 )");
-        UndertaleCode doorSamusCollision = new UndertaleCode();
-        doorSamusCollision.Name = gmData.Strings.MakeString("gml_Object_oDoor_Collision_267");
+        // 267 is oCharacter ID
+        UndertaleCode doorSamusCollision = gmData.GameObjects.ByName("oDoor").EventHandlerFor(EventType.Collision, 267, gmData.Strings, gmData.Code, gmData.CodeLocals);
         doorSamusCollision.SubstituteGMLCode("if (!open && ((lock == 11 && other.state == other.SPIDERBALL) || " +
                                              "(lock == 12 && global.screwattack && other.state == other.JUMPING && !other.vjump && !other.walljumping && (!other.inwater || global.currentsuit >= 2))))" +
                                              "event_user(1)");
-        gmData.Code.Add(doorSamusCollision);
-        var doorCollisionList = gmData.GameObjects.ByName("oDoor").Events[4];
-        UndertaleGameObject.EventAction varDoorAction = new UndertaleGameObject.EventAction();
-        varDoorAction.CodeId = doorSamusCollision;
-        UndertaleGameObject.Event varDoorEvent = new UndertaleGameObject.Event();
-        varDoorEvent.EventSubtype = 267; // 267 is oCharacter ID
-        varDoorEvent.Actions.Add(varDoorAction);
-        doorCollisionList.Add(varDoorEvent);
 
         // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
         // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24), emp tutorial (25), emp robot home (26), emp near zeta (27),
@@ -377,53 +311,8 @@ public class Patcher
             "popup_text(global.itmtext1); sfx_play(sndMessage);");
 
 
-
-        // Add doors to gfs thoth bridge
-        UndertaleCode thothLeftDoorCC = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_thothLeftDoor_Create") };
-        UndertaleCode thothRightDoorCC = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_thothRightDoor_Create") };
-        gmData.Code.Add(thothLeftDoorCC);
-        gmData.Code.Add(thothRightDoorCC);
-        gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(new UndertaleRoom.GameObject
-        {
-            X = 24,
-            Y = 96,
-            ObjectDefinition = gmData.GameObjects.ByName("oDoorA8"),
-            InstanceID = ThothBridgeLeftDoorID,
-            ScaleY = 1,
-            ScaleX = 1,
-            CreationCode = thothLeftDoorCC
-        });
-        gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(new UndertaleRoom.GameObject
-        {
-            X = 616,
-            Y = 96,
-            ObjectDefinition = gmData.GameObjects.ByName("oDoorA8"),
-            InstanceID = ThothBridgeRightDoorID,
-            ScaleX = -1,
-            ScaleY = 1,
-            CreationCode = thothRightDoorCC
-        });
-
-        // Make doors appear in front, so you can see them in door lock rando
-        gmData.Code.ByName("gml_Room_rm_a8a03_Create").AppendGMLInCode("with (oDoor) depth = -200");
-
-
-        // Add door from water turbine station to hydro station exterior
-        UndertaleCode waterTurbineDoorCC = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_waterStationDoor_Create") };
-        gmData.Code.Add(waterTurbineDoorCC);
-        UndertaleRoom? rm_a2a08 = gmData.Rooms.ByName("rm_a2a08");
-        rm_a2a08.GameObjects.Add(CreateRoomObject(24, 96, gmData.GameObjects.ByName("oDoor"), waterTurbineDoorCC, 1, 1, A2WaterTurbineLeftDoorID));
-
-
-        UndertaleBackground? doorTileset = gmData.Backgrounds.ByName("tlDoor");
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 144, -103, doorTileset, 112, 64));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 128, -103, doorTileset, 112, 32));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 112, -103, doorTileset, 112, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(16, 96, -103, doorTileset, 112, 0));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 144, -103, doorTileset, 96, 64));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 128, -103, doorTileset, 96, 32));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 112, -103, doorTileset, 96, 16));
-        rm_a2a08.Tiles.Add(CreateRoomTile(0, 96, -103, doorTileset, 96, 0));
+        // Add doors so that all doors are always two-way
+        AddMissingDoors.Apply(gmData, decompileContext, seedObject);
 
 
         // Implement dna item
@@ -650,138 +539,7 @@ public class Patcher
         // Add shortcut between nest and hideout
         if (seedObject.Patches.NestPipes)
         {
-            // Hideout
-            UndertaleRoom? hideoutPipeRoom = gmData.Rooms.ByName("rm_a6a11");
-            UndertaleBackground? hideoutPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsEntrance");
-            UndertaleBackground? depthsEntrancePipeTileset = gmData.Backgrounds.ByName("tlWarpHideout");
-            UndertaleBackground? depthsExitPipeTileset = gmData.Backgrounds.ByName("tlWarpWaterfall");
-            UndertaleBackground? waterfallsPipeTileset = gmData.Backgrounds.ByName("tlWarpDepthsExit");
-            UndertaleBackground? pipeBGTileset = gmData.Backgrounds.ByName("tlWarpPipes");
-            UndertaleGameObject? solidObject = gmData.GameObjects.ByName("oSolid1");
-            UndertaleGameObject? pipeObject = gmData.GameObjects.ByName("oWarpPipeTrigger");
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, 100, hideoutPipeTileset, 0, 48, 48, 48));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 176, -101, hideoutPipeTileset, 32, 0));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 176, -101, hideoutPipeTileset, 48, 32));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 176, -101, hideoutPipeTileset, 16, 0));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 192, -101, hideoutPipeTileset, 0, 32));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(352, 208, -101, hideoutPipeTileset, 32, 16));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(368, 208, -101, hideoutPipeTileset, 48, 48));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(384, 208, -101, hideoutPipeTileset, 16, 16));
-            hideoutPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 176, solidObject, null, 3));
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 192, solidObject));
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 208, solidObject, null, 3));
-
-            UndertaleCode hideoutPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6a11_pipe_Create") };
-            hideoutPipeCode.SubstituteGMLCode("targetroom = 327; targetx = 216; targety = 400; direction = 90;");
-            gmData.Code.Add(hideoutPipeCode);
-            hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode, 1, 1, PipeInHideoutID));
-            hideoutPipeRoom.CreationCodeId.AppendGMLInCode("global.darkness = 0; mus_change(mus_get_main_song());");
-
-            // Nest
-            UndertaleRoom? nestPipeRoom = gmData.Rooms.ByName("rm_a6b03");
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, 100, depthsEntrancePipeTileset, 0, 48, 48, 48));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 368, -101, depthsEntrancePipeTileset, 0, 0));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(208, 368, -101, depthsEntrancePipeTileset, 48, 32));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 368, -101, depthsEntrancePipeTileset, 48, 0));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 384, -101, depthsEntrancePipeTileset, 16, 32));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(192, 400, -101, depthsEntrancePipeTileset, 0, 16));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(208, 400, -101, depthsEntrancePipeTileset, 48, 48));
-            nestPipeRoom.Tiles.Add(CreateRoomTile(224, 400, -101, depthsEntrancePipeTileset, 48, 16));
-            //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 368, solidObject, null, 3));
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(224, 384, solidObject));
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(192, 400, solidObject, null, 3));
-
-            nestPipeRoom.CreationCodeId.AppendGMLInCode("mus_change(musArea6A)");
-
-            UndertaleCode nestPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
-            nestPipeCode.SubstituteGMLCode("targetroom = 317; targetx = 376; targety = 208; direction = 270;");
-            gmData.Code.Add(nestPipeCode);
-            nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode, 1, 1, PipeInDepthsLowerID));
-
-            // Change slope to solid to prevent oob issue
-            nestPipeRoom.GameObjects.First(o => o.X == 176 && o.Y == 416).ObjectDefinition = solidObject;
-
-            // Add shortcut between Depths and Waterfalls
-            // Depths
-            UndertaleRoom? depthsPipeRoom = gmData.Rooms.ByName("rm_a6b11");
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, 100, depthsExitPipeTileset, 0, 48, 48, 48));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 160, -101, depthsExitPipeTileset, 32, 0));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 160, -101, depthsExitPipeTileset, 48, 32));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 160, -101, depthsExitPipeTileset, 16, 0));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 176, -101, depthsExitPipeTileset, 0, 32));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 192, -101, depthsExitPipeTileset, 32, 16));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(96, 192, -101, depthsExitPipeTileset, 48, 48));
-            depthsPipeRoom.Tiles.Add(CreateRoomTile(112, 192, -101, depthsExitPipeTileset, 16, 16));
-            //depthsPipeRoom.Tiles.Add(CreateRoomTile(80, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-
-            // Clean up some tiles/collision
-            depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 112 && t.Y == 160));
-            depthsPipeRoom.Tiles.Remove(depthsPipeRoom.Tiles.First(t => t.X == 80 && t.Y == 192));
-            depthsPipeRoom.GameObjects.First(o => o.X == 96 && o.Y == 208).ObjectDefinition = solidObject;
-
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 160, solidObject, null, 3));
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 176, solidObject));
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(80, 192, solidObject, null, 3));
-
-            depthsPipeRoom.CreationCodeId.AppendGMLInCode("mus_change(musArea6A);");
-
-            UndertaleCode depthsPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
-            depthsPipeCode.SubstituteGMLCode("targetroom = 348; targetx = 904; targety = 208; direction = 180;");
-            gmData.Code.Add(depthsPipeCode);
-            depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode, 1, 1, PipeInDepthsUpperID));
-
-            // Waterfalls
-            UndertaleRoom? waterfallsPipeRoom = gmData.Rooms.ByName("rm_a7a07");
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, 100, waterfallsPipeTileset, 0, 48, 48, 48));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 176, -101, waterfallsPipeTileset, 0, 0));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 176, -101, waterfallsPipeTileset, 48, 32));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 176, -101, waterfallsPipeTileset, 48, 0));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 192, -101, waterfallsPipeTileset, 16, 32));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 208, -101, waterfallsPipeTileset, 0, 16));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(896, 208, -101, waterfallsPipeTileset, 48, 48));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(912, 208, -101, waterfallsPipeTileset, 48, 16));
-            //nestPipeRoom.Tiles.Add(CreateRoomTile(360, 80, 100, pipeBGTileset, 0, 32, 32, 96));
-
-            // Clean up some tiles/collision
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 912 && t.Y == 208));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 896 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Remove(waterfallsPipeRoom.Tiles.First(t => t.X == 880 && t.Y == 192));
-            waterfallsPipeRoom.Tiles.Add(CreateRoomTile(880, 224, -100, gmData.Backgrounds.ByName("tlRock7A"), 0, 32, 32));
-
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 176, solidObject, null, 3));
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(912, 192, solidObject));
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 208, solidObject, null, 3));
-
-            UndertaleCode waterfallsPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7a07_pipe_Create") };
-            waterfallsPipeCode.SubstituteGMLCode("targetroom = 335; targetx = 104; targety = 192; direction = 0;");
-            gmData.Code.Add(waterfallsPipeCode);
-            waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode, 1, 1, PipeInWaterfallsID));
-
-            waterfallsPipeRoom.CreationCodeId.AppendGMLInCode("global.darkness = 0");
-
-            // Modify minimap for new pipes and purple in nest and waterfalls too
-            // Hideout
-            gmData.Code.ByName("gml_Script_map_init_04").ReplaceGMLInCode(@"global.map[21, 53] = ""1210100""", @"global.map[21, 53] = ""12104U0""");
-            gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[20, 53] = ""1012100""", @"global.map[20, 53] = ""1012400""");
-            // Depths lower
-            gmData.Code.ByName("gml_Script_map_init_04").ReplaceGMLInCode("global.map[21, 44] = \"1102100\"\nglobal.map[21, 45] = \"0112100\"",
-                "global.map[21, 44] = \"1102400\"\nglobal.map[21, 45] = \"01124D0\"");
-            // Depths upper
-            gmData.Code.ByName("gml_Script_map_init_02").ReplaceGMLInCode(@"global.map[16, 34] = ""1012100""", @"global.map[16, 34] = ""10124L0""");
-            gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[17, 34] = ""1010100""", @"global.map[17, 34] = ""1010400""");
-            gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[18, 34] = ""1020100""", @"global.map[18, 34] = ""1020400""");
-            gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[19, 34] = ""1010100""", @"global.map[19, 34] = ""1010400""");
-            gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[20, 34] = ""1210100""", @"global.map[20, 34] = ""1210400""");
-            // Waterfalls
-            gmData.Code.ByName("gml_Script_map_init_01").ReplaceGMLInCode(@"global.map[7, 34] = ""1012200""", @"global.map[7, 34] = ""1012400""");
-            gmData.Code.ByName("gml_Script_map_init_17").ReplaceGMLInCode(@"global.map[8, 34] = ""1010200""", @"global.map[8, 34] = ""1010400""");
-            gmData.Code.ByName("gml_Script_map_init_01").ReplaceGMLInCode(@"global.map[9, 34] = ""1010200""", @"global.map[9, 34] = ""10104R0""");
-            gmData.Code.ByName("gml_Script_map_init_02").ReplaceGMLInCode(@"global.map[10, 34] = ""1210200""", @"global.map[10, 34] = ""1210400""");
+            AddA6Pipes.Apply(gmData, decompileContext, seedObject);
         }
 
         // Make metroids drop an item onto you on death and increase music timer to not cause issues
@@ -814,30 +572,9 @@ public class Patcher
         gmData.Code.Add(labBlockCode);
         labBlock.CreationCode = labBlockCode;
         labsRoom.GameObjects.Add(labBlock);
-        labsRoom.Tiles.Add(new UndertaleRoom.Tile
-        {
-            X = 64,
-            Y = 96,
-            TileDepth = -99,
-            BackgroundDefinition = gmData.Backgrounds.ByName("tlArea7Outside"),
-            InstanceID = gmData.GeneralInfo.LastTile++,
-            SourceX = 0,
-            SourceY = 208,
-            Width = 32,
-            Height = 32
-        });
-        labsRoom.Tiles.Add(new UndertaleRoom.Tile
-        {
-            X = 64,
-            Y = 128,
-            TileDepth = -99,
-            BackgroundDefinition = gmData.Backgrounds.ByName("tlArea7Outside"),
-            InstanceID = gmData.GeneralInfo.LastTile++,
-            SourceX = 0,
-            SourceY = 208,
-            Width = 32,
-            Height = 32
-        });
+        var tla7Outside = gmData.Backgrounds.ByName("tlArea7Outside");
+        labsRoom.Tiles.Add(CreateRoomTile(64, 96, -99, tla7Outside, 0, 208, 32, 32));
+        labsRoom.Tiles.Add(CreateRoomTile(64, 128, -99, tla7Outside, 0, 208, 32, 32));
 
         // Move alpha in nest
         gmData.Code.ByName("gml_RoomCC_rm_a6a09_8945_Create").ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
@@ -1050,9 +787,8 @@ public class Patcher
         // Set a bunch of metroid events to already be scanned
         characterVarsCode.AppendGMLInCode("global.event[301] = 1; global.event[305] = 1; global.event[306] = 1;");
 
-        // Move Geothermal PB to big shaft
-        gmData.Rooms.ByName("rm_a4b02a").CreationCodeId.AppendGMLInCode("instance_create(272, 400, scr_itemsopen(oControl.mod_253));");
-        gmData.Rooms.ByName("rm_a4b02b").CreationCodeId.ReplaceGMLInCode("instance_create(314, 192, scr_itemsopen(oControl.mod_253))", "");
+        // Move Geothermal PB
+        MoveGeothermalPB.Apply(gmData, decompileContext, seedObject);
 
         // Set lava state and the metroid scanned events
         characterVarsCode.AppendGMLInCode("global.lavastate = 11; global.event[4] = 1; global.event[56] = 1;" +
@@ -1475,239 +1211,13 @@ public class Patcher
             """);
 
         // Set starting items
-        bool alreadyAddedMissiles = false;
-        bool alreadyAddedSupers = false;
-        bool alreadyAddedPBombs = false;
-        characterVarsCode.AppendGMLInCode("global.collectedItems = \"items:\"");
-        foreach ((ItemEnum item, int quantity) in seedObject.StartingItems)
-        {
-            int finalQuantity = quantity;
-            switch (item)
-            {
-                case ItemEnum.EnergyTank:
-                    characterVarsCode.ReplaceGMLInCode("global.etanks = 0", $"global.etanks = {quantity};");
-                    characterVarsCode.ReplaceGMLInCode($"global.playerhealth = {seedObject.Patches.EnergyPerTank - 1}",
-                        $"global.playerhealth = {seedObject.Patches.EnergyPerTank + seedObject.Patches.EnergyPerTank * quantity - 1};");
-                    break;
-                case ItemEnum.LockedMissile:
-                case ItemEnum.Missile:
-                    if (alreadyAddedMissiles) break;
+        StartingItems.Apply(gmData, decompileContext, seedObject);
 
-                    if (item == ItemEnum.Missile && seedObject.StartingItems.TryGetValue(ItemEnum.LockedMissile, out int lockedMissileQuantity))
-                    {
-                        finalQuantity += lockedMissileQuantity;
-                    }
-
-                    if (item == ItemEnum.LockedMissile && seedObject.StartingItems.TryGetValue(ItemEnum.Missile, out int missileQuantity)) finalQuantity += missileQuantity;
-
-                    characterVarsCode.ReplaceGMLInCode("global.missiles = 0", $"global.missiles = {finalQuantity};");
-                    alreadyAddedMissiles = true;
-                    break;
-                case ItemEnum.LockedSuperMissile:
-                case ItemEnum.SuperMissile:
-                    if (alreadyAddedSupers) break;
-
-                    if (item == ItemEnum.SuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.LockedSuperMissile, out int lockedSuperQuantity))
-                    {
-                        finalQuantity += lockedSuperQuantity;
-                    }
-
-                    if (item == ItemEnum.LockedSuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.SuperMissile, out int superQuantity)) finalQuantity += superQuantity;
-
-                    characterVarsCode.ReplaceGMLInCode("global.smissiles = 0", $"global.smissiles = {finalQuantity};");
-                    alreadyAddedSupers = true;
-                    break;
-
-                case ItemEnum.LockedPBomb:
-                case ItemEnum.PBomb:
-                    if (alreadyAddedPBombs) break;
-
-                    if (item == ItemEnum.PBomb && seedObject.StartingItems.TryGetValue(ItemEnum.LockedPBomb, out int lockedPBombQuantity)) finalQuantity += lockedPBombQuantity;
-
-                    if (item == ItemEnum.LockedPBomb && seedObject.StartingItems.TryGetValue(ItemEnum.PBomb, out int pBombQuantity)) finalQuantity += pBombQuantity;
-
-                    characterVarsCode.ReplaceGMLInCode("global.pbombs = 0", $"global.pbombs = {finalQuantity};");
-                    alreadyAddedPBombs = true;
-                    break;
-                case ItemEnum.MissileLauncher:
-                case ItemEnum.SuperMissileLauncher:
-                case ItemEnum.PBombLauncher:
-                    // Are handled further down
-                    break;
-
-                case var x when x.ToString().StartsWith("DNA"):
-                    characterVarsCode.ReplaceGMLInCode("global.dna =", "global.dna = 1 +");
-                    break;
-
-                case ItemEnum.Bombs:
-                    characterVarsCode.ReplaceGMLInCode("global.hasBombs = 0", $"global.hasBombs = {quantity};");
-                    break;
-                case ItemEnum.Powergrip:
-                    characterVarsCode.ReplaceGMLInCode("global.hasPowergrip = 0", $"global.hasPowergrip = {quantity};");
-                    break;
-                case ItemEnum.Spiderball:
-                    characterVarsCode.ReplaceGMLInCode("global.hasSpiderball = 0", $"global.hasSpiderball = {quantity};");
-                    break;
-                case ItemEnum.Springball:
-                    characterVarsCode.ReplaceGMLInCode("global.hasJumpball = 0", $"global.hasJumpball = {quantity};");
-                    break;
-                case ItemEnum.Hijump:
-                    characterVarsCode.ReplaceGMLInCode("global.hasHijump = 0", $"global.hasHijump = {quantity};");
-                    break;
-                case ItemEnum.Varia:
-                    characterVarsCode.ReplaceGMLInCode("global.hasVaria = 0", $"global.hasVaria = {quantity};");
-                    break;
-                case ItemEnum.Spacejump:
-                    characterVarsCode.ReplaceGMLInCode("global.hasSpacejump = 0", $"global.hasSpacejump = {quantity};");
-                    break;
-                case ItemEnum.ProgressiveJump:
-                    if (quantity >= 1) characterVarsCode.ReplaceGMLInCode("global.hasHijump = 0", "global.hasHijump = 1;");
-
-                    if (quantity >= 2) characterVarsCode.ReplaceGMLInCode("global.hasSpacejump = 0", "global.hasSpacejump = 1;");
-
-                    break;
-                case ItemEnum.Speedbooster:
-                    characterVarsCode.ReplaceGMLInCode("global.hasSpeedbooster = 0", $"global.hasSpeedbooster = {quantity};");
-                    break;
-                case ItemEnum.Screwattack:
-                    characterVarsCode.ReplaceGMLInCode("global.hasScrewattack = 0", $"global.hasScrewattack = {quantity};");
-                    break;
-                case ItemEnum.Gravity:
-                    characterVarsCode.ReplaceGMLInCode("global.hasGravity = 0", $"global.hasGravity = {quantity};");
-                    break;
-                case ItemEnum.ProgressiveSuit:
-                    if (quantity >= 1) characterVarsCode.ReplaceGMLInCode("global.hasVaria = 0", "global.hasVaria = 1;");
-
-                    if (quantity >= 2) characterVarsCode.ReplaceGMLInCode("global.hasGravity = 0", "global.hasGravity = 1;");
-
-                    break;
-                case ItemEnum.Power:
-                    // Stubbed for now, may get a purpose in the future
-                    break;
-                case ItemEnum.Charge:
-                    characterVarsCode.ReplaceGMLInCode("global.hasCbeam = 0", $"global.hasCbeam = {quantity};");
-                    break;
-                case ItemEnum.Ice:
-                    characterVarsCode.ReplaceGMLInCode("global.hasIbeam = 0", $"global.hasIbeam = {quantity};");
-                    break;
-                case ItemEnum.Wave:
-                    characterVarsCode.ReplaceGMLInCode("global.hasWbeam = 0", $"global.hasWbeam = {quantity};");
-                    break;
-                case ItemEnum.Spazer:
-                    characterVarsCode.ReplaceGMLInCode("global.hasSbeam = 0", $"global.hasSbeam = {quantity};");
-                    break;
-                case ItemEnum.Plasma:
-                    characterVarsCode.ReplaceGMLInCode("global.hasPbeam = 0", $"global.hasPbeam = {quantity};");
-                    break;
-                case ItemEnum.Morphball:
-                    characterVarsCode.ReplaceGMLInCode("global.hasMorph = 0", $"global.hasMorph = {quantity};");
-                    break;
-                case ItemEnum.Flashlight:
-                    characterVarsCode.ReplaceGMLInCode("global.flashlightLevel = 0", $"global.flashlightLevel = {quantity};");
-                    break;
-                case ItemEnum.Blindfold:
-                    characterVarsCode.ReplaceGMLInCode("global.flashlightLevel = 0", $"global.flashlightLevel = -{quantity};");
-                    break;
-                case ItemEnum.SpeedBoosterUpgrade:
-                    characterVarsCode.ReplaceGMLInCode("global.speedBoosterFramesReduction = 0", $"global.speedBoosterFramesReduction = {quantity}");
-                    break;
-                case ItemEnum.WalljumpBoots:
-                    characterVarsCode.ReplaceGMLInCode("global.hasWJ = 0", $"global.hasWJ = {quantity}");
-                    break;
-                case ItemEnum.InfiniteBombPropulsion:
-                    characterVarsCode.ReplaceGMLInCode("global.hasIBJ = 0", $"global.hasIBJ = {quantity}");
-                    break;
-                case ItemEnum.LongBeam:
-                    characterVarsCode.ReplaceGMLInCode("global.hasLongBeam = 0", $"global.hasLongBeam = {quantity}");
-                    break;
-                case ItemEnum.Nothing:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            characterVarsCode.AppendGMLInCode($"global.collectedItems += \"{item.GetEnumMemberValue()}|{quantity},\"");
-        }
-        // After we have gotten our starting items, adjust the DNA counter
-        characterVarsCode.ReplaceGMLInCode("global.dna = ", $"global.dna = (46 - {seedObject.Patches.RequiredDNAmount}) + ");
-
-        // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
-        if (!seedObject.Patches.RequireMissileLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.MissileLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.missileLauncher = 0", "global.missileLauncher = 1");
-        }
-
-        if (!seedObject.Patches.RequireSuperLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.SuperMissileLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.SMissileLauncher = 0", "global.SMissileLauncher = 1");
-        }
-
-        if (!seedObject.Patches.RequirePBLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.PBombLauncher))
-        {
-            characterVarsCode.ReplaceGMLInCode("global.PBombLauncher = 0", "global.PBombLauncher = 1");
-        }
-
-        // Set starting location
+        // Set starting location - TODO: allow custom x/y position in rooms.
         characterVarsCode.ReplaceGMLInCode("global.startingSave = 0", $"global.startingSave = {seedObject.StartingLocation.SaveRoom}");
         characterVarsCode.ReplaceGMLInCode("global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
 
-        // Modify minimap for power plant because of pb movement
-        gmData.Code.ByName("gml_Script_map_init_07").ReplaceGMLInCode("""
-                                                                      global.map[35, 43] = "0112300"
-                                                                      global.map[35, 44] = "1210300"
-                                                                      global.map[35, 45] = "1210300"
-                                                                      """, """
-                                                                           global.map[35, 43] = "0101330"
-                                                                           global.map[35, 44] = "0101300"
-                                                                           global.map[35, 45] = "0101300"
-                                                                           """);
-        gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("&& itemid == 253", "&& false");
-        // Removes map tiles of the inaccessible A4 basement/Reactor Core/Power Plant.
-        gmData.Code.ByName("gml_Script_init_map").AppendGMLInCode("""
-                                                                  // Remove A4 reactor core map tiles
-                                                                  // Upper left
-                                                                  i = 31
-                                                                  repeat (4)
-                                                                  {
-                                                                      j = 43
-                                                                      repeat (3)
-                                                                      {
-                                                                          global.map[i, j] = "0"
-                                                                          j++
-                                                                      }
-                                                                      i++
-                                                                  }
 
-                                                                  // Mid section
-                                                                  global.map[36, 44] = "0"
-                                                                  global.map[36, 45] = "0"
-                                                                  global.map[36, 46] = "0"
-                                                                  global.map[37, 46] = "0"
-
-                                                                  i = 34
-                                                                  repeat (4)
-                                                                  {
-                                                                      j = 47
-                                                                      repeat (6)
-                                                                      {
-                                                                          global.map[i, j] = "0"
-                                                                          j++
-                                                                      }
-                                                                      i++
-                                                                  }
-
-                                                                  // Below A6
-                                                                  i = 31
-                                                                  repeat (8)
-                                                                  {
-                                                                      j = 54
-                                                                      repeat (6)
-                                                                      {
-                                                                          global.map[i, j] = "0"
-                                                                          j++
-                                                                      }
-                                                                      i++
-                                                                  }
-                                                                  """);
 
 
         // Make items spawned from metroids not change map
