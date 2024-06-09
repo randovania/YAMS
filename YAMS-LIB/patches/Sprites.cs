@@ -168,9 +168,16 @@ public class Sprites
         {
             gmData.Sprites.Add(new UndertaleSprite
             {
-                Name = gmData.Strings.MakeString(name), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
+                Name = gmData.Strings.MakeString(name),
+                Height = 16,
+                Width = 16,
+                MarginRight = 15,
+                MarginBottom = 15,
+                OriginX = 0,
+                OriginY = 16,
                 Textures = GetTexturePageItemsForSpriteName(name + "_")
             });
+
         }
 
         gmData.Sprites.Add(new UndertaleSprite

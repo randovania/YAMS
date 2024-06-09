@@ -63,12 +63,19 @@ public class Patcher
         // Decouple the item locations from the actual items
         DecoupleItemsFromLocations.Apply(gmData, decompileContext, seedObject);
 
+
+        // Run these in parallel to speed up performance slightly
+        List<Task> nonCodeTasks = new List<Task>();
+
         // Import new Sprites
-        Sprites.Apply(gmData, decompileContext, seedObject);
-        // Apply cosmetic patches - TODO: run this in parallel?
-        CosmeticHud.Apply(gmData, decompileContext, seedObject);
-        // Shuffle Music - TODO: run this in parallel?
-        MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict);
+        nonCodeTasks.Add(Task.Run(() => Sprites.Apply(gmData, decompileContext, seedObject)));
+        // Apply cosmetic patches
+        nonCodeTasks.Add(Task.Run(() => CosmeticHud.Apply(gmData, decompileContext, seedObject)));
+        // Shuffle Music
+        nonCodeTasks.Add(Task.Run(() => MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict)));
+
+        // TODO: move this further down, when we actually need the results.
+        Task.WhenAll(nonCodeTasks).GetAwaiter().GetResult();
 
         // Fix songs that break if they're too long
         FixOverlappingSongs.Apply(gmData, decompileContext, seedObject);
