@@ -16,6 +16,7 @@ public class StartingItems
         bool alreadyAddedPBombs = false;
         characterVarsCode.AppendGMLInCode("global.collectedItems = \"items:\"");
         int howMuchDna = 0;
+        // TODO: move the "has bla" stuff into a seperate append call at the very end rather than copy pasting for each entry?
         foreach ((ItemEnum item, int quantity) in seedObject.StartingItems)
         {
             int finalQuantity = quantity;
@@ -24,6 +25,7 @@ public class StartingItems
                 case ItemEnum.EnergyTank:
                     characterVarsCode.AppendGMLInCode($"global.etanks = {quantity};");
                     characterVarsCode.AppendGMLInCode($"global.playerhealth = {seedObject.Patches.EnergyPerTank + seedObject.Patches.EnergyPerTank * quantity - 1};");
+                    characterVarsCode.AppendGMLInCode("global.maxhealth = global.playerhealth");
                     break;
                 case ItemEnum.LockedMissile:
                 case ItemEnum.Missile:
@@ -36,7 +38,7 @@ public class StartingItems
 
                     if (item == ItemEnum.LockedMissile && seedObject.StartingItems.TryGetValue(ItemEnum.Missile, out int missileQuantity)) finalQuantity += missileQuantity;
 
-                    characterVarsCode.AppendGMLInCode($"global.missiles = {finalQuantity};");
+                    characterVarsCode.AppendGMLInCode($"global.missiles = {finalQuantity}; global.maxmissiles = global.missiles");
                     alreadyAddedMissiles = true;
                     break;
                 case ItemEnum.LockedSuperMissile:
@@ -50,7 +52,7 @@ public class StartingItems
 
                     if (item == ItemEnum.LockedSuperMissile && seedObject.StartingItems.TryGetValue(ItemEnum.SuperMissile, out int superQuantity)) finalQuantity += superQuantity;
 
-                    characterVarsCode.AppendGMLInCode($"global.smissiles = {finalQuantity};");
+                    characterVarsCode.AppendGMLInCode($"global.smissiles = {finalQuantity}; global.maxsmissiles = global.smissiles");
                     alreadyAddedSupers = true;
                     break;
 
@@ -62,7 +64,7 @@ public class StartingItems
 
                     if (item == ItemEnum.LockedPBomb && seedObject.StartingItems.TryGetValue(ItemEnum.PBomb, out int pBombQuantity)) finalQuantity += pBombQuantity;
 
-                    characterVarsCode.AppendGMLInCode($"global.pbombs = {finalQuantity};");
+                    characterVarsCode.AppendGMLInCode($"global.pbombs = {finalQuantity}; global.maxpbombs = global.pbombs");
                     alreadyAddedPBombs = true;
                     break;
                 case ItemEnum.MissileLauncher:
@@ -77,67 +79,67 @@ public class StartingItems
                     break;
 
                 case ItemEnum.Bombs:
-                    characterVarsCode.AppendGMLInCode($"global.hasBombs = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasBombs = {quantity}; global.bomb = global.hasBombs");
                     break;
                 case ItemEnum.Powergrip:
-                    characterVarsCode.AppendGMLInCode($"global.hasPowergrip = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasPowergrip = {quantity}; global.powergrip = global.hasPowergrip");
                     break;
                 case ItemEnum.Spiderball:
-                    characterVarsCode.AppendGMLInCode($"global.hasSpiderball = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasSpiderball = {quantity}; global.spiderball = global.hasSpiderball");
                     break;
                 case ItemEnum.Springball:
-                    characterVarsCode.AppendGMLInCode($"global.hasJumpball = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasJumpball = {quantity}; global.jumpball = global.hasJumpball");
                     break;
                 case ItemEnum.Hijump:
-                    characterVarsCode.AppendGMLInCode($"global.hasHijump = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasHijump = {quantity}; global.hijump = global.hasHijump");
                     break;
                 case ItemEnum.Varia:
-                    characterVarsCode.AppendGMLInCode($"global.hasVaria = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasVaria = {quantity}; global.currentsuit = 1");
                     break;
                 case ItemEnum.Spacejump:
-                    characterVarsCode.AppendGMLInCode($"global.hasSpacejump = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasSpacejump = {quantity}; global.spacejump = global.hasSpacejump");
                     break;
                 case ItemEnum.ProgressiveJump:
-                    if (quantity >= 1) characterVarsCode.AppendGMLInCode("global.hasHijump = 1;");
+                    if (quantity >= 1) characterVarsCode.AppendGMLInCode("global.hasHijump = 1; global.hijump = global.hasHijump");
 
-                    if (quantity >= 2) characterVarsCode.AppendGMLInCode("global.hasSpacejump = 1;");
+                    if (quantity >= 2) characterVarsCode.AppendGMLInCode("global.hasSpacejump = 1; global.spacejump = global.hasSpacejump");
 
                     break;
                 case ItemEnum.Speedbooster:
-                    characterVarsCode.AppendGMLInCode($"global.hasSpeedbooster = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasSpeedbooster = {quantity}; global.speedbooster = global.hasSpeedbooster");
                     break;
                 case ItemEnum.Screwattack:
-                    characterVarsCode.AppendGMLInCode($"global.hasScrewattack = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasScrewattack = {quantity}; global.screwattack = global.hasScrewattack");
                     break;
                 case ItemEnum.Gravity:
-                    characterVarsCode.AppendGMLInCode($"global.hasGravity = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasGravity = {quantity}; global.currentsuit = 2");
                     break;
                 case ItemEnum.ProgressiveSuit:
-                    if (quantity >= 1) characterVarsCode.AppendGMLInCode("global.hasVaria = 1;");
+                    if (quantity >= 1) characterVarsCode.AppendGMLInCode("global.hasVaria = 1; global.currentsuit = 1");
 
-                    if (quantity >= 2) characterVarsCode.AppendGMLInCode( "global.hasGravity = 1;");
+                    if (quantity >= 2) characterVarsCode.AppendGMLInCode( "global.hasGravity = 1; global.currentsuit = 2");
 
                     break;
                 case ItemEnum.Power:
                     // Stubbed for now, may get a purpose in the future
                     break;
                 case ItemEnum.Charge:
-                    characterVarsCode.AppendGMLInCode($"global.hasCbeam = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasCbeam = {quantity}; global.cbeam = global.hasCbeam");
                     break;
                 case ItemEnum.Ice:
-                    characterVarsCode.AppendGMLInCode($"global.hasIbeam = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasIbeam = {quantity}; global.ibeam = global.hasIbeam");
                     break;
                 case ItemEnum.Wave:
-                    characterVarsCode.AppendGMLInCode($"global.hasWbeam = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasWbeam = {quantity}; global.wbeam = global.hasWbeam");
                     break;
                 case ItemEnum.Spazer:
-                    characterVarsCode.AppendGMLInCode($"global.hasSbeam = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasSbeam = {quantity}; global.sbeam = global.hasSbeam");
                     break;
                 case ItemEnum.Plasma:
-                    characterVarsCode.AppendGMLInCode($"global.hasPbeam = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasPbeam = {quantity}; global.pbeam = global.hasPbeam");
                     break;
                 case ItemEnum.Morphball:
-                    characterVarsCode.AppendGMLInCode($"global.hasMorph = {quantity};");
+                    characterVarsCode.AppendGMLInCode($"global.hasMorph = {quantity}; global.morphball = global.hasMorph");
                     break;
                 case ItemEnum.Flashlight:
                     characterVarsCode.AppendGMLInCode($"global.flashlightLevel = {quantity};");
