@@ -144,10 +144,10 @@ public class AddDNAItem
             """);
 
         // Make DNA count show on map
-        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext)",
-            "draw_text((view_xview[0] + 18), ((view_yview[0] + 198) + rectoffset), timetext); draw_text((view_xview[0] + 158), ((view_yview[0] + 198) + rectoffset), string(global.dna) + \"/46\")");
-        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext)",
-            "draw_text((view_xview[0] + 17), ((view_yview[0] + 197) + rectoffset), timetext); draw_text((view_xview[0] + 157), ((view_yview[0] + 197) + rectoffset), string(global.dna) + \"/46\")");
+        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 18), (view_yview[0] + 198 + rectoffset), timetext)",
+            "draw_text((view_xview[0] + 18), (view_yview[0] + 198 + rectoffset), timetext); draw_text((view_xview[0] + 158), (view_yview[0] + 198 + rectoffset), string(global.dna) + \"/46\")");
+        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 17), (view_yview[0] + 197 + rectoffset), timetext)",
+            "draw_text((view_xview[0] + 17), (view_yview[0] + 197 + rectoffset), timetext); draw_text((view_xview[0] + 157), (view_yview[0] + 197 + rectoffset), string(global.dna) + \"/46\")");
 
         // Fix item percentage now that more items have been added
         foreach (string name in new[]

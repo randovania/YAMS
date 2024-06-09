@@ -19,7 +19,7 @@ public class SaveCutsceneSkip
                                                                                      instance_create(x, y, oSaveFX)
                                                                                      instance_create(x, y, oSaveSparks)
                                                                                      popup_text(get_text("Notifications", "GameSaved"))
-                                                                                     save_game(("save" + string((global.saveslot + 1))))
+                                                                                     save_game("save" + (string(global.saveslot + 1)))
                                                                                      refill_heath_ammo()
                                                                                  }
                                                                                  if (statetime == 230)
@@ -34,7 +34,7 @@ public class SaveCutsceneSkip
                                                                                               instance_create(x, y, oSaveSparks)
                                                                                           }
                                                                                           popup_text(get_text("Notifications", "GameSaved"))
-                                                                                          save_game(("save" + string((global.saveslot + 1))))
+                                                                                          save_game("save" + (string(global.saveslot + 1)))
                                                                                           refill_heath_ammo()
                                                                                       }
                                                                                       if ((statetime == 230 && !global.skipSaveCutscene) || (statetime == 10 && global.skipSaveCutscene))

@@ -199,7 +199,7 @@ public class DecoupleItemsFromLocations
         // Morph Ball
         subscreenMiscDaw.ReplaceGMLInCode("""
                                           draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
-                                          draw_text((x - 20), ((y + 15) + oControl.subScrItemOffset), morph)
+                                          draw_text((x - 20), (y + 15 + oControl.subScrItemOffset), morph)
                                           """, """
                                                if (global.hasMorph) {
                                                    draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))

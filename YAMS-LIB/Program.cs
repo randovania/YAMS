@@ -57,8 +57,6 @@ public class Patcher
         if (!useAnyVersion && !controlCreate.Contains("global.am2r_version = \"V1.5.5\"")) throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
 
         // Important invasive modifications done first
-        // Fixes character step event for further modification
-        FixCharacterStepEvent.Apply(gmData, decompileContext, seedObject);
 
         // Decouple the item locations from the actual items
         DecoupleItemsFromLocations.Apply(gmData, decompileContext, seedObject);
@@ -383,43 +381,43 @@ public class Patcher
         drawGuiCode.ReplaceGMLInCode(
             """
                         if (global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
-                            draw_sprite(sGUIMissile, 0, ((0 + xoff) + 1), 4)
+                            draw_sprite(sGUIMissile, 0, (0 + xoff + 1), 4)
             """,
             """
                         if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (!global.missileLauncher)))
-                            draw_sprite(sGUIMissile, 4, ((0 + xoff) + 1), 4)
+                            draw_sprite(sGUIMissile, 4, (0 + xoff + 1), 4)
                         else if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (global.missileLauncher)))
-                            draw_sprite(sGUIMissile, 0, ((0 + xoff) + 1), 4)
+                            draw_sprite(sGUIMissile, 0, (0 + xoff + 1), 4)
 
             """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 0)
-                                                         draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                                         draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
                                      """, """
                                                           if (oCharacter.armmsl == 0 && global.missileLauncher)
-                                                              draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                                              draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
                                                           else if (oCharacter.armmsl == 0 && !global.missileLauncher)
-                                                              draw_sprite(sGUIMissile, 5, ((0 + xoff) + 1), 4)
+                                                              draw_sprite(sGUIMissile, 5, (0 + xoff + 1), 4)
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
-                                                         draw_sprite(sGUIMissile, 2, ((0 + xoff) + 1), 4)
+                                                         draw_sprite(sGUIMissile, 2, (0 + xoff + 1), 4)
                                      """, """
                                                           if (oCharacter.armmsl == 1 && global.missileLauncher)
-                                                              draw_sprite(sGUIMissile, 2, ((0 + xoff) + 1), 4)
+                                                              draw_sprite(sGUIMissile, 2, (0 + xoff + 1), 4)
                                                           else if (oCharacter.armmsl == 1 && !global.missileLauncher)
-                                                              draw_sprite(sGUIMissile, 3, ((0 + xoff) + 1), 4)
+                                                              draw_sprite(sGUIMissile, 3, (0 + xoff + 1), 4)
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                  if (global.currentweapon == 1)
-                                                     draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                                     draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
                                      """, """
                                                       if (global.currentweapon == 1 && global.missileLauncher)
-                                                          draw_sprite(sGUIMissile, 1, ((0 + xoff) + 1), 4)
+                                                          draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
                                                       else if (global.currentweapon == 1 && !global.missileLauncher)
-                                                          draw_sprite(sGUIMissile, 3, ((0 + xoff) + 1), 4)
+                                                          draw_sprite(sGUIMissile, 3, (0 + xoff + 1), 4)
                                                       else if (global.currentweapon != 1 && !global.missileLauncher)
-                                                          draw_sprite(sGUIMissile, 4, ((0 + xoff) + 1), 4)
+                                                          draw_sprite(sGUIMissile, 4, (0 + xoff + 1), 4)
                                           """);
 
         // Replace Super GUI
@@ -823,17 +821,17 @@ public class Patcher
         UndertaleCode? sv6load = gmData.Code.ByName("gml_Script_sv6_load");
         sv6load.ReplaceGMLInCode("V7.0", "RDV V8.0");
         sv6load.ReplaceGMLInCode("sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid); sv6_get_newglobals(fid);");
-        sv6load.ReplaceGMLInCode("global.maxhealth = (99 + ((global.etanks * 100) * oControl.mod_etankhealthmult))", "");
+        sv6load.ReplaceGMLInCode("global.maxhealth = 99 + global.etanks * 100 * oControl.mod_etankhealthmult", "");
         sv6load.ReplaceGMLInCode("""
                                      if (global.difficulty < 2)
                                      {
-                                         global.maxmissiles = (oControl.mod_Mstartingcount + (global.mtanks * 5))
-                                         global.maxsmissiles = (global.stanks * 2)
-                                         global.maxpbombs = (global.ptanks * 2)
+                                         global.maxmissiles = oControl.mod_Mstartingcount + global.mtanks * 5
+                                         global.maxsmissiles = global.stanks * 2
+                                         global.maxpbombs = global.ptanks * 2
                                      }
                                      else
                                      {
-                                         global.maxmissiles = (oControl.mod_Mstartingcount + (global.mtanks * 2))
+                                         global.maxmissiles = oControl.mod_Mstartingcount + global.mtanks * 2
                                          global.maxsmissiles = global.stanks
                                          global.maxpbombs = global.ptanks
                                      }
