@@ -48,7 +48,7 @@ public class AddDNAItem
         gmData.Code.ByName("gml_Script_sv6_get_items").ReplaceGMLInCode("350", "400");
 
         // Metroid ID to DNA map
-        gmData.Scripts.AddScript("gml_Script_scr_DNASpawn", """
+        gmData.Scripts.AddScript("scr_DNASpawn", """
             if (argument0 == 0)
                 return oItemDNA_350;
             if (argument0 == 1)
