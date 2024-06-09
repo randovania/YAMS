@@ -17,11 +17,12 @@ public class ShowFullyUnexploredMap
         if (seedObject.Cosmetics.ShowUnexploredMap)
             // TODO: don't redefine, but set instead!
             characterVarsCode.ReplaceGMLInCode( "global.unexploredMap = 0", "global.unexploredMap = 1;");
+
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument8 > 0)", """
-            // variables for swapping map color and corner sprites
+            // Variables for swapping map color and corner sprites
             var blockSprite, cornerSprite;
 
-            // default sprites
+            // Default sprites
             blockSprite = sMapBlock;
             cornerSprite = sMapCorner;
 
@@ -38,6 +39,7 @@ public class ShowFullyUnexploredMap
                     exit;
             }
             """);
+
         // Don't ever draw the debug pipe tiles
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( """
             if (argument7 == "H")
@@ -47,13 +49,17 @@ public class ShowFullyUnexploredMap
             if (argument7 == "C")
                 draw_sprite(sMapSP, 14, argument0, argument1)
             """, "");
+
         // Also show item pickups and metroids
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument7 == \"4\" && argument8 == 1)", "if (argument7 == \"4\" && (argument8 == 1 || argument8 == 0))");
+
         // Add hint icons to minimap
         gmData.Code.ByName("gml_Script_draw_mapblock").AppendGMLInCode( "if (argument7 == \"W\") draw_sprite(sMapSP, 15, argument0, argument1)");
+
         // Add "M" condition to Metroid alive icon check
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument8 == 10)", """if (argument8 == 10 || (argument7 == "M" && global.unexploredMap))""");
+
         // Draw metroid alive icon on undiscovered map
         gmData.Code.ByName("gml_Script_init_map").AppendGMLInCode( """
         global.map[14, 34] = "10111M0"

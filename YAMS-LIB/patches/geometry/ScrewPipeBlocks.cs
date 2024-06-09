@@ -34,9 +34,10 @@ public class ScrewPipeBlocks
         }
 
         // A bunch of tiles in a5c13 - screw blocks before pipe hub
-        for (int i = 39; i <= 44; i++)
+        foreach (var codeEntry in gmData.Rooms.ByName("rm_a5c13").GameObjects
+                     .Where(go => go.Y is >= 144 and <= 176 && go.X is >= 240 and <= 256 && go.ObjectDefinition.Name.Content == "oBlockScrew"))
         {
-            gmData.Code.ByName($"gml_RoomCC_rm_a5c13_76{i}_Create").SubstituteGMLCode("if (!global.screwPipeBlocks) instance_destroy();");
+            codeEntry.CreationCode.SubstituteGMLCode("if (!global.screwPipeBlocks) instance_destroy();");
         }
     }
 }

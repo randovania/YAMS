@@ -36,9 +36,7 @@ public class AddA6Pipes
         hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 192, solidObject));
         hideoutPipeRoom.GameObjects.Add(CreateRoomObject(352, 208, solidObject, null, 3));
 
-        UndertaleCode hideoutPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6a11_pipe_Create") };
-        hideoutPipeCode.SubstituteGMLCode("targetroom = 327; targetx = 216; targety = 400; direction = 90;");
-        gmData.Code.Add(hideoutPipeCode);
+        var hideoutPipeCode = gmData.Code.AddCodeEntry("gml_RoomCC_rm_a6a11_pipe_Create", "targetroom = 327; targetx = 216; targety = 400; direction = 90;");
         hideoutPipeRoom.GameObjects.Add(CreateRoomObject(368, 192, pipeObject, hideoutPipeCode, 1, 1, PipeInHideoutID));
         hideoutPipeRoom.CreationCodeId.AppendGMLInCode("global.darkness = 0; mus_change(mus_get_main_song());");
 
@@ -60,9 +58,7 @@ public class AddA6Pipes
 
         nestPipeRoom.CreationCodeId.AppendGMLInCode("mus_change(musArea6A)");
 
-        UndertaleCode nestPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b03_pipe_Create") };
-        nestPipeCode.SubstituteGMLCode("targetroom = 317; targetx = 376; targety = 208; direction = 270;");
-        gmData.Code.Add(nestPipeCode);
+        UndertaleCode nestPipeCode = gmData.Code.AddCodeEntry("gml_RoomCC_rm_a6b03_pipe_Create", "targetroom = 317; targetx = 376; targety = 208; direction = 270;");
         nestPipeRoom.GameObjects.Add(CreateRoomObject(208, 384, pipeObject, nestPipeCode, 1, 1, PipeInDepthsLowerID));
 
         // Change slope to solid to prevent oob issue
@@ -92,9 +88,7 @@ public class AddA6Pipes
 
         depthsPipeRoom.CreationCodeId.AppendGMLInCode("mus_change(musArea6A);");
 
-        UndertaleCode depthsPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a6b11_pipe_Create") };
-        depthsPipeCode.SubstituteGMLCode("targetroom = 348; targetx = 904; targety = 208; direction = 180;");
-        gmData.Code.Add(depthsPipeCode);
+        UndertaleCode depthsPipeCode = gmData.Code.AddCodeEntry("gml_RoomCC_rm_a6b11_pipe_Create", "targetroom = 348; targetx = 904; targety = 208; direction = 180;");
         depthsPipeRoom.GameObjects.Add(CreateRoomObject(96, 176, pipeObject, depthsPipeCode, 1, 1, PipeInDepthsUpperID));
 
         // Waterfalls
@@ -120,9 +114,7 @@ public class AddA6Pipes
         waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(912, 192, solidObject));
         waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(880, 208, solidObject, null, 3));
 
-        UndertaleCode waterfallsPipeCode = new UndertaleCode { Name = gmData.Strings.MakeString("gml_RoomCC_rm_a7a07_pipe_Create") };
-        waterfallsPipeCode.SubstituteGMLCode("targetroom = 335; targetx = 104; targety = 192; direction = 0;");
-        gmData.Code.Add(waterfallsPipeCode);
+        UndertaleCode waterfallsPipeCode = gmData.Code.AddCodeEntry("gml_RoomCC_rm_a7a07_pipe_Create", "targetroom = 335; targetx = 104; targety = 192; direction = 0;");
         waterfallsPipeRoom.GameObjects.Add(CreateRoomObject(896, 192, pipeObject, waterfallsPipeCode, 1, 1, PipeInWaterfallsID));
 
         waterfallsPipeRoom.CreationCodeId.AppendGMLInCode("global.darkness = 0");

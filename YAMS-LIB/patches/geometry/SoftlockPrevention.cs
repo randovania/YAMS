@@ -83,7 +83,7 @@ public class SoftlockPrevention
         // screw blocks in bullet hell room
         foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5c22").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockScrew"))
         {
-            if (gameObject.X == 48 || gameObject.X == 64)
+            if (gameObject.X is 48 or 64)
             {
                 gameObject.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 268 && global.screwattack == 0 && global.item[scr_itemchange(8)] == 1",
                     "global.softlockPrevention");
@@ -100,7 +100,7 @@ public class SoftlockPrevention
         // Crumble blocks in gravity area one way room
         foreach (UndertaleRoom.GameObject? gameObject in gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(o => o.ObjectDefinition.Name.Content == "oBlockStep"))
         {
-            if (gameObject.X == 96 || gameObject.X == 112)
+            if (gameObject.X is 96 or 112)
             {
                 gameObject.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 298 && (global.hasGravity == 0 || global.hasSpacejump == 0)",
                     "global.softlockPrevention");

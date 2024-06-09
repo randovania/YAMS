@@ -16,7 +16,8 @@ public class BombBeforeA3
             characterVarsCode.ReplaceGMLInCode("global.a3Block = 0", "global.a3Block = 1;");
         }
 
-        gmData.Code.ByName("gml_RoomCC_rm_a3h03_5279_Create").ReplaceGMLInCode(
+        var bombBlock = gmData.Rooms.ByName("rm_a3h03").GameObjects.First(go => go.X == 896 && go.Y == 160 && go.ObjectDefinition.Name.Content == "oBlockBomb");
+        bombBlock.CreationCode.ReplaceGMLInCode(
             "if ((oControl.mod_randomgamebool == 1 || oControl.mod_splitrandom == 1) && global.hasBombs == 0 && global.ptanks == 0)",
             "if (!global.a3Block)");
     }

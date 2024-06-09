@@ -17,6 +17,7 @@ public class SkipItemFanfares
 
         // Show popup text only when we skip the cutscene
         gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("if (itemtype == 1)", "if (global.skipItemFanfare)");
+
         // Removes cutscenes for type 1's
         gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("display_itemmsg", "if (!global.skipItemFanfare) display_itemmsg");
     }

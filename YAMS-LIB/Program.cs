@@ -5,11 +5,9 @@ using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
 using YAMS_LIB.patches;
-using YAMS_LIB.patches.decompilerWorkarounds;
 using YAMS_LIB.patches.geometry;
 using YAMS_LIB.patches.misc;
 using YAMS_LIB.patches.qol;
-using static YAMS_LIB.ExtensionMethods;
 
 namespace YAMS_LIB;
 
@@ -1011,9 +1009,6 @@ public class Patcher
 
         // Add patch to see room names on minimap
         DisplayRoomNamesOnMap.Apply(gmData, decompileContext, seedObject);
-
-        // Adjust pause screen text to mention room names
-        RoomFeatureMapText.Apply(gmData, decompileContext);
 
 
         // Add spoiler log in credits when finished game normally

@@ -118,7 +118,7 @@ public static class ExtensionMethods
         gmData.Scripts.Add(script);
     }
 
-    public static void AddCodeEntry(this IList<UndertaleCode> list, string name, string code)
+    public static UndertaleCode AddCodeEntry(this IList<UndertaleCode> list, string name, string code)
     {
         var codeEntry = new UndertaleCode() { Name = gmData.Strings.MakeString(name) };
         gmData.Code.Add(codeEntry);
@@ -133,5 +133,6 @@ public static class ExtensionMethods
         gmData.CodeLocals.Add(locals);
 
         codeEntry.SubstituteGMLCode(code);
+        return codeEntry;
     }
 }

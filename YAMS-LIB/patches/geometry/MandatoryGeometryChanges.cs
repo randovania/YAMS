@@ -8,12 +8,13 @@ public class MandatoryGeometryChanges
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         // A4 exterior top, always remove the bomb blocks when coming from that entrance
-        foreach (string codeName in new[] { "gml_RoomCC_rm_a4h03_6341_Create", "gml_RoomCC_rm_a4h03_6342_Create" })
+        foreach (var codeEntry in gmData.Rooms.ByName("rm_a4h03").GameObjects.Where(go => go.Y == 624 && go.ObjectDefinition.Name.Content == "oBlockBomb"))
         {
-            gmData.Code.ByName(codeName).ReplaceGMLInCode("oControl.mod_previous_room == 214 && global.spiderball == 0", "global.targetx == 416");
+            codeEntry.CreationCode.ReplaceGMLInCode("oControl.mod_previous_room == 214 && global.spiderball == 0", "global.targetx == 416");
         }
 
         // Super Missile chamber - make first two crumble blocks shoot blocks
+
         gmData.Code.ByName("gml_Room_rm_a3a23a_Create").AppendGMLInCode("if (global.softlockPrevention) { with (119465) instance_destroy(); with (119465) instance_destroy(); instance_create(304, 96, oBlockShoot); instance_create(304, 112, oBlockShoot);}");
 
         // When going down from thoth, make PB blocks disabled

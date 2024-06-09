@@ -18,8 +18,11 @@ public class DisplayRoomNamesOnMap
             }
         }
         string DSMapCoordRoomname = dsMapCordBuilder.ToString();
-        gmData.Code.ByName("gml_Object_oSS_Fg_Create_0").AppendGMLInCode( DSMapCoordRoomname);
-        gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0").ReplaceGMLInCode( """
+
+
+        gmData.Code.ByName("gml_Object_oSS_Fg_Create_0").AppendGMLInCode(DSMapCoordRoomname);
+
+        gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0").ReplaceGMLInCode("""
             draw_text((view_xview[0] + 161), (view_yview[0] + 30 - rectoffset), maptext)
             draw_set_color(c_white)
             draw_text((view_xview[0] + 160), (view_yview[0] + 29 - rectoffset), maptext)
@@ -37,15 +40,11 @@ public class DisplayRoomNamesOnMap
             draw_text((view_xview[0] + 160), ((view_yview[0] + 28) - rectoffset), titleText);
             draw_set_font(global.fontGUI2)
         """);
-        var ssFGDestroyCode = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oSS_Fg_Destroy_0") };
+
+        var ssFGDestroyCode = gmData.GameObjects.ByName("oSS_Fg").EventHandlerFor(EventType.Destroy, gmData);
         ssFGDestroyCode.SubstituteGMLCode( "ds_map_destroy(room_names_coords)");
-        gmData.Code.Add(ssFGDestroyCode);
-        var ssFGCollisionList = gmData.GameObjects.ByName("oSS_Fg").Events[1];
-        var ssFGAction = new UndertaleGameObject.EventAction();
-        ssFGAction.CodeId = ssFGDestroyCode;
-        var ssFGEvent = new UndertaleGameObject.Event();
-        ssFGEvent.EventSubtype = 0;
-        ssFGEvent.Actions.Add(ssFGAction);
-        ssFGCollisionList.Add(ssFGEvent);
+
+        // Adjust pause screen text to mention room names
+        gmData.Code.ByName("gml_Object_oSS_Fg_Create_0").ReplaceGMLInCode( "tip2text = get_text(\"Subscreen\", \"Marker_Tip\")", "tip2text = \"| - Marker & Room Names\"");
     }
 }
