@@ -11,7 +11,7 @@ public class SoftlockPrevention
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         // Softlock prevention blocks
-        if (seedObject.Patches.SoftlockPrevention) characterVarsCode.ReplaceGMLInCode("global.softlockPrevention = 0", "global.softlockPrevention = 1;");
+        characterVarsCode.AppendGMLInCode($"global.softlockPrevention = {(seedObject.Patches.SoftlockPrevention ? "1" : "0")};");
 
         // gml_Room_rm_a3b08_Create - some shot / solid blocks in BG3
         // Also change these to chain bomb blocks

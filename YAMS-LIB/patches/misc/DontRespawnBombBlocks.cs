@@ -11,7 +11,7 @@ public class DontRespawnBombBlocks
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         // Stop Bomb blocks from respawning
-        if (seedObject.Patches.RespawnBombBlocks) characterVarsCode.ReplaceGMLInCode("global.respawnBombBlocks = 0", "global.respawnBombBlocks = 1");
+        characterVarsCode.AppendGMLInCode($"global.respawnBombBlocks = {(seedObject.Patches.RespawnBombBlocks ? "1" : "0")}");
 
         // The position here is for a puzzle in a2, that when not respawned makes it a tad hard.
         gmData.Code.ByName("gml_Object_oBlockBomb_Other_10").PrependGMLInCode("if (!global.respawnBombBlocks && !(room == rm_a2a06 && x == 624 && y == 128)) regentime = -1");

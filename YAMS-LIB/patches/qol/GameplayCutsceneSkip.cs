@@ -10,7 +10,7 @@ public class GameplayCutsceneSkip
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
         // Skip most cutscenes when enabled
-        if (seedObject.Patches.SkipCutscenes) characterVarsCode.ReplaceGMLInCode("global.skipCutscenes = 0", "global.skipCutscenes = 1");
+        characterVarsCode.AppendGMLInCode($"global.skipCutscenes = {(seedObject.Patches.SkipCutscenes ? "1" : "0")}");
 
         // Skip Intro cutscene instantly
         gmData.Code.ByName("gml_Object_oIntroCutscene_Create_0").PrependGMLInCode("room_change(15, 0)");

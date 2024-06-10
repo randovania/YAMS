@@ -11,10 +11,8 @@ public class BombBeforeA3
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         // Bomb block before a3 entry
-        if (seedObject.Patches.A3EntranceBlocks)
-        {
-            characterVarsCode.ReplaceGMLInCode("global.a3Block = 0", "global.a3Block = 1;");
-        }
+        characterVarsCode.AppendGMLInCode($"global.a3Block = {(seedObject.Patches.A3EntranceBlocks ? "1" : "0")};");
+
 
         var bombBlock = gmData.Rooms.ByName("rm_a3h03").GameObjects.First(go => go.X == 896 && go.Y == 160 && go.ObjectDefinition.Name.Content == "oBlockBomb");
         bombBlock.CreationCode.ReplaceGMLInCode(

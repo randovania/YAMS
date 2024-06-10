@@ -10,7 +10,7 @@ public class RemoveHelperSeptoggs
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
         // Turn off Septoggs if the wished configuration
-        if (seedObject.Patches.SeptoggHelpers) characterVarsCode.ReplaceGMLInCode("global.septoggHelpers = 0", "global.septoggHelpers = 1");
+        characterVarsCode.AppendGMLInCode($"global.septoggHelpers = {(seedObject.Patches.SeptoggHelpers ? "1" : "0")}");
 
         foreach (UndertaleCode? code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_")))
         {

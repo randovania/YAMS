@@ -24,7 +24,7 @@ public class CosmeticHud
 
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
-        Dictionary<UndertaleEmbeddedTexture, List<Tuple<Rectangle, int>>> textureDict = new Dictionary<UndertaleEmbeddedTexture, List<Tuple<Rectangle, int>>>();
+        var textureDict = new Dictionary<UndertaleEmbeddedTexture, List<Tuple<Rectangle, int>>>();
 
         // TODO: less copypaste
         // Hue shift etanks

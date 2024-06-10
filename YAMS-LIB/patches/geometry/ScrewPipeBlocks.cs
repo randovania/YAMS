@@ -11,7 +11,7 @@ public class ScrewPipeBlocks
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         // screw+pipes related
-        if (seedObject.Patches.ScrewPipeBlocks) characterVarsCode.ReplaceGMLInCode("global.screwPipeBlocks = 0", "global.screwPipeBlocks = 1");
+        characterVarsCode.AppendGMLInCode($"global.screwPipeBlocks = {(seedObject.Patches.ScrewPipeBlocks ? "1" : "0")}");
 
         // Screw blocks before normal pipe rooms
         foreach (string codeName in new[]

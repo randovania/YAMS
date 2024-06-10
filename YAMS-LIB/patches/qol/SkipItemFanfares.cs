@@ -10,7 +10,7 @@ public class SkipItemFanfares
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
-        if (seedObject.Patches.SkipItemFanfares) characterVarsCode.ReplaceGMLInCode("global.skipItemFanfare = 0", "global.skipItemFanfare = 1");
+        characterVarsCode.AppendGMLInCode($"global.skipItemFanfare = {(seedObject.Patches.SkipItemFanfares ? "1" : "0")}");
 
         // Put all items as type one
         gmData.Code.ByName("gml_Object_oItem_Other_10").PrependGMLInCode("if (global.skipItemFanfare) itemtype = 1;");

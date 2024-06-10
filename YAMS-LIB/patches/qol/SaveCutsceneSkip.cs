@@ -10,7 +10,7 @@ public class SaveCutsceneSkip
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
-        if (seedObject.Patches.SkipSaveCutscene) characterVarsCode.ReplaceGMLInCode("global.skipSaveCutscene = 0", "global.skipSaveCutscene = 1");
+        characterVarsCode.AppendGMLInCode($"global.skipSaveCutscene = {(seedObject.Patches.SkipSaveCutscene ? "1" : "0")}");
 
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("""
                                                                                  if (statetime == 1)

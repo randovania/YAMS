@@ -514,9 +514,7 @@ public class Patcher
 
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         // TODO: move these all into their seperate patches.
-        characterVarsCode.PrependGMLInCode(
-            "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipSaveCutscene = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-            "global.a3Block = 0; global.softlockPrevention = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
+        characterVarsCode.PrependGMLInCode("global.canUseSupersOnMissileDoors = 0;");
 
         // Set geothermal reactor to always be exploded
         characterVarsCode.AppendGMLInCode("global.event[203] = 9");
