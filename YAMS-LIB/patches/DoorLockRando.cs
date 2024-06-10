@@ -118,7 +118,8 @@ public class DoorLockRando
                 {
                     if (gameObject.InstanceID != id) continue;
 
-                    bool isGotoObject = gameObject.ObjectDefinition.Name.Content == "oGotoRoom";
+                    UndertaleGameObject goToRoomObject = gmData.GameObjects.ByName("oGotoRoom");
+                    bool isGotoObject = gameObject.ObjectDefinition == goToRoomObject;
                     bool isResearchHatch = gameObject.ObjectDefinition.Name.Content == "oA3LabDoor";
                     if (isGotoObject && !doorEntry.isDock)
                     {
@@ -138,23 +139,29 @@ public class DoorLockRando
                         int tileDepth = -80;
                         var doorTileset = gmData.Backgrounds.ByName("tlDoorsExtended");
                         room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)0 : 128, 96, 32, 64));
-                        // Extend the tiles if goto object is on the edge of room or on special cases - TODO: do not use instance IDs.
-                        bool shouldExtendTiles = gameObject.X == 0 || gameObject.X == room.Width || door.InstanceID switch
-                        {
-                            138494 or       // Top transition in hideout alpha nest
-                                144652 or   // Top transition in waterfalls entryway
-                                105815 or   // Bottom transition in Skreek Street
-                                102617      // Bottom transition in Grave Grotto
-                                => true,
-                            _ => false
-                        };
 
-                        // TODO: do not use instance IDs.
-                        int maxIteration = door.InstanceID switch
-                        {
-                            144652 => 8,   // Top transition in waterfalls entryway
-                            _ => 5
-                        };
+                        // Extend the tiles if goto object is on the edge of room or on special cases
+                        // Top transition in waterfalls entryway
+                        uint waterfallID = gmData.Rooms.ByName("rm_a6b17").GameObjects.First(go => go.X == 320 && go.Y == 144 && go.ObjectDefinition == goToRoomObject).InstanceID;
+                        // Top transition in hideout alpha nest
+                        uint hideoutAlphaID = gmData.Rooms.ByName("rm_a6b17").GameObjects.First(go => go.X == 1280 && go.Y == 176 && go.ObjectDefinition == goToRoomObject)
+                            .InstanceID;
+                        // Bottom transition in Skreek Street
+                        uint skreekStreetID = gmData.Rooms.ByName("rm_a0h30").GameObjects.First(go => go.X == 960 && go.Y == 848 && go.ObjectDefinition == goToRoomObject)
+                            .InstanceID;
+                        // Bottom transition in Grave Grotto
+                        uint graveGrottoID = gmData.Rooms.ByName("rm_a0h07").GameObjects.First(go => go.X == 640 && go.Y == 1600 && go.ObjectDefinition == goToRoomObject)
+                            .InstanceID;
+
+                        bool shouldExtendTiles = false;
+                        if (gameObject.X == 0 || gameObject.Y == 0)
+                            shouldExtendTiles = true;
+                        else if (door.InstanceID == waterfallID || door.InstanceID == hideoutAlphaID || door.InstanceID == skreekStreetID || door.InstanceID == graveGrottoID)
+                            shouldExtendTiles = true;
+
+                        int maxIteration = 5;
+                        if (door.InstanceID == waterfallID)
+                            maxIteration = 8;
 
                         if (shouldExtendTiles)
                         {

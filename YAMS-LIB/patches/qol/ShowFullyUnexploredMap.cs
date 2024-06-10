@@ -13,10 +13,8 @@ public class ShowFullyUnexploredMap
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "sMapBlock", "blockSprite");
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "sMapCorner", "cornerSprite");
 
-        // Redefine the sprite variables to the Unexplored sprites, if map tile hasn't been revealed to player.
-        if (seedObject.Cosmetics.ShowUnexploredMap)
-            // TODO: don't redefine, but set instead!
-            characterVarsCode.ReplaceGMLInCode( "global.unexploredMap = 0", "global.unexploredMap = 1;");
+        // Set the sprite variables to the Unexplored sprites, if map tile hasn't been revealed to player.
+        characterVarsCode.AppendGMLInCode($"global.unexploredMap = {(seedObject.Cosmetics.ShowUnexploredMap ? "1": "0")};");
 
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument8 > 0)", """
             // Variables for swapping map color and corner sprites

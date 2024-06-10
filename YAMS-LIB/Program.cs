@@ -79,15 +79,9 @@ public class Patcher
 
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
-        // Remove other game modes, rename "normal" to "Randovania"
-        UndertaleCode? gameSelMenuStepCode = gmData.Code.ByName("gml_Object_oGameSelMenu_Step_0");
-        gameSelMenuStepCode.ReplaceGMLInCode("if (global.mod_gamebeaten == 1)", "if (false)");
-        gmData.Code.ByName("gml_Object_oSlotMenu_normal_only_Create_0").ReplaceGMLInCode(
-            "d0str = get_text(\"Title-Additions\", \"GameSlot_NewGame_NormalGame\")", "d0str = \"Randovania\";");
+        // Apply randovania themed stuff ("randovania" mode, credits, extras unlocked etc.)
+        RandovaniaStuff.Apply(gmData, decompileContext, seedObject);
 
-        // Add Credits
-        gmData.Code.ByName("gml_Object_oCreditsText_Create_0").ReplaceGMLInCode("/Japanese Community;;;;",
-            "/Japanese Community;;;*AM2R Randovania Credits;;*Development;Miepee=JesRight;;*Logic Database;Miepee=JeffGainsNGames;/Esteban 'DruidVorse' Criado;;*Art;ShirtyScarab=AbyssalCreature;;/With contributions from many others;;;");
 
         // Fix crashes where rooms try to access these vars in the starting room
         gmData.Code.ByName("gml_Script_set_start_location").AppendGMLInCode("global.targetx = global.save_x; global.targety = global.save_y;");
@@ -95,10 +89,7 @@ public class Patcher
         // Fix visual edge case discrepancy with time of day
         gmData.Code.ByName("gml_Room_rm_a8h01_Create").PrependGMLInCode("global.timeofday = 1;");
 
-        // Unlock fusion etc. by default
-        UndertaleCode? unlockStuffCode = gmData.Code.ByName("gml_Object_oControl_Other_2");
-        unlockStuffCode.AppendGMLInCode("global.mod_fusion_unlocked = 1; global.mod_gamebeaten = 1;");
-        gmData.Code.ByName("gml_Object_oSS_Fg_Create_0").AppendGMLInCode("itemcollunlock = 1;");
+
 
         // Make fusion only a damage multiplier, leaving the fusion stuff up to a setting
         gmData.Code.ByName("gml_Object_oControl_Step_0").PrependGMLInCode("mod_fusion = 0;");
@@ -107,6 +98,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0").ReplaceGMLInCode("bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
         gmData.Code.ByName("gml_Object_oSuitChangeFX2_Create_0").ReplaceGMLInCode("image_index = 1133", "sprite_index = sSuitChangeFX2_fusion");
 
+        // Don't respawn weapons when offscreen
         DontDespawnWeaponsOffscreen.Apply(gmData, decompileContext, seedObject);
 
         // Fix arachnus event value doing x coordinate BS
@@ -154,7 +146,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0").AppendGMLInCode("else { with (oDoor) lock = 4; }");
         gmData.Code.ByName("gml_Room_rm_a8a11_Create").AppendGMLInCode("if (!global.event[307]) {with (oDoor) lock = 4;}");
 
-        // Fix doors in tester to be always blue
+        // Fix doors in tester to be always blue - TODO: remove instance IDs
         foreach (string codeName in new[] { "gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create" })
         {
             gmData.Code.ByName(codeName).SubstituteGMLCode("lock = 0;");
@@ -168,7 +160,7 @@ public class Patcher
             "global.darkness = 0; with (oLightEngine) instance_destroy(); with (oFlashlight64); instance_destroy()");
         gmData.Code.ByName("gml_Object_oProboscum_Create_0").AppendGMLInCode("active = true; image_index = 0;");
 
-        // Fix tester events sharing an event with tower activated - moved tester to 207
+        // Fix tester events sharing an event with tower activated - moved tester to 207 - TODO: remove instance IDs
         gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create").ReplaceGMLInCode("global.event[200] < 2", "!global.event[207]");
         gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0").ReplaceGMLInCode("global.event[200] != 1", "global.event[207]");
         gmData.Code.ByName("gml_Object_oTester_Step_0").ReplaceGMLInCode("global.event[200] = 2", "global.event[207] = 1;");
@@ -182,7 +174,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oLightEngine_Other_11").ReplaceGMLInCode("1, 0.4", "0.7, 1.4");
         gmData.Code.ByName("gml_Object_oLightEngine_Other_11").ReplaceGMLInCode("1, -0.4", "0.7, -1.4");
 
-        // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
+        // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them - TODO: remove instance IDs
         foreach (string codeName in new[]
                  {
                      "gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create",
@@ -217,7 +209,7 @@ public class Patcher
         // Implement tower activated (13), tester dead doors (14), guardian doors (15), arachnus (16), torizo (17), serris (18), genesis (19), queen (20)
         // Also implement emp events - emp active (21), emp a1 (22), emp a2 (23), emp a3 (24), emp tutorial (25), emp robot home (26), emp near zeta (27),
         // emp near bullet hell (28), emp near pipe hub (29), emp near right exterior (30).
-        // perma locked is doesnt have a number and is never set here as being openable.
+        // perma locked doesn't have a number and is never set here as being open-able.
         string newDoorReplacementText = "(lock == 0) || (global.event[200] && lock == 13)" +
                                         "|| (global.event[207] && lock == 14) || (global.event[51] && lock == 15)" +
                                         "|| (global.event[103] && lock == 16) || (global.event[152] && lock == 17)" +
@@ -236,7 +228,7 @@ public class Patcher
         // Make EMP slots activate doors instantly, rather than having to wait 1.5 seconds
         gmData.Code.ByName("gml_Object_oBattery_Collision_187").ReplaceGMLInCode("alarm[0] = 90", "alarm[0] = 1");
 
-        // Fix Emp devices unlocking all doors automatically!
+        // Fix Emp devices unlocking all doors automatically! - TODO: instance IDs
         string empBatteryCellCondition = "false";
         foreach (uint doorID in new uint[] { 108539, 111778, 115149, 133836, 133903, 133914, 133911, 134711, 134426, 135330 })
         {
@@ -255,7 +247,7 @@ public class Patcher
             $"with (oDoor) {{ if ({empBatteryCellCondition}) lock = 0 }}");
 
         string a5ActivateCondition = "false";
-        foreach (uint doorID in new uint[] { 133732, 133731 })
+        foreach (uint doorID in new uint[] { 133732, 133731 })  // TODO: instance IDs
         {
             if (!seedObject.DoorLocks.ContainsKey(doorID)) a5ActivateCondition += $" || id == {doorID}";
         }
@@ -287,7 +279,7 @@ public class Patcher
         gmData.Code.ByName("gml_Room_rm_a2a09_Create").ReplaceGMLInCode("global.event[101] = 4", "");
         gmData.Code.ByName("gml_Room_rm_a2a19_Create").ReplaceGMLInCode("global.event[101] = 4", "");
 
-        // Fix plasma chamber having a missile door instead of normal after tester dead
+        // Fix plasma chamber having a missile door instead of normal after tester dead - TODO: instance IDs
         gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create").ReplaceGMLInCode("lock = 1", "lock = 0;");
 
         // Fix lab log not displaying progress bar
@@ -325,7 +317,7 @@ public class Patcher
             AddA6Pipes.Apply(gmData, decompileContext, seedObject);
         }
 
-        // Move alpha in nest
+        // Move alpha in nest - TODO: instance IDs
         gmData.Code.ByName("gml_RoomCC_rm_a6a09_8945_Create").ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
 
         // Lock these blocks behind a setting because they can make for some interesting changes
@@ -527,9 +519,10 @@ public class Patcher
         chStepControlCode.ReplaceGMLInCode("if (global.maxmissiles > 0 && (state", "if ((state");
 
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
+        // TODO: move these all into their seperate patches.
         characterVarsCode.PrependGMLInCode(
             "global.septoggHelpers = 0; global.skipCutscenes = 0; global.skipSaveCutscene = 0; global.skipItemFanfare = 0; global.respawnBombBlocks = 0; global.screwPipeBlocks = 0;" +
-            "global.a3Block = 0; global.softlockPrevention = 0; global.unexploredMap = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
+            "global.a3Block = 0; global.softlockPrevention = 0; global.unveilBlocks = 0; global.canUseSupersOnMissileDoors = 0;");
 
         // Set geothermal reactor to always be exploded
         characterVarsCode.AppendGMLInCode("global.event[203] = 9");
@@ -595,27 +588,7 @@ public class Patcher
                                                   """);
         eTankCharacterEvent.ReplaceGMLInCode("popup_text(get_text(\"Notifications\", \"EnergyTank\"))", "");
 
-        // Add speedbooster reduction
-        characterVarsCode.PrependGMLInCode("global.speedBoosterFramesReduction = 0;");
-        gmData.Code.ByName("gml_Script_characterStepEvent")
-            .ReplaceGMLInCode("speedboost_steps > 75", "speedboost_steps >= 1 && speedboost_steps > (75 - global.speedBoosterFramesReduction)");
-        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("dash == 30", "dash >= 1 && dash >= (30 - (max(global.speedBoosterFramesReduction, 76)-76))");
-        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("""
-                                                                                 speedboost = 1
-                                                                                 canturn = 0
-                                                                                 sjball = 0
-                                                                                 charge = 0
-                                                                                 sfx_play(sndSBStart)
-                                                                                 alarm[2] = 30
-                                                                             """, """
-                                                                                      dash = 30
-                                                                                      speedboost = 1
-                                                                                      canturn = 0
-                                                                                      sjball = 0
-                                                                                      charge = 0
-                                                                                      sfx_play(sndSBStart)
-                                                                                      alarm[2] = 30
-                                                                                  """);
+
 
         // Add starting equipment memo
         characterVarsCode.PrependGMLInCode("global.showStartingMemo = 1; global.startingHeader = \"\"; global.startingText = \"\";");
@@ -628,43 +601,7 @@ public class Patcher
             characterVarsCode.ReplaceGMLInCode("global.startingText = \"\"", $"global.startingText = \"{seedObject.Identifier.StartingMemoText.Description}\"");
         }
 
-        // TODO: put this somewhere Decouple Major items from item locations
-        characterVarsCode.PrependGMLInCode("global.dna = 0;");
 
-        // Add Long Beam as an item
-        characterVarsCode.PrependGMLInCode("global.hasLongBeam = 0;");
-        gmData.Code.ByName("gml_Object_oBeam_Create_0").AppendGMLInCode("existingTimer = 12;");
-        gmData.Code.ByName("gml_Object_oBeam_Step_0").PrependGMLInCode("if (existingTimer > 0) existingTimer--; if (existingTimer <= 0 && !global.hasLongBeam) instance_destroy()");
-
-        // Add WJ as item
-        characterVarsCode.PrependGMLInCode("global.hasWJ = 0;");
-        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode(
-            "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0)",
-            "if (state == JUMPING && statetime > 4 && position_meeting(x, (y + 8), oSolid) == 0 && justwalljumped == 0 && walljumping == 0 && monster_drain == 0 && global.hasWJ)");
-
-        // Add IBJ as item
-        characterVarsCode.PrependGMLInCode("global.hasIBJ = 0;");
-        gmData.Code.ByName("gml_Script_characterCreateEvent").AppendGMLInCode("IBJ_MIDAIR_MAX = 5; IBJLaidInAir = IBJ_MIDAIR_MAX; IBJ_MAX_BOMB_SEPERATE_TIMER = 4; IBJBombSeperateTimer = -1;");
-        gmData.Code.ByName("gml_Object_oCharacter_Step_0").AppendGMLInCode("if (IBJBombSeperateTimer >= 0) IBJBombSeperateTimer-- if (!platformCharacterIs(IN_AIR)) IBJLaidInAir = IBJ_MIDAIR_MAX;");
-        gmData.Code.ByName("gml_Object_oCharacter_Collision_435").ReplaceGMLInCode("if (isCollisionTop(6) == 0)",
-            """
-            if (!global.hasIBJ)
-            {
-                if (state == AIRBALL)
-                {
-                    if (IBJBombSeperateTimer < 0)
-                        IBJLaidInAir--;
-                }
-                else
-                {
-                    IBJLaidInAir = IBJ_MIDAIR_MAX;
-                }
-                if (IBJLaidInAir <= 0)
-                    exit;
-                IBJBombSeperateTimer = IBJ_MAX_BOMB_SEPERATE_TIMER;
-            }
-            if (isCollisionTop(6) == 0)
-            """);
 
         // Save current hash seed, so we can compare saves later
         characterVarsCode.PrependGMLInCode($"global.gameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"");
@@ -690,6 +627,13 @@ public class Patcher
 
         // Add a "load from start" option
         LoadFromStart.Apply(gmData, decompileContext, seedObject);
+
+        // Add new custom items
+        FlashLightItem.Apply(gmData, decompileContext, seedObject);
+        IBJItem.Apply(gmData, decompileContext, seedObject);
+        LongBeamItem.Apply(gmData, decompileContext, seedObject);
+        SpeedBoosterUpgradeItem.Apply(gmData, decompileContext, seedObject);
+        WallJumpBootsItem.Apply(gmData, decompileContext, seedObject);
 
         // Modify save scripts to load our new globals / stuff we modified
         UndertaleCode saveGlobalsCode = new UndertaleCode();
@@ -858,22 +802,9 @@ public class Patcher
         gmData.GeneralInfo.Name = gmData.Strings.MakeString("AM2R_RDV");
         gmData.GeneralInfo.FileName = gmData.Strings.MakeString("AM2R_RDV");
 
-        // Change starting health and energy per tank
+        // Change starting health and energy per tank - TODO: should get into startingitems patch
         characterVarsCode.ReplaceGMLInCode("global.playerhealth = 99", $"global.playerhealth = {seedObject.Patches.EnergyPerTank - 1};");
         eTankCharacterEvent.ReplaceGMLInCode("global.maxhealth += (100 * oControl.mod_etankhealthmult)", $"global.maxhealth += {seedObject.Patches.EnergyPerTank}");
-
-        // Flashlight
-        characterVarsCode.PrependGMLInCode("global.flashlightLevel = 0;");
-        gmData.Code.ByName("gml_Script_ApplyLightPreset").ReplaceGMLInCode("global.darkness", "lightLevel");
-        gmData.Code.ByName("gml_Script_ApplyLightPreset").PrependGMLInCode(
-            """
-            var lightLevel = 0
-            lightLevel = global.darkness - global.flashlightLevel
-            if (lightLevel < 0)
-                lightLevel = 0
-            if (lightLevel > 4)
-                lightLevel = 4
-            """);
 
         // Set starting items
         StartingItems.Apply(gmData, decompileContext, seedObject);
@@ -927,30 +858,7 @@ public class Patcher
                                                      """);
 
         // Turn off Septoggs if the wished configuration
-        if (seedObject.Patches.SeptoggHelpers) characterVarsCode.ReplaceGMLInCode("global.septoggHelpers = 0", "global.septoggHelpers = 1");
-
-        foreach (UndertaleCode? code in gmData.Code.Where(c => c.Name.Content.StartsWith("gml_Script_scr_septoggs_")))
-        {
-            code.PrependGMLInCode("if (!global.septoggHelpers) return true; else return false;");
-        }
-
-        UndertaleGameObject? elderSeptogg = gmData.GameObjects.ByName("oElderSeptogg");
-        foreach (UndertaleRoom room in gmData.Rooms)
-        {
-            foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
-            {
-                go.CreationCode.ReplaceGMLInCode("oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1",
-                    "!global.septoggHelpers", true);
-            }
-        }
-
-        gmData.Code.ByName("gml_RoomCC_rm_a0h25_4105_Create").ReplaceGMLInCode("else if (global.hasBombs == 1 || global.hasSpiderball == 1 || global.hasSpacejump == 1)",
-            "else if (!global.septoggHelpers)");
-        // Make these septoggs always appear instead of only when coming from certain room
-        gmData.Code.ByName("gml_RoomCC_rm_a2a13_5007_Create").ReplaceGMLInCode("&& oControl.mod_previous_room == 103", "");
-        gmData.Code.ByName("gml_RoomCC_rm_a3a07_5533_Create").ReplaceGMLInCode("&& oControl.mod_previous_room == 136", "");
-        gmData.Code.ByName("gml_RoomCC_rm_a5a05_8701_Create").ReplaceGMLInCode("&& oControl.mod_previous_room == 300", "");
-
+        RemoveHelperSeptoggs.Apply(gmData, decompileContext, seedObject);
 
         // Options to turn off the random room geometry changes!
         MandatoryGeometryChanges.Apply(gmData, decompileContext, seedObject);
@@ -964,18 +872,11 @@ public class Patcher
         ShowFullyUnexploredMap.Apply(gmData, decompileContext, seedObject);
 
         // Force all breakables (except the hidden super blocks) to be visible
-        if (seedObject.Cosmetics.UnveilBlocks) characterVarsCode.ReplaceGMLInCode("global.unveilBlocks = 0", "global.unveilBlocks = 1");
+        ShowUnveiledBreakables.Apply(gmData, decompileContext, seedObject);
 
-        gmData.Code.ByName("gml_Object_oSolid_Alarm_5").AppendGMLInCode("if (global.unveilBlocks && sprite_index >= sBlockShoot && sprite_index <= sBlockSand)\n" +
-                                                                        "{ event_user(1); visible = true; }");
-
-        // Skip Gameplay cutscenes
+        // Skip cutscenes and fanfares
         GameplayCutsceneSkip.Apply(gmData, decompileContext, seedObject);
-
-        // Shorten save animation
         SaveCutsceneSkip.Apply(gmData, decompileContext, seedObject);
-
-        // Skip Item acquisition fanfares
         SkipItemFanfares.Apply(gmData, decompileContext, seedObject);
 
         // Patch to add room name display near health

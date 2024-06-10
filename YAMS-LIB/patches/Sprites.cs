@@ -241,7 +241,6 @@ public class Sprites
 
         gmData.Sprites.Add(new UndertaleSprite
         {
-            // TODO: sprite is offset by a bit? Double check whether thats still the case
             Name = gmData.Strings.MakeString("sItemNothing"), Height = 16, Width = 16, MarginRight = 15, MarginBottom = 15, OriginX = 0, OriginY = 16,
             Textures = GetTexturePageItemsForSpriteName("sItemNothing_")
         });
