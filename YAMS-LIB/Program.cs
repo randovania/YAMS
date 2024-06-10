@@ -1,6 +1,8 @@
-﻿using System.Globalization;
+﻿using System.Data.Common;
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using SixLabors.ImageSharp.Processing;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -102,7 +104,7 @@ public class Patcher
 
 
         // Killing queen should not lock you out of the rest of the game
-        gmData.Code.ByName("gml_RoomCC_rm_a0h01_3762_Create").AppendGMLInCode("instance_destroy()");
+        gmData.Rooms.ByName("rm_a0h01").GameObjects.Remove(gmData.Rooms.ByName("rm_a0h01").GameObjects.First(go => go.X == 4432 && go.Y == 992 && (Math.Abs(go.ScaleY - 4.0) < 0.1)));
         gmData.Code.ByName("gml_Room_rm_a0h01_Create").AppendGMLInCode("tile_layer_delete(-119)");
 
         // Killing Queen spawns pickups (helps prevent softlocks with DLR)
@@ -140,10 +142,10 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0").AppendGMLInCode("else { with (oDoor) lock = 4; }");
         gmData.Code.ByName("gml_Room_rm_a8a11_Create").AppendGMLInCode("if (!global.event[307]) {with (oDoor) lock = 4;}");
 
-        // Fix doors in tester to be always blue - TODO: remove instance IDs
-        foreach (string codeName in new[] { "gml_RoomCC_rm_a4a05_6510_Create", "gml_RoomCC_rm_a4a05_6511_Create" })
+        // Fix doors in tester to be always blue
+        foreach (var door in gmData.Rooms.ByName("rm_a4a05").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oDoorA4"))
         {
-            gmData.Code.ByName(codeName).SubstituteGMLCode("lock = 0;");
+            door.CreationCode.SubstituteGMLCode("lock = 0;");
         }
 
         // Fix Tower activation unlocking right door for door lock rando
@@ -154,8 +156,8 @@ public class Patcher
             "global.darkness = 0; with (oLightEngine) instance_destroy(); with (oFlashlight64); instance_destroy()");
         gmData.Code.ByName("gml_Object_oProboscum_Create_0").AppendGMLInCode("active = true; image_index = 0;");
 
-        // Fix tester events sharing an event with tower activated - moved tester to 207 - TODO: remove instance IDs
-        gmData.Code.ByName("gml_RoomCC_rm_a4a04_6496_Create").ReplaceGMLInCode("global.event[200] < 2", "!global.event[207]");
+        // Fix tester events sharing an event with tower activated - moved tester to 207
+        gmData.Rooms.ByName("rm_a4a04").GameObjects.First(go => go.X == 24 && go.Y == 80 && go.ObjectDefinition.Name.Content == "oDoorA4").CreationCode.ReplaceGMLInCode("global.event[200] < 2", "!global.event[207]");
         gmData.Code.ByName("gml_Object_oTesterBossTrigger_Create_0").ReplaceGMLInCode("global.event[200] != 1", "global.event[207]");
         gmData.Code.ByName("gml_Object_oTester_Step_0").ReplaceGMLInCode("global.event[200] = 2", "global.event[207] = 1;");
 
@@ -168,17 +170,14 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oLightEngine_Other_11").ReplaceGMLInCode("1, 0.4", "0.7, 1.4");
         gmData.Code.ByName("gml_Object_oLightEngine_Other_11").ReplaceGMLInCode("1, -0.4", "0.7, -1.4");
 
-        // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them - TODO: remove instance IDs
-        foreach (string codeName in new[]
-                 {
-                     "gml_RoomCC_rm_a7b05_9400_Create", "gml_RoomCC_rm_a7b06_9413_Create", "gml_RoomCC_rm_a7b06_9414_Create",
-                     "gml_RoomCC_rm_a7b06A_9421_Create", "gml_RoomCC_rm_a7b06A_9420_Create", "gml_RoomCC_rm_a7b07_9437_Create", "gml_RoomCC_rm_a7b07_9438_Create",
-                     "gml_RoomCC_rm_a7b08_9455_Create", "gml_RoomCC_rm_a7b08_9454_Create", "gml_RoomCC_rm_a7b08A_9467_Create", "gml_RoomCC_rm_a7b08A_9470_Create"
-                 })
+        // Fix doors in labs, by making them always blue, and the metroid listener lock/unlock them
+        foreach (var roomName in new[] { "rm_a7b05", "rm_a7b06", "rm_a7b06A", "rm_a7b07", "rm_a7b08", "rm_a7b08A" })
         {
-            gmData.Code.ByName(codeName).SubstituteGMLCode("");
+            foreach (var door in gmData.Rooms.ByName(roomName).GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oDoor"))
+            {
+                door.CreationCode.SubstituteGMLCode("");
+            }
         }
-
         gmData.Code.ByName("gml_Object_oMonsterDoorControl_Alarm_0").SubstituteGMLCode("if (instance_number(oMonster) > 0) { with (oDoor) lock = 4 }");
 
         // Have option for missile doors to not open by supers
@@ -273,8 +272,8 @@ public class Patcher
         gmData.Code.ByName("gml_Room_rm_a2a09_Create").ReplaceGMLInCode("global.event[101] = 4", "");
         gmData.Code.ByName("gml_Room_rm_a2a19_Create").ReplaceGMLInCode("global.event[101] = 4", "");
 
-        // Fix plasma chamber having a missile door instead of normal after tester dead - TODO: instance IDs
-        gmData.Code.ByName("gml_RoomCC_rm_a4a09_6582_Create").ReplaceGMLInCode("lock = 1", "lock = 0;");
+        // Fix plasma chamber having a missile door instead of normal after tester dead
+        gmData.Rooms.ByName("rm_a4a09").GameObjects.First(go => go.X == 24 && go.Y == 80 && go.ObjectDefinition.Name.Content == "oDoorA4").CreationCode.ReplaceGMLInCode("lock = 1", "lock = 0;");
 
         // Fix lab log not displaying progress bar
         gmData.Code.ByName("gml_Room_rm_a7b04A_Create").ReplaceGMLInCode("create_log_trigger(0, 44, 440, 111, 0, 0)", "create_log_trigger(0, 44, 438, 111, -60, 1)");
@@ -311,8 +310,8 @@ public class Patcher
             AddA6Pipes.Apply(gmData, decompileContext, seedObject);
         }
 
-        // Move alpha in nest - TODO: instance IDs
-        gmData.Code.ByName("gml_RoomCC_rm_a6a09_8945_Create").ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
+        // Move alpha in nest
+        gmData.Rooms.ByName("rm_a6a09").GameObjects.First(go => go.X == 800 && go.Y == 368 && go.ObjectDefinition.Name.Content == "oMalpha3TriggerProx").CreationCode.ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
 
         // Lock these blocks behind a setting because they can make for some interesting changes
         gmData.Code.ByName("gml_Room_rm_a0h07_Create").ReplaceGMLInCode(
