@@ -66,7 +66,7 @@ public class Patcher
         // Shuffle Music
         nonCodeTasks.Add(Task.Run(() => MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict)));
 
-        // TODO: move this further down, when we actually need the results.
+        // TODO: move this further down, when we actually need the results? Dunno if that's actually better, would rely on non-thread safe utmt stuff.
         Task.WhenAll(nonCodeTasks).GetAwaiter().GetResult();
 
         // Fix songs that break if they're too long
