@@ -23,18 +23,19 @@ public static class ExtensionMethods
         return Decompiler.Decompile(code, decompileContext);
     }
 
-    public static void ReplaceGMLInCode(this UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
+    public static bool ReplaceGMLInCode(this UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
     {
         var codeText = Decompiler.Decompile(code, decompileContext);
         if (!codeText.Contains(textToReplace))
         {
             if (ignoreErrors)
-                return;
+                return false;
 
             throw new ApplicationException($"The text \"{textToReplace}\" was not found in \"{code.Name.Content}\"!");
         }
         codeText = codeText.Replace(textToReplace, replacementText);
         code.ReplaceGML(codeText, gmData);
+        return true;
     }
 
     public static void PrependGMLInCode(this UndertaleCode code, string prependedText)

@@ -14,40 +14,6 @@ public class DecoupleItemsFromLocations
                                            "global.hasVaria = 0; global.hasSpacejump = 0; global.hasSpeedbooster = 0; global.hasScrewattack = 0; global.hasGravity = 0;" +
                                            "global.hasCbeam = 0; global.hasIbeam = 0; global.hasWbeam = 0; global.hasSbeam  = 0; global.hasPbeam = 0; global.hasMorph = 0;");
 
-        // Make all item activation dependant on whether the main item is enabled.
-        characterVarsCode.ReplaceGMLInCode("""
-                                           global.morphball = 1
-                                           global.jumpball = 0
-                                           global.powergrip = 1
-                                           global.spacejump = 0
-                                           global.screwattack = 0
-                                           global.hijump = 0
-                                           global.spiderball = 0
-                                           global.speedbooster = 0
-                                           global.bomb = 0
-                                           global.ibeam = 0
-                                           global.wbeam = 0
-                                           global.pbeam = 0
-                                           global.sbeam = 0
-                                           global.cbeam = 0
-                                           """, """
-                                                global.morphball = global.hasMorph;
-                                                global.jumpball = global.hasJumpball;
-                                                global.powergrip = global.hasPowergrip;
-                                                global.spacejump = global.hasSpacejump;
-                                                global.screwattack = global.hasScrewattack;
-                                                global.hijump = global.hasHijump;
-                                                global.spiderball = global.hasSpiderball;
-                                                global.speedbooster = global.hasSpeedbooster;
-                                                global.bomb = global.hasBombs;
-                                                global.ibeam = global.hasIbeam;
-                                                global.wbeam = global.hasWbeam;
-                                                global.pbeam = global.hasPbeam;
-                                                global.sbeam = global.hasSbeam;
-                                                global.cbeam = global.hasCbeam;
-                                                """);
-        characterVarsCode.ReplaceGMLInCode("global.currentsuit = 0",
-            "global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
 
         // Fix spring showing up for a brief moment when killing arachnus
         gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("if (temp_randitem == oItemJumpBall)", "if (false)");
@@ -58,25 +24,49 @@ public class DecoupleItemsFromLocations
         UndertaleCode? subscreenMiscDaw = gmData.Code.ByName("gml_Object_oSubScreenMisc_Draw_0");
         subscreenMiscDaw.ReplaceGMLInCode("global.item[0]", "global.hasBombs");
 
+        var rm_a2a06 = gmData.Rooms.ByName("rm_a2a06");
         foreach (string code in new[]
                  {
                      "gml_Script_spawn_rnd_pickup", "gml_Script_spawn_rnd_pickup_at", "gml_Script_spawn_many_powerups",
-                     "gml_Script_spawn_many_powerups_tank", "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create",
-                     "gml_RoomCC_rm_a3h03_5279_Create", "gml_Room_rm_a3b08_Create"
+                     "gml_Script_spawn_many_powerups_tank",
+                     rm_a2a06.GameObjects.First(go => go.X == 608 && go.Y == 112 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.Name.Content,
+                     rm_a2a06.GameObjects.First(go => go.X == 624 && go.Y == 48 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.Name.Content,
+                     gmData.Rooms.ByName("rm_a3h03").GameObjects.First(go => go.X == 896 && go.Y == 160 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.Name.Content,
+                     "gml_Room_rm_a3b08_Create"
                  })
         {
             gmData.Code.ByName(code).ReplaceGMLInCode("global.item[0]", "global.hasBombs");
         }
 
         UndertaleGameObject? elderSeptogg = gmData.GameObjects.ByName("oElderSeptogg");
-        foreach (UndertaleRoom room in gmData.Rooms)
+        foreach (var gameObject in new[]
+                 {
+                     gmData.Rooms.ByName("rm_a0h11").GameObjects.First(go => go.X == 480 && go.Y == 768 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a0h25").GameObjects.First(go => go.X == 120 && go.Y == 816 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a0h25").GameObjects.First(go => go.X == 168 && go.Y == 256 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a0h29").GameObjects.First(go => go.X == 384 && go.Y == 312 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a1h05").GameObjects.First(go => go.X == 1184 && go.Y == 832 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a3h04").GameObjects.First(go => go.X == 528 && go.Y == 1344 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a3h04").GameObjects.First(go => go.X == 1728 && go.Y == 1248 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a3a07").GameObjects.First(go => go.X == 112 && go.Y == 240 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a3b02").GameObjects.First(go => go.X == 192 && go.Y == 896 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a3b08").GameObjects.First(go => go.X == 224 && go.Y == 352 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a0h17").GameObjects.First(go => go.X == 96 && go.Y == 352 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a4b02a").GameObjects.First(go => go.X == 120 && go.Y == 816 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a4b10").GameObjects.First(go => go.X == 144 && go.Y == 624 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a4b10").GameObjects.First(go => go.X == 512 && go.Y == 256 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a4b11").GameObjects.First(go => go.X == 224 && go.Y == 2288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c13").GameObjects.First(go => go.X == 96 && go.Y == 704 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c14").GameObjects.First(go => go.X == 1056 && go.Y == 288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c17").GameObjects.First(go => go.X == 192 && go.Y == 288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c18").GameObjects.First(go => go.X == 128 && go.Y == 192 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c18").GameObjects.First(go => go.X == 480 && go.Y == 192 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c21").GameObjects.First(go => go.X == 160 && go.Y == 384 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                     gmData.Rooms.ByName("rm_a5c21").GameObjects.First(go => go.X == 96 && go.Y == 560 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content),
+                 })
         {
-            foreach (UndertaleRoom.GameObject go in room.GameObjects.Where(go => go.ObjectDefinition == elderSeptogg && go.CreationCode is not null))
-            {
-                go.CreationCode.ReplaceGMLInCode("global.item[0]", "global.hasBombs", true);
-            }
+            gameObject.CreationCode.ReplaceGMLInCode("global.item[0]", "global.hasBombs");
         }
-
 
         // Powergrip
         subscreenMiscDaw.ReplaceGMLInCode("global.item[1]", "global.hasPowergrip");
@@ -85,8 +75,10 @@ public class DecoupleItemsFromLocations
         // Spiderball
         subscreenMiscDaw.ReplaceGMLInCode("global.item[2]", "global.hasSpiderball");
         subscreenMenuStep.ReplaceGMLInCode("global.item[2] == 0", "!global.hasSpiderball");
-        foreach (UndertaleCode code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                               c.Name.Content.Contains('2')) || c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
+        foreach (UndertaleCode code in gmData.Code.Where(c =>
+                     (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && c.Name.Content.Contains('2')) ||
+                    c.Name.Content ==  gmData.Rooms.ByName("rm_a0h25").GameObjects.First(go => go.X == 120 && go.Y == 816 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content).CreationCode.Name.Content)
+                 )
         {
             code.ReplaceGMLInCode("global.item[2]", "global.hasSpiderball");
         }
@@ -94,15 +86,17 @@ public class DecoupleItemsFromLocations
         // Jumpball
         subscreenMiscDaw.ReplaceGMLInCode("global.item[3]", "global.hasJumpball");
         subscreenMenuStep.ReplaceGMLInCode("global.item[3] == 0", "!global.hasJumpball");
-        gmData.Code.ByName("gml_RoomCC_rm_a2a06_4761_Create").ReplaceGMLInCode("global.item[3] == 0", "!global.hasJumpball");
+        rm_a2a06.GameObjects.First(go => go.X == 608 && go.Y == 112 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.ReplaceGMLInCode("global.item[3] == 0", "!global.hasJumpball");
 
         // Hijump
         UndertaleCode? subcreenBootsDraw = gmData.Code.ByName("gml_Object_oSubScreenBoots_Draw_0");
         subcreenBootsDraw.ReplaceGMLInCode("global.item[4]", "global.hasHijump");
         subscreenMenuStep.ReplaceGMLInCode("global.item[4] == 0", "!global.hasHijump");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('4')) || c.Name.Content == "gml_Room_rm_a3b08_Create" ||
-                                                               c.Name.Content == "gml_RoomCC_rm_a5c17_7779_Create"))
+        foreach (UndertaleCode? code in gmData.Code.Where(c =>
+                     (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && c.Name.Content.Contains('4')) ||
+                     c.Name.Content == "gml_Room_rm_a3b08_Create" ||
+                     c.Name.Content == gmData.Rooms.ByName("rm_a5c17").GameObjects.First(go => go.X == 192 && go.Y == 288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content).CreationCode.Name.Content)
+                 )
         {
             code.ReplaceGMLInCode("global.item[4]", "global.hasHijump");
         }
@@ -120,7 +114,7 @@ public class DecoupleItemsFromLocations
             gmData.Code.ByName(code).ReplaceGMLInCode("global.item[5]", "global.hasVaria");
         }
 
-        // Spacejump
+        // Spacejump // TODO: revise this, so that we don't set ignoreErrors.
         subcreenBootsDraw.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump");
         subscreenMenuStep.ReplaceGMLInCode("global.item[6] == 0", "!global.hasSpacejump");
         foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
@@ -130,7 +124,7 @@ public class DecoupleItemsFromLocations
             code.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump", true);
         }
 
-        // Speedbooster
+        // Speedbooster // TODO: revise this, so that we don't set ignoreErrors.
         subcreenBootsDraw.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster");
         subscreenMenuStep.ReplaceGMLInCode("global.item[7] == 0", "!global.hasSpeedbooster");
         foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
@@ -140,7 +134,7 @@ public class DecoupleItemsFromLocations
         }
 
 
-        // Screwattack
+        // Screwattack // TODO: revise this, so that we don't set ignoreErrors.
         subscreenMiscDaw.ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
         subscreenMenuStep.ReplaceGMLInCode("global.item[8] == 0", "!global.hasScrewattack");
         foreach (string code in new[]
@@ -156,7 +150,7 @@ public class DecoupleItemsFromLocations
         }
 
 
-        // Gravity
+        // Gravity // TODO: revise this, so that we don't set ignoreErrors.
         subscreenSuitDraw.ReplaceGMLInCode("global.item[9]", "global.hasGravity");
         subscreenMenuStep.ReplaceGMLInCode("global.item[9] == 0", "!global.hasGravity");
 

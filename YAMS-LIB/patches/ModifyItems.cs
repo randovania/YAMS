@@ -154,13 +154,12 @@ public class ModifyItems
             gmObject.Sprite = gmData.Sprites.ByName(pickup.SpriteDetails.Name);
             if (gmObject.Sprite is null && !String.IsNullOrWhiteSpace(pickup.SpriteDetails.Name))
             {
-                throw new NotSupportedException($"The sprite for {pickupName} ({gmObject.Name.Content}) cannot be null!");
+                throw new NotSupportedException($"The sprite for {pickupName} ({gmObject.Name.Content}) cannot be null! (Sprite name was \"{pickup.SpriteDetails.Name}\")");
             }
 
             // First 0 is for creation event
             UndertaleCode? createCode = gmObject.Events[0][0].Actions[0].CodeId;
-            createCode.AppendGMLInCode($"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\";" +
-                                        $"btn1_name = \"\"; btn2_name = \"\"; itemName = \"{pickup.ItemEffect.GetEnumMemberValue()}\"; itemQuantity = {pickup.Quantity};");
+            createCode.AppendGMLInCode($"image_speed = {pickup.SpriteDetails.Speed}; text1 = \"{pickup.Text.Header}\"; text2 = \"{pickup.Text.Description}\"; btn1_name = \"\"; btn2_name = \"\"; itemName = \"{pickup.ItemEffect.GetEnumMemberValue()}\"; itemQuantity = {pickup.Quantity};");
             // First 4 is for Collision event
             UndertaleCode? collisionCode = gmObject.Events[4][0].Actions[0].CodeId;
             string collisionCodeToBe = pickup.ItemEffect switch
@@ -234,6 +233,7 @@ public class ModifyItems
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect),
             };
+
             collisionCode.SubstituteGMLCode(collisionCodeToBe);
         }
 

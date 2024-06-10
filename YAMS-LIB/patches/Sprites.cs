@@ -12,6 +12,7 @@ namespace YAMS_LIB.patches;
 
 public class Sprites
 {
+    // TODO: clean this up a little
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         var nameToPageItemDict = new Dictionary<string, int>();

@@ -138,7 +138,7 @@ public class DoorLockRando
                         int tileDepth = -80;
                         var doorTileset = gmData.Backgrounds.ByName("tlDoorsExtended");
                         room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)0 : 128, 96, 32, 64));
-                        // Extend the tiles if goto object is on the edge of room or on special cases
+                        // Extend the tiles if goto object is on the edge of room or on special cases - TODO: do not use instance IDs.
                         bool shouldExtendTiles = gameObject.X == 0 || gameObject.X == room.Width || door.InstanceID switch
                         {
                             138494 or       // Top transition in hideout alpha nest
@@ -149,6 +149,7 @@ public class DoorLockRando
                             _ => false
                         };
 
+                        // TODO: do not use instance IDs.
                         int maxIteration = door.InstanceID switch
                         {
                             144652 => 8,   // Top transition in waterfalls entryway

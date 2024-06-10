@@ -10,10 +10,10 @@ public class AddInGameHints
     private static void PatchIceBeamHint(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         // Make log in lab always appear
-        gmData.Code.ByName("gml_Room_rm_a7b04A_Create").ReplaceGMLInCode( "oControl.chozomessage >= 10", "true");
+        gmData.Code.ByName("gml_Room_rm_a7b04A_Create").ReplaceGMLInCode("oControl.chozomessage >= 10", "true");
         // Fix hint dissappearing when visiting room right after baby scan
-        gmData.Code.ByName("gml_Object_oChozoLogMarker_Step_0").ReplaceGMLInCode( "instance_exists(oNotification)", "instance_exists(oNotification) && oNotification.log == 1");
-        // Change text to be hint
+        gmData.Code.ByName("gml_Object_oChozoLogMarker_Step_0").ReplaceGMLInCode("instance_exists(oNotification)", "instance_exists(oNotification) && oNotification.log == 1");
+        // Change text to be a hint
         gmData.Code.ByName("gml_Script_load_logs_list").AppendGMLInCode( $"lbl[44] = \"Ice Beam Hint\"; txt[44, 0] = \"{seedObject.Hints[HintLocationEnum.ChozoLabs]}\"; pic[44, 0] = bgLogImg44B");
         // Remove second scanning
         gmData.Code.ByName("gml_Room_rm_a0h01_Create").ReplaceGMLInCode( "scan_log(44, get_text(\"Misc\", \"Translation\"), 180, 1)", "if (false) {}");
@@ -59,7 +59,7 @@ public class AddInGameHints
             repeat (100)
             """);
         // Add 7 new Hint logs to the new category 5
-        gmData.Code.ByName("gml_Script_create_log_category").ReplaceGMLInCode( "dlognum = 0", """
+        gmData.Code.ByName("gml_Script_create_log_category").ReplaceGMLInCode("dlognum = 0", """
             if (argument0 == 5)
             {
                 clognum = 7
@@ -68,20 +68,20 @@ public class AddInGameHints
             dlognum = 0
             """);
         // Add categories
-        gmData.Code.ByName("gml_Object_oLogScreen_Create_0").ReplaceGMLInCode( "create_log_category(category)", """
+        gmData.Code.ByName("gml_Object_oLogScreen_Create_0").ReplaceGMLInCode("create_log_category(category)", """
             if (global.gotolog >= 50 && global.gotolog < 60)
                 category = 5
             create_log_category(category)
             """);
         // This stuff is for the menu. The array thing might not be needed, but did it anyway, increasing by the same amount as the global.log arrays.
-        gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode( """
+        gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode("""
             i = 59
             repeat (60)
             """, """
             i = 109
             repeat (110)
             """);
-        gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode( """
+        gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode("""
             j += 1
             create_log_label(cat[4])
             create_log_entry(41)
@@ -112,7 +112,7 @@ public class AddInGameHints
             }
             """);
         // Defines the new septogg hint entries
-        gmData.Code.ByName("gml_Script_load_logs_list").AppendGMLInCode( $"""
+        gmData.Code.ByName("gml_Script_load_logs_list").AppendGMLInCode($"""
             cat[5] = "DNA Hints"
             lbl[50] = "{seedObject.RoomObjects["rm_a0h13"].RegionName}"
             txt[50, 0] = "{seedObject.Hints[HintLocationEnum.SeptoggA0]}"

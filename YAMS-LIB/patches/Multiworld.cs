@@ -6,6 +6,7 @@ namespace YAMS_LIB.patches;
 
 public class Multiworld
 {
+    // TODO: add locals here correctly.
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
