@@ -6,7 +6,6 @@ namespace YAMS_LIB.patches;
 
 public class Multiworld
 {
-    // TODO: add locals here correctly.
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
@@ -219,16 +218,7 @@ public class Multiworld
                                              """);
 
         // Received network packet event.
-        var oControlNetworkReceived = new UndertaleCode() { Name = gmData.Strings.MakeString("gml_Object_oControl_Other_68") };
-        UndertaleCodeLocals locals = new UndertaleCodeLocals();
-        locals.Name = oControlNetworkReceived.Name;
-        UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
-        argsLocal.Name = gmData.Strings.MakeString("arguments");
-        argsLocal.Index = 0;
-        locals.Locals.Add(argsLocal);
-        oControlNetworkReceived.LocalsCount = 1;
-        gmData.CodeLocals.Add(locals);
-        oControlNetworkReceived.SubstituteGMLCode($$"""
+        gmData.Code.AddCodeEntry("gml_Object_oControl_Other_68",$$"""
         mw_debug("Async Networking event entered")
         var type_event, _buffer, bufferSize, msgid, handshake, socket, malformed, protocolVer, length, currentPos, i, upperLimit;
         type_event = ds_map_find_value(async_load, "type")
@@ -513,13 +503,5 @@ public class Multiworld
         }
         mw_debug("Leaving async networking event")
         """);
-        gmData.Code.Add(oControlNetworkReceived);
-        var oControlCollisionList = gmData.GameObjects.ByName("oControl").Events[7];
-        var oControlAction = new UndertaleGameObject.EventAction();
-        oControlAction.CodeId = oControlNetworkReceived;
-        var oControlEvent = new UndertaleGameObject.Event();
-        oControlEvent.EventSubtype = 68;
-        oControlEvent.Actions.Add(oControlAction);
-        oControlCollisionList.Add(oControlEvent);
     }
 }
