@@ -104,7 +104,7 @@ public static class ExtensionMethods
     {
         var codeEntry = new UndertaleCode() { Name = gmData.Strings.MakeString($"gml_Script_{name}") };
         gmData.Code.Add(codeEntry);
-        // add locals - TODO: add these everywhere where we add code!!!
+        // add locals
         UndertaleCodeLocals locals = new UndertaleCodeLocals();
         locals.Name = codeEntry.Name;
         UndertaleCodeLocals.LocalVar argsLocal = new UndertaleCodeLocals.LocalVar();
