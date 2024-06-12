@@ -595,6 +595,52 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("light_level")]
     public string? LightLevel;
+
+    [JsonInclude]
+    [JsonPropertyName("liquid_info")]
+    public LiquidInfo LiquidInfo = new LiquidInfo();
+}
+
+public class LiquidInfo
+{
+    public enum LiquidTypeEnum
+    {
+        Water = 0,
+        Laval = 1,
+    }
+
+    [JsonInclude]
+    [JsonPropertyName("liquid_type")]
+    public LiquidTypeEnum LiquidType;
+
+    [JsonInclude]
+    [JsonPropertyName("liquid_level")]
+    public int LiquidLevel;
+
+    [JsonInclude]
+    [JsonPropertyName("should_move_horizontally")]
+    public bool ShouldMoveHorizontally;
+
+    [JsonInclude]
+    [JsonPropertyName("should_wave")]
+    public bool ShouldWave;
+
+    [JsonInclude]
+    [JsonPropertyName("wave_speed")]
+    public int WaveSpeed;
+
+    [JsonInclude]
+    [JsonPropertyName("wave_height")]
+    public int WaveHeight;
+
+    [JsonInclude]
+    [JsonPropertyName("should_be_at_very_front")]
+    public bool PutAtVeryFront;
+
+    internal string FormatForDSMap()
+    {
+        return $"{(int)LiquidType}|{LiquidLevel}|{Convert.ToInt32(ShouldMoveHorizontally)}|{Convert.ToInt32(ShouldWave)}|{WaveSpeed}|{WaveHeight}|{Convert.ToInt32(PutAtVeryFront)}";
+    }
 }
 
 public class PipeObject

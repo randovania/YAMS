@@ -58,6 +58,9 @@ public class Patcher
         // Use custom darkness levels
         CustomDarknessLevels.Apply(gmData, decompileContext, seedObject);
 
+        // Use custom liquid info
+        CustomWaterLevel.Apply(gmData, decompileContext, seedObject);
+
         // Run these in parallel to speed up performance slightly
         List<Task> nonCodeTasks = new List<Task>();
 
