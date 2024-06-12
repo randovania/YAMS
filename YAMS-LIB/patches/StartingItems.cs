@@ -165,7 +165,7 @@ public class StartingItems
             characterVarsCode.AppendGMLInCode($"global.collectedItems += \"{item.GetEnumMemberValue()}|{quantity},\"");
         }
         // After we have gotten our starting items, adjust the DNA counter
-        characterVarsCode.AppendGMLInCode($"global.dna = (46 - {seedObject.Patches.RequiredDNAmount}) + {howMuchDna}");
+        characterVarsCode.PrependGMLInCode($"global.dna = (46 - {seedObject.Patches.RequiredDNAmount}) + {howMuchDna}");
 
         // Check whether option has been set for non-main launchers or if starting with them, if yes enable the main launchers in character var
         if (!seedObject.Patches.RequireMissileLauncher || seedObject.StartingItems.ContainsKey(ItemEnum.MissileLauncher))

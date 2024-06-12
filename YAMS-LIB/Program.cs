@@ -55,6 +55,8 @@ public class Patcher
         // Decouple the item locations from the actual items
         DecoupleItemsFromLocations.Apply(gmData, decompileContext, seedObject);
 
+        // Use custom darkness levels
+        CustomDarknessLevels.Apply(gmData, decompileContext, seedObject);
 
         // Run these in parallel to speed up performance slightly
         List<Task> nonCodeTasks = new List<Task>();
@@ -148,7 +150,7 @@ public class Patcher
             door.CreationCode.SubstituteGMLCode("lock = 0;");
         }
 
-        // Fix Tower activation unlocking right door for door lock rando
+        // Fix Tower activation unlocking right door for door lock rando - TODO: instance ID
         if (seedObject.DoorLocks.ContainsKey(127890)) gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("lock = 0", "lock = lock;");
 
         // Fix tester being fought in darkness / proboscums being disabled on not activated tower
