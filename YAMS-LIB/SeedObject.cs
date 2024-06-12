@@ -591,6 +591,10 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("minimap_data")]
     public List<Coordinate> MinimapData = new List<Coordinate>();
+
+    [JsonInclude]
+    [JsonPropertyName("light_level")]
+    public string? LightLevel;
 }
 
 public class PipeObject

@@ -11,11 +11,9 @@ public class FlashLightItem
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
         // Flashlight
         characterVarsCode.PrependGMLInCode("global.flashlightLevel = 0;");
-        gmData.Code.ByName("gml_Script_ApplyLightPreset").ReplaceGMLInCode("global.darkness", "lightLevel");
-        gmData.Code.ByName("gml_Script_ApplyLightPreset").PrependGMLInCode(
+        gmData.Code.ByName("gml_Script_ApplyLightPreset").ReplaceGMLInCode("lightLevel = lightLevelValue",
             """
-            var lightLevel = 0
-            lightLevel = global.darkness - global.flashlightLevel
+            lightLevel = lightLevelValue - global.flashlightLevel
             if (lightLevel < 0)
                 lightLevel = 0
             if (lightLevel > 4)
