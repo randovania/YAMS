@@ -240,9 +240,9 @@ public class Patcher
             $"with (oDoor) {{ if ({empBatteryCellCondition}) lock = 0 }}");
 
         string a5ActivateCondition = "false";
-        foreach (uint doorID in new uint[] { 133732, 133731 })  // TODO: instance IDs
+        foreach (var doorObject in gmData.Rooms.ByName("rm_a5c07").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oDoorA5"))
         {
-            if (!seedObject.DoorLocks.ContainsKey(doorID)) a5ActivateCondition += $" || id == {doorID}";
+            if (!seedObject.DoorLocks.ContainsKey(doorObject.InstanceID)) a5ActivateCondition += $" || id == {doorObject.InstanceID}";
         }
 
         gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("""

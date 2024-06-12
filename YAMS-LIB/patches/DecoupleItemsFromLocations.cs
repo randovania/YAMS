@@ -95,7 +95,7 @@ public class DecoupleItemsFromLocations
         foreach (UndertaleCode? code in gmData.Code.Where(c =>
                      (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && c.Name.Content.Contains('4')) ||
                      c.Name.Content == "gml_Room_rm_a3b08_Create" ||
-                     c.Name.Content == gmData.Rooms.ByName("rm_a5c17").GameObjects.First(go => go.X == 192 && go.Y == 288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content).CreationCode.Name.Content)
+                     c == gmData.Rooms.ByName("rm_a5c17").GameObjects.First(go => go.X == 192 && go.Y == 288 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content).CreationCode)
                  )
         {
             code.ReplaceGMLInCode("global.item[4]", "global.hasHijump");
@@ -114,23 +114,27 @@ public class DecoupleItemsFromLocations
             gmData.Code.ByName(code).ReplaceGMLInCode("global.item[5]", "global.hasVaria");
         }
 
-        // Spacejump // TODO: revise this, so that we don't set ignoreErrors.
+        // Spacejump
         subcreenBootsDraw.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump");
         subscreenMenuStep.ReplaceGMLInCode("global.item[6] == 0", "!global.hasSpacejump");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('6')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5a03_") ||
-                                                               c.Name.Content == "gml_RoomCC_rm_a0h25_4105_Create"))
+        foreach (UndertaleCode? code in gmData.Code.Where(c =>
+                     (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && c.Name.Content.Contains('6')) ||
+                     gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(go => go.X is >= 96 and <= 112 && go.Y is >= 240 and <= 288 && go.ObjectDefinition.Name.Content == "oBlockStep").Select(go => go.CreationCode).Contains(c) ||
+                     c == gmData.Rooms.ByName("rm_a0h25").GameObjects.First(go => go.X == 120 && go.Y == 816 && go.ObjectDefinition.Name.Content == elderSeptogg.Name.Content).CreationCode)
+                 )
         {
-            code.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump", true);
+            code.ReplaceGMLInCode("global.item[6]", "global.hasSpacejump");
         }
 
-        // Speedbooster // TODO: revise this, so that we don't set ignoreErrors.
+        // Speedbooster
         subcreenBootsDraw.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster");
         subscreenMenuStep.ReplaceGMLInCode("global.item[7] == 0", "!global.hasSpeedbooster");
-        foreach (UndertaleCode? code in gmData.Code.Where(c => (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") &&
-                                                                c.Name.Content.Contains('7')) || c.Name.Content.StartsWith("gml_RoomCC_rm_a5c08_")))
+        foreach (UndertaleCode? code in gmData.Code.Where(c =>
+                     (c.Name.Content.StartsWith("gml_Script_scr_septoggs_") && c.Name.Content.Contains('7')) ||
+                     gmData.Rooms.ByName("rm_a5c08").GameObjects.Where(go => go.Y == 32 && go.ObjectDefinition.Name.Content == "oBlockSpeed").Select(go => go.CreationCode).Contains(c))
+                 )
         {
-            code.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster", true);
+            code.ReplaceGMLInCode("global.item[7]", "global.hasSpeedbooster");
         }
 
 
