@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.6.0] - 2024-06-14
+
+### Added
+- Add the ability for custom darkness levels in rooms.
+- Add the ability for custom liquid levels in rooms.
+
+### Changed
+- Internal refactor to make future code editing easier.
+
+### Fixed
+- Fixed credits for Infinite Wall Jump Boots and Infinite Bomb Propulsion.
+
+
 ## [2.5.0] - 2024-05-27
 
 ### Changed
