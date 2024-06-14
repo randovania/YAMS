@@ -64,8 +64,8 @@ public class Patcher
         // Run these in parallel to speed up performance slightly
         List<Task> nonCodeTasks = new List<Task>();
 
-        // Import new Sprites
-        nonCodeTasks.Add(Task.Run(() => Sprites.Apply(gmData, decompileContext, seedObject)));
+        // Import new Sprites (can't run it parallel, 'cause some edits rely on this being done first.)
+        Sprites.Apply(gmData, decompileContext, seedObject);
         // Apply cosmetic patches
         nonCodeTasks.Add(Task.Run(() => CosmeticHud.Apply(gmData, decompileContext, seedObject)));
         // Shuffle Music
