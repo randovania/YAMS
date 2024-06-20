@@ -144,7 +144,7 @@ public class DoorLockRando
                         // Top transition in waterfalls entryway
                         uint waterfallID = gmData.Rooms.ByName("rm_a6b17").GameObjects.First(go => go.X == 320 && go.Y == 144 && go.ObjectDefinition == goToRoomObject).InstanceID;
                         // Top transition in hideout alpha nest
-                        uint hideoutAlphaID = gmData.Rooms.ByName("rm_a6b17").GameObjects.First(go => go.X == 1280 && go.Y == 176 && go.ObjectDefinition == goToRoomObject)
+                        uint hideoutAlphaID = gmData.Rooms.ByName("rm_a6a09").GameObjects.First(go => go.X == 1280 && go.Y == 176 && go.ObjectDefinition == goToRoomObject)
                             .InstanceID;
                         // Bottom transition in Skreek Street
                         uint skreekStreetID = gmData.Rooms.ByName("rm_a0h30").GameObjects.First(go => go.X == 960 && go.Y == 848 && go.ObjectDefinition == goToRoomObject)
