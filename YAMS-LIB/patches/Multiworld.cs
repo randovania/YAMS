@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
@@ -9,6 +10,7 @@ public class Multiworld
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
+        var oControl = gmData.GameObjects.ByName("oControl");
 
         // Multiworld stuff
         // Needed variables
@@ -22,46 +24,46 @@ public class Multiworld
         file_text_close(f)
         """);
 
-        gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode($"""
-        year = string(current_year)
-        month = string(current_month)
-        day = string(current_day)
-        hour = string(current_hour)
-        minute = string(current_minute)
-        PACKET_HANDSHAKE=1
-        PACKET_UUID=2
-        PACKET_LOG=3
-        PACKET_KEEP_ALIVE=4
-        PACKET_NEW_INVENTORY=5
-        PACKET_NEW_LOCATION=6
-        PACKET_RECEIVED_PICKUPS=7
-        PACKET_GAME_STATE=8
-        PACKET_DISPLAY_MESSAGE=9
-        PACKET_MALFORMED=10
-        socketServer = network_create_server_raw(0, 2016, 1)
-        if (socketServer < 0) mw_debug("The port 2016 was not able to be opened!")
-        packetNumber = 0
-        networkProtocolVersion = 1
-        hasConnectedAtLeastOnce = false
-        hasConnectedAlpha = 1
-        hasConnectedAlphaDirection = 0
-        currentGameUuid = "{seedObject.Identifier.WorldUUID}"
-        clientState = 0
-        CLIENT_DISCONNECTED = 0
-        CLIENT_HANDSHAKE_CONNECTION = 1
-        CLIENT_FULLY_CONNECTED = 2
-        clientSocket = 0
-        messageDisplay = ""
-        messageDisplayTimer = 0
-        MESSAGE_DISPLAY_TIMER_INITIAL = 360
-        fetchPickupTimer = -1
-        PICKUP_TIMER_INITIAL = 180
-        global.lastOffworldNumber = 0
-        global.collectedIndices = "locations:"
-        global.collectedItems = "items:"
-        tempTimer = 0
-        mw_debug("Multiworld variables initialized");
-        """);
+        oControl.EventHandlerFor(EventType.Create, gmData).PrependGMLInCode($"""
+            year = string(current_year)
+            month = string(current_month)
+            day = string(current_day)
+            hour = string(current_hour)
+            minute = string(current_minute)
+            PACKET_HANDSHAKE=1
+            PACKET_UUID=2
+            PACKET_LOG=3
+            PACKET_KEEP_ALIVE=4
+            PACKET_NEW_INVENTORY=5
+            PACKET_NEW_LOCATION=6
+            PACKET_RECEIVED_PICKUPS=7
+            PACKET_GAME_STATE=8
+            PACKET_DISPLAY_MESSAGE=9
+            PACKET_MALFORMED=10
+            socketServer = network_create_server_raw(0, 2016, 1)
+            if (socketServer < 0) mw_debug("The port 2016 was not able to be opened!")
+            packetNumber = 0
+            networkProtocolVersion = 1
+            hasConnectedAtLeastOnce = false
+            hasConnectedAlpha = 1
+            hasConnectedAlphaDirection = 0
+            currentGameUuid = "{seedObject.Identifier.WorldUUID}"
+            clientState = 0
+            CLIENT_DISCONNECTED = 0
+            CLIENT_HANDSHAKE_CONNECTION = 1
+            CLIENT_FULLY_CONNECTED = 2
+            clientSocket = 0
+            messageDisplay = ""
+            messageDisplayTimer = 0
+            MESSAGE_DISPLAY_TIMER_INITIAL = 360
+            fetchPickupTimer = -1
+            PICKUP_TIMER_INITIAL = 180
+            global.lastOffworldNumber = 0
+            global.collectedIndices = "locations:"
+            global.collectedItems = "items:"
+            tempTimer = 0
+            mw_debug("Multiworld variables initialized");
+            """);
 
         // Also add the save items to character vars
         characterVarsCode.PrependGMLInCode("""
@@ -144,13 +146,15 @@ public class Multiworld
         }
         """);
 
-        gmData.Code.ByName("gml_Object_oControl_Other_4").AppendGMLInCode("""
+
+
+        oControl.EventHandlerFor(EventType.Other, EventSubtypeOther.User4, gmData).AppendGMLInCode("""
         mw_debug("Player has changed their room")
         send_room_info_packet();
         """);
 
         // Periodically send what our last received offworld item was
-        gmData.Code.ByName("gml_Object_oControl_Step_0").AppendGMLInCode("""
+        oControl.EventHandlerFor(EventType.Step, gmData).AppendGMLInCode("""
         if (socketServer >= 0 && clientState >= oControl.CLIENT_FULLY_CONNECTED && fetchPickupTimer == 0)
         {
             mw_debug("Sending PickupTimer packet. Our current value: " + string(global.lastOffworldNumber));
@@ -218,7 +222,7 @@ public class Multiworld
                                              """);
 
         // Received network packet event.
-        gmData.Code.AddCodeEntry("gml_Object_oControl_Other_68",$$"""
+        oControl.EventHandlerFor(EventType.Other, EventSubtypeOther.AsyncNetworking, gmData).SubstituteGMLCode($$"""
         mw_debug("Async Networking event entered")
         var type_event, _buffer, bufferSize, msgid, handshake, socket, malformed, protocolVer, length, currentPos, i, upperLimit;
         type_event = ds_map_find_value(async_load, "type")
