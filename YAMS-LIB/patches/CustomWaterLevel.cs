@@ -37,7 +37,8 @@ public class CustomWaterLevel
                 i++
             }
 
-            if (splitted[0] == 0)
+            // Water level 0 is considered by the game as "doesnt exist".
+            if (splitted[1] == 0)
                 exit;
 
             with (oWater)
