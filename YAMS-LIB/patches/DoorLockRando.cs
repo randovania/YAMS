@@ -154,7 +154,7 @@ public class DoorLockRando
                             .InstanceID;
 
                         bool shouldExtendTiles = false;
-                        if (gameObject.X == 0 || gameObject.Y == 0)
+                        if (gameObject.X == 0 || gameObject.X == room.Width)
                             shouldExtendTiles = true;
                         else if (door.InstanceID == waterfallID || door.InstanceID == hideoutAlphaID || door.InstanceID == skreekStreetID || door.InstanceID == graveGrottoID)
                             shouldExtendTiles = true;
