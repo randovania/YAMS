@@ -110,6 +110,8 @@ Prime items:
 
 Metroid: Samus Returns items:
 - The Baby Metroid sprites (`offworld items/msr/baby`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and [Dyceron](https://twitch.tv/dyceron)
+- The Bomb sprites (`offworld items/msr/bombs`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
+- The Grapple Beam sprites (`offworld items/msr/grapple`) were made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - The Beam Burst sprites (`offworld items/msr/beamBurst`) were made by [Mimolette](https://twitter.com/VanessaMae1087)
 - The Lightning Armor sprites (`offworld items/msr/lightningArmor`) were made by [Mimolette](https://twitter.com/VanessaMae1087)
 - The Phase Drift sprites (`offworld items/msr/phaseDrift`) were made by [Mimolette](https://twitter.com/VanessaMae1087)
