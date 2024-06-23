@@ -37,10 +37,6 @@ public class CustomWaterLevel
                 i++
             }
 
-            // Water level 0 is considered by the game as "doesnt exist".
-            if (splitted[1] == 0)
-                exit;
-
             with (oWater)
                 instance_destroy()
             with (oWaterFXV2)
@@ -49,6 +45,10 @@ public class CustomWaterLevel
                 instance_destroy()
             with (oLavaBGFX)
                 instance_destroy()
+
+            // Water level 0 is considered by the game as "doesnt exist".
+            if (splitted[1] == 0)
+                exit;
 
             make_liquid(splitted[0], splitted[1], splitted[2], splitted[3], splitted[4], splitted[5], splitted[6]);
             """);
