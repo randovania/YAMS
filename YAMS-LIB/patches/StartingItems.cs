@@ -205,7 +205,6 @@ public class StartingItems
                                                 global.maxsmissiles = global.smissiles
                                                 global.maxpbombs = global.pbombs;
                                                 """);
-        characterVarsCode.ReplaceGMLInCode("global.currentsuit = 0",
-            "global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
+        characterVarsCode.AppendGMLInCode("global.currentsuit = 0; if (global.hasGravity) global.currentsuit = 2; else if (global.hasVaria) global.currentsuit = 1;");
     }
 }
