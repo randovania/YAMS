@@ -138,35 +138,39 @@ public class DecoupleItemsFromLocations
         }
 
 
-        // Screwattack // TODO: revise this, so that we don't set ignoreErrors.
+        // Screwattack
         subscreenMiscDaw.ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
         subscreenMenuStep.ReplaceGMLInCode("global.item[8] == 0", "!global.hasScrewattack");
-        foreach (string code in new[]
-                 {
-                     "gml_Script_scr_septoggs_2468", "gml_Script_scr_septoggs_48", "gml_RoomCC_rm_a1a06_4447_Create",
-                     "gml_RoomCC_rm_a1a06_4448_Create", "gml_RoomCC_rm_a1a06_4449_Create", "gml_RoomCC_rm_a3a04_5499_Create", "gml_RoomCC_rm_a3a04_5500_Create",
-                     "gml_RoomCC_rm_a3a04_5501_Create", "gml_RoomCC_rm_a4a01_6476_Create", "gml_RoomCC_rm_a4a01_6477_Create", "gml_RoomCC_rm_a4a01_6478_Create",
-                     "gml_RoomCC_rm_a5c13_7639_Create", "gml_RoomCC_rm_a5c13_7640_Create", "gml_RoomCC_rm_a5c13_7641_Create", "gml_RoomCC_rm_a5c13_7642_Create",
-                     "gml_RoomCC_rm_a5c13_7643_Create", "gml_RoomCC_rm_a5c13_7644_Create"
-                 })
+        foreach (var codeEntry in gmData.Code.Where(c =>
+                        c.Name.Content == "gml_Script_scr_septoggs_2468" ||
+                        c.Name.Content == "gml_Script_scr_septoggs_48" ||
+                        gmData.Rooms.ByName("rm_a1a06").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
+                        gmData.Rooms.ByName("rm_a3a04").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
+                        gmData.Rooms.ByName("rm_a4a01").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
+                        gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(go => go.X is >= 96 and <= 112 && go.Y is >= 240 and <= 288 && go.ObjectDefinition.Name.Content == "oBlockStep").Select(go => go.CreationCode).Contains(c)
+                 ))
+
         {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
+            codeEntry.ReplaceGMLInCode("global.item[8]", "global.hasScrewattack");
         }
 
 
-        // Gravity // TODO: revise this, so that we don't set ignoreErrors.
+        // Gravity
         subscreenSuitDraw.ReplaceGMLInCode("global.item[9]", "global.hasGravity");
         subscreenMenuStep.ReplaceGMLInCode("global.item[9] == 0", "!global.hasGravity");
 
-        foreach (string code in new[]
-                 {
-                     "gml_Script_scr_variasuitswap", "gml_Object_oGravitySuitChangeFX_Step_0", "gml_Object_oGravitySuitChangeFX_Other_10",
-                     "gml_RoomCC_rm_a2a06_4759_Create", "gml_RoomCC_rm_a2a06_4761_Create", "gml_RoomCC_rm_a5a03_8631_Create", "gml_RoomCC_rm_a5a03_8632_Create",
-                     "gml_RoomCC_rm_a5a03_8653_Create", "gml_RoomCC_rm_a5a03_8654_Create", "gml_RoomCC_rm_a5a03_8655_Create", "gml_RoomCC_rm_a5a03_8656_Create",
-                     "gml_RoomCC_rm_a5a03_8657_Create", "gml_RoomCC_rm_a5a03_8674_Create", "gml_RoomCC_rm_a5a05_8701_Create", "gml_RoomCC_rm_a5a06_8704_Create"
-                 })
+        foreach (var codeEntry in gmData.Code.Where(c =>
+                     c.Name.Content == "gml_Script_scr_variasuitswap" ||
+                     c.Name.Content == "gml_Object_oGravitySuitChangeFX_Step_0" ||
+                     c.Name.Content == "gml_Object_oGravitySuitChangeFX_Other_10" ||
+                     rm_a2a06.GameObjects.First(go => go.X == 608 && go.Y == 112 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode == c ||
+                     rm_a2a06.GameObjects.First(go => go.X == 624 && go.Y == 48 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode == c ||
+                     gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(go => go.X is >= 96 and <= 112 && go.Y is >= 240 and <= 288 && go.ObjectDefinition.Name.Content == "oBlockStep").Select(go => go.CreationCode).Contains(c) ||
+                     gmData.Rooms.ByName("rm_a50a5").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oElderSeptogg").CreationCode == c ||
+                     gmData.Rooms.ByName("rm_a5a06").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oBlockBomb" && go.X == 192 && go.Y == 64).CreationCode == c))
+
         {
-            gmData.Code.ByName(code).ReplaceGMLInCode("global.item[9]", "global.hasGravity");
+            codeEntry.ReplaceGMLInCode("global.item[9]", "global.hasGravity");
         }
 
         // Charge
