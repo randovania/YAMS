@@ -627,11 +627,11 @@ public class LiquidInfo
 
     [JsonInclude]
     [JsonPropertyName("wave_speed")]
-    public int WaveSpeed;
+    public double WaveSpeed;
 
     [JsonInclude]
     [JsonPropertyName("wave_height")]
-    public int WaveHeight;
+    public double WaveHeight;
 
     [JsonInclude]
     [JsonPropertyName("should_be_at_very_front")]
