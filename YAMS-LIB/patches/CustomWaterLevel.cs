@@ -11,7 +11,10 @@ public class CustomWaterLevel
         StringBuilder sb = new StringBuilder("liquidInfoMappings = ds_map_create();");
         foreach ((var roomName, var roomObject)  in seedObject.RoomObjects)
         {
-            sb.Append($"\nds_map_add(liquidInfoMappings, \"{roomName}\", \"{roomObject.LiquidInfo.FormatForDSMap()}\");");
+            if (roomObject.LiquidInfo is not null)
+            {
+                sb.Append($"\nds_map_add(liquidInfoMappings, \"{roomName}\", \"{roomObject.LiquidInfo.FormatForDSMap()}\");");
+            }
         }
         gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode(sb.ToString());
         gmData.Scripts.AddScript("ApplyWaterLevel",

@@ -598,7 +598,7 @@ public class RoomObject
 
     [JsonInclude]
     [JsonPropertyName("liquid_info")]
-    public LiquidInfo LiquidInfo = new LiquidInfo();
+    public LiquidInfo? LiquidInfo = new LiquidInfo();
 }
 
 public class LiquidInfo
