@@ -8,14 +8,14 @@ namespace YAMS_LIB.patches;
 
 public class DoorLockRando
 {
-    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
+    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject, bool isHorde)
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         // Adjust global event array to be 900
-        characterVarsCode.ReplaceGMLInCode( """
-            i = 350
-            repeat (350)
+        characterVarsCode.ReplaceGMLInCode( $$"""
+            i = {{(!isHorde ? "350" : "400")}}
+            repeat ({{(!isHorde ? "350" : "400")}})
             {
                 i -= 1
                 global.event[i] = 0
@@ -77,7 +77,7 @@ public class DoorLockRando
         var a5Door = gmData.GameObjects.ByName("oDoorA5");
         foreach (var room in gmData.Rooms)
         {
-            foreach (var door in room.GameObjects.Where(go => go.ObjectDefinition.Name.Content.StartsWith("oDoor")))
+            foreach (var door in room.GameObjects.Where(go => go.ObjectDefinition is not null && go.ObjectDefinition.Name.Content.StartsWith("oDoor")))
             {
                 door.ObjectDefinition = a5Door;
             }

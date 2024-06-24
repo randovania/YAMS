@@ -5,7 +5,7 @@ namespace YAMS_LIB.patches.qol;
 
 public class ShowFullyUnexploredMap
 {
-    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
+    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject, bool isHorde)
     {
         var characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
@@ -39,8 +39,8 @@ public class ShowFullyUnexploredMap
             """);
 
         // Don't ever draw the debug pipe tiles
-        gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( """
-            if (argument7 == "H")
+        gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode($$"""
+            if (argument7 == "H"{{(isHorde ? " || argument8 == \"H\"" : "")}})
                 draw_sprite(sMapSP, 12, argument0, argument1)
             if (argument7 == "V")
                 draw_sprite(sMapSP, 13, argument0, argument1)

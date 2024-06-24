@@ -18,6 +18,7 @@ public class Patcher
     public static string Version = CreateVersionString();
     internal static UndertaleData? gmData;
     internal static GlobalDecompileContext? decompileContext;
+    internal static bool isHorde = false;
 
     private static string CreateVersionString()
     {
@@ -49,6 +50,8 @@ public class Patcher
         string controlCreate = gmData.Code.ByName("gml_Object_oControl_Create_0").GetGMLCode();
         bool useAnyVersion = Environment.GetEnvironmentVariable("YAMS_USE_ANY_AM2R_VERSION") == "true";
         if (!useAnyVersion && !controlCreate.Contains("global.am2r_version = \"V1.5.5\"")) throw new InvalidAM2RVersionException("The selected game is not AM2R 1.5.5!");
+
+        isHorde = gmData.Code.ByName("gml_Object_oDrawTitleBG_Create_0").GetGMLCode().Contains("hordeversion = \"The Horde");
 
         // Important invasive modifications done first
 
@@ -99,14 +102,18 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oSuitChangeFX_Step_0").ReplaceGMLInCode("bg1alpha = 0", "bg1alpha = 0; instance_create(x, y, oSuitChangeFX2);");
         gmData.Code.ByName("gml_Object_oSuitChangeFX2_Create_0").ReplaceGMLInCode("image_index = 1133", "sprite_index = sSuitChangeFX2_fusion");
 
-        // Don't respawn weapons when offscreen
-        DontDespawnWeaponsOffscreen.Apply(gmData, decompileContext, seedObject);
 
-        // Fix arachnus event value doing x coordinate BS
-        gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("global.event[103] = x", "global.event[103] = 1");
-        // Make arachnus item location always spawn in center
-        gmData.Code.ByName("gml_Room_rm_a2a04_Create").ReplaceGMLInCode("instance_create(global.event[103]", "instance_create(room_width / 2");
+        if (!isHorde)
+        {
+            // Don't respawn weapons when offscreen
+            DontDespawnWeaponsOffscreen.Apply(gmData, decompileContext, seedObject);
 
+            // Fix arachnus event value doing x coordinate BS
+            gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("global.event[103] = x", "global.event[103] = 1");
+            // Make arachnus item location always spawn in center
+            gmData.Code.ByName("gml_Room_rm_a2a04_Create").ReplaceGMLInCode("instance_create(global.event[103]", "instance_create(room_width / 2");
+
+        }
 
         // Killing queen should not lock you out of the rest of the game
         gmData.Rooms.ByName("rm_a0h01").GameObjects.Remove(gmData.Rooms.ByName("rm_a0h01").GameObjects.First(go => go.X == 4432 && go.Y == 992 && (Math.Abs(go.ScaleY - 4.0) < 0.1)));
@@ -314,7 +321,8 @@ public class Patcher
         AddDNAItem.Apply(gmData, decompileContext, seedObject);
 
         // In vanilla, you need empty ammo for charge beam to work. fix that.
-        MakeChargeBeamAlwaysHitMetroids.Apply(gmData, decompileContext, seedObject);
+        if (!isHorde)
+            MakeChargeBeamAlwaysHitMetroids.Apply(gmData, decompileContext, seedObject);
 
         // Add shortcut between nest and hideout
         if (seedObject.Patches.NestPipes)
@@ -323,7 +331,12 @@ public class Patcher
         }
 
         // Move alpha in nest
-        gmData.Rooms.ByName("rm_a6a09").GameObjects.First(go => go.X == 800 && go.Y == 368 && go.ObjectDefinition.Name.Content == "oMalpha3TriggerProx").CreationCode.ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
+        if (!isHorde)
+            gmData.Rooms.ByName("rm_a6a09").GameObjects.First(go => go.X == 800 && go.Y == 368 && go.ObjectDefinition.Name.Content == "oMalpha3TriggerProx").CreationCode.ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
+        else
+        {
+            gmData.Rooms.ByName("rm_a6a09").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oMZeta_Cocoon").CreationCode.ReplaceGMLInCode("if (global.lavastate > 8)", "y = 320; if (false)");
+        }
 
         // Lock these blocks behind a setting because they can make for some interesting changes
         gmData.Code.ByName("gml_Room_rm_a0h07_Create").ReplaceGMLInCode(
@@ -346,7 +359,7 @@ public class Patcher
             "if (itemtype == 1) {popup_text(text1);} global.itemtype = itemtype");
 
         // Add required launcher mains
-        RequiredMains.Apply(gmData, decompileContext, seedObject);
+        RequiredMains.Apply(gmData, decompileContext, seedObject, isHorde);
 
         // Have new variables for certain events because they are easier to debug via a switch than changing a ton of values
         // TODO: move these all into their seperate patches.
@@ -478,7 +491,7 @@ public class Patcher
         characterVarsCode.ReplaceGMLInCode("global.save_room = 0", $"global.save_room = {seedObject.StartingLocation.SaveRoom}");
 
         // Door locks
-        DoorLockRando.Apply(gmData, decompileContext, seedObject);
+        DoorLockRando.Apply(gmData, decompileContext, seedObject, isHorde);
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         ModifyItems.Apply(gmData, decompileContext, seedObject);
@@ -529,19 +542,19 @@ public class Patcher
         MandatoryGeometryChanges.Apply(gmData, decompileContext, seedObject);
         ScrewPipeBlocks.Apply(gmData, decompileContext, seedObject);
         BombBeforeA3.Apply(gmData, decompileContext, seedObject);
-        SoftlockPrevention.Apply(gmData, decompileContext, seedObject);
+        SoftlockPrevention.Apply(gmData, decompileContext, seedObject, isHorde);
         DontRespawnBombBlocks.Apply(gmData, decompileContext, seedObject);
 
 
         // On start, make all rooms show being "unexplored" similar to prime/super rando
-        ShowFullyUnexploredMap.Apply(gmData, decompileContext, seedObject);
+        ShowFullyUnexploredMap.Apply(gmData, decompileContext, seedObject, isHorde);
 
         // Force all breakables (except the hidden super blocks) to be visible
         ShowUnveiledBreakables.Apply(gmData, decompileContext, seedObject);
 
         // Skip cutscenes and fanfares
         GameplayCutsceneSkip.Apply(gmData, decompileContext, seedObject);
-        SaveCutsceneSkip.Apply(gmData, decompileContext, seedObject);
+        SaveCutsceneSkip.Apply(gmData, decompileContext, seedObject, isHorde);
         SkipItemFanfares.Apply(gmData, decompileContext, seedObject);
 
         // Patch to add room name display near health

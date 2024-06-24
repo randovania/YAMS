@@ -6,7 +6,7 @@ namespace YAMS_LIB.patches;
 
 public class RequiredMains
 {
-    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
+    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject, bool isHorde)
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
         // Add main (super) missile / PB launcher
@@ -37,10 +37,13 @@ public class RequiredMains
 
         // Change GUI For toggle, use a red item sprite instead of green, for hold use a red instead of yellow. For not selected, use a crossed out one.
         // Replace Missile GUI
+        if (isHorde)
+            drawGuiCode.ReplaceGMLInCode("mslspr = sGUIIceMissile", "mslspr = sGUIMissile");
+        string mslSprite = !isHorde ? "sGUIMissile" : "mslspr";
         drawGuiCode.ReplaceGMLInCode(
-            """
+            $$"""
                         if (global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
-                            draw_sprite(sGUIMissile, 0, (0 + xoff + 1), 4)
+                            draw_sprite({{mslSprite}}, 0, (0 + xoff + 1), 4)
             """,
             """
                         if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (!global.missileLauncher)))
@@ -49,27 +52,27 @@ public class RequiredMains
                             draw_sprite(sGUIMissile, 0, (0 + xoff + 1), 4)
 
             """);
-        drawGuiCode.ReplaceGMLInCode("""
+        drawGuiCode.ReplaceGMLInCode($$"""
                                                      if (oCharacter.armmsl == 0)
-                                                         draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
+                                                         draw_sprite({{mslSprite}}, 1, (0 + xoff + 1), 4)
                                      """, """
                                                           if (oCharacter.armmsl == 0 && global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
                                                           else if (oCharacter.armmsl == 0 && !global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 5, (0 + xoff + 1), 4)
                                           """);
-        drawGuiCode.ReplaceGMLInCode("""
+        drawGuiCode.ReplaceGMLInCode($$"""
                                                      if (oCharacter.armmsl == 1)
-                                                         draw_sprite(sGUIMissile, 2, (0 + xoff + 1), 4)
+                                                         draw_sprite({{mslSprite}}, 2, (0 + xoff + 1), 4)
                                      """, """
                                                           if (oCharacter.armmsl == 1 && global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 2, (0 + xoff + 1), 4)
                                                           else if (oCharacter.armmsl == 1 && !global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 3, (0 + xoff + 1), 4)
                                           """);
-        drawGuiCode.ReplaceGMLInCode("""
+        drawGuiCode.ReplaceGMLInCode($$"""
                                                  if (global.currentweapon == 1)
-                                                     draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
+                                                     draw_sprite({{mslSprite}}, 1, (0 + xoff + 1), 4)
                                      """, """
                                                       if (global.currentweapon == 1 && global.missileLauncher)
                                                           draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)

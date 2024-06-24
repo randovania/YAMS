@@ -6,7 +6,7 @@ namespace YAMS_LIB.patches.geometry;
 
 public class SoftlockPrevention
 {
-    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
+    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject, bool isHorde)
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
@@ -20,48 +20,48 @@ public class SoftlockPrevention
             go.ObjectDefinition = gmData.GameObjects.ByName("oBlockBombChain");
         }
 
-        gmData.Code.ByName("gml_Room_rm_a3b08_Create").ReplaceGMLInCode("""
+        gmData.Code.ByName("gml_Room_rm_a3b08_Create").ReplaceGMLInCode($$"""
                                                                             if (oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1)
                                                                             {
-                                                                                with (121234)
+                                                                                with ({{(!isHorde ? 121234 : 121259)}})
                                                                                     instance_destroy()
-                                                                                with (121235)
+                                                                                with ({{(!isHorde ? 121235 : 121260)}})
                                                                                     instance_destroy()
-                                                                                with (121236)
+                                                                                with ({{(!isHorde ? 121236 : 121261)}})
                                                                                     instance_destroy()
                                                                             }
                                                                             else if (global.item[2] == 1 || global.item[6] == 1 || global.hasHijump == 1)
                                                                             {
-                                                                                with (121234)
+                                                                                with ({{(!isHorde ? 121234 : 121259)}})
                                                                                     instance_destroy()
-                                                                                with (121235)
+                                                                                with ({{(!isHorde ? 121235 : 121260)}})
                                                                                     instance_destroy()
-                                                                                with (121236)
+                                                                                with ({{(!isHorde ? 121236 : 121261)}})
                                                                                     instance_destroy()
                                                                             }
                                                                             else
                                                                             {
-                                                                                with (121151)
+                                                                                with ({{(!isHorde ? 121151 : 121176)}})
                                                                                     instance_destroy()
                                                                                 tile_layer_delete_at(-105, 848, 192)
                                                                             }
-                                                                        """, """
-                                                                             if (global.softlockPrevention)
-                                                                             {
-                                                                                 with (121151)
-                                                                                     instance_destroy()
-                                                                                 tile_layer_delete_at(-105, 848, 192)
-                                                                             }
-                                                                             else
-                                                                             {
-                                                                                 with (121234)
-                                                                                     instance_destroy()
-                                                                                 with (121235)
-                                                                                     instance_destroy()
-                                                                                 with (121236)
-                                                                                     instance_destroy()
-                                                                             }
-                                                                             """);
+                                                                        """, $$"""
+            if (global.softlockPrevention)
+            {
+                with ({{(!isHorde ? 121151 : 121176)}})
+                    instance_destroy()
+                tile_layer_delete_at(-105, 848, 192)
+            }
+            else
+            {
+                with ({{(!isHorde ? 121234 : 121259)}})
+                    instance_destroy()
+                with ({{(!isHorde ? 121235 : 121260)}})
+                    instance_destroy()
+                with ({{(!isHorde ? 121236 : 121261)}})
+                    instance_destroy()
+            }
+            """);
 
         // speed booster blocks near a5 activation
         UndertaleRoom? a5c08 = gmData.Rooms.ByName("rm_a5c08");

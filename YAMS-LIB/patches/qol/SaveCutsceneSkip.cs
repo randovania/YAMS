@@ -6,20 +6,20 @@ namespace YAMS_LIB.patches.qol;
 
 public class SaveCutsceneSkip
 {
-    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
+    public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject, bool isHorde)
     {
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
 
         characterVarsCode.AppendGMLInCode($"global.skipSaveCutscene = {(seedObject.Patches.SkipSaveCutscene ? "1" : "0")}");
 
-        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("""
+        gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode($$"""
                                                                                  if (statetime == 1)
                                                                                  {
                                                                                      sfx_play(sndSave)
                                                                                      instance_create(x, y, oSaveFX)
                                                                                      instance_create(x, y, oSaveSparks)
                                                                                      popup_text(get_text("Notifications", "GameSaved"))
-                                                                                     save_game("save" + (string(global.saveslot + 1)))
+                                                                                     save_game({{(!isHorde ? "save" : "working_directory + \"/TheHorde/save\"")}} + (string(global.saveslot + 1)))
                                                                                      refill_heath_ammo()
                                                                                  }
                                                                                  if (statetime == 230)
