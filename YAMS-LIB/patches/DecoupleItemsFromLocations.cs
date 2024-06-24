@@ -147,7 +147,7 @@ public class DecoupleItemsFromLocations
                         gmData.Rooms.ByName("rm_a1a06").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
                         gmData.Rooms.ByName("rm_a3a04").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
                         gmData.Rooms.ByName("rm_a4a01").GameObjects.Where(go => go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c) ||
-                        gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(go => go.X is >= 96 and <= 112 && go.Y is >= 240 and <= 288 && go.ObjectDefinition.Name.Content == "oBlockStep").Select(go => go.CreationCode).Contains(c)
+                        gmData.Rooms.ByName("rm_a5c13").GameObjects.Where(go => go.X is >= 240 and <= 256 && go.Y is >= 114 and <= 176 && go.ObjectDefinition.Name.Content == "oBlockScrew").Select(go => go.CreationCode).Contains(c)
                  ))
 
         {
@@ -166,8 +166,9 @@ public class DecoupleItemsFromLocations
                      rm_a2a06.GameObjects.First(go => go.X == 608 && go.Y == 112 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode == c ||
                      rm_a2a06.GameObjects.First(go => go.X == 624 && go.Y == 48 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode == c ||
                      gmData.Rooms.ByName("rm_a5a03").GameObjects.Where(go => go.X is >= 96 and <= 112 && go.Y is >= 240 and <= 288 && go.ObjectDefinition.Name.Content == "oBlockStep").Select(go => go.CreationCode).Contains(c) ||
-                     gmData.Rooms.ByName("rm_a50a5").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oElderSeptogg").CreationCode == c ||
-                     gmData.Rooms.ByName("rm_a5a06").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oBlockBomb" && go.X == 192 && go.Y == 64).CreationCode == c))
+                     gmData.Rooms.ByName("rm_a5a05").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oElderSeptogg").CreationCode == c ||
+                     gmData.Rooms.ByName("rm_a5a06").GameObjects.First(go => go.ObjectDefinition.Name.Content == "oBlockBombChain" && go.X == 192 && go.Y == 64).CreationCode == c
+                     ))
 
         {
             codeEntry.ReplaceGMLInCode("global.item[9]", "global.hasGravity");
