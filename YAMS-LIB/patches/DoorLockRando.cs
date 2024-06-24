@@ -31,6 +31,10 @@ public class DoorLockRando
          gmData.Code.ByName("gml_Script_sv6_add_events").ReplaceGMLInCode( "350", "900");
          gmData.Code.ByName("gml_Script_sv6_get_events").ReplaceGMLInCode( "350", "900");
 
+         // Fix Tower activation unlocking right door for door lock rando
+         var rightTowerDoorID = gmData.Rooms.ByName("rm_a4a04").GameObjects.First(go => go.X == 616 && go.Y == 80 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+         if (seedObject.DoorLocks.ContainsKey(rightTowerDoorID)) gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("lock = 0", "lock = lock;");
+
          // Make water turbine generic where it can be shuffled
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").PrependGMLInCode("facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("""

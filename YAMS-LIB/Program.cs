@@ -153,9 +153,6 @@ public class Patcher
             door.CreationCode.SubstituteGMLCode("lock = 0;");
         }
 
-        // Fix Tower activation unlocking right door for door lock rando - TODO: instance ID
-        if (seedObject.DoorLocks.ContainsKey(127890)) gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("lock = 0", "lock = lock;");
-
         // Fix tester being fought in darkness / proboscums being disabled on not activated tower
         gmData.Code.ByName("gml_Object_oTesterBossTrigger_Other_10").PrependGMLInCode(
             "global.darkness = 0; with (oLightEngine) instance_destroy(); with (oFlashlight64); instance_destroy()");
@@ -226,9 +223,19 @@ public class Patcher
         // Make EMP slots activate doors instantly, rather than having to wait 1.5 seconds
         gmData.Code.ByName("gml_Object_oBattery_Collision_187").ReplaceGMLInCode("alarm[0] = 90", "alarm[0] = 1");
 
-        // Fix Emp devices unlocking all doors automatically! - TODO: instance IDs
+        // Fix Emp devices unlocking all doors automatically! - TODO: move these into door lock rando patch
         string empBatteryCellCondition = "false";
-        foreach (uint doorID in new uint[] { 108539, 111778, 115149, 133836, 133903, 133914, 133911, 134711, 134426, 135330 })
+        var a1EMPID = gmData.Rooms.ByName("rm_a1a06").GameObjects.First(go => go.X == 296 && go.Y == 1104 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var a2EMPID = gmData.Rooms.ByName("rm_a2c01").GameObjects.First(go => go.X == 24 && go.Y == 592 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var a3EMPID = gmData.Rooms.ByName("rm_a3h08").GameObjects.First(go => go.X == 24 && go.Y == 368 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var nearEscapeEMPID = gmData.Rooms.ByName("rm_a5c09").GameObjects.First(go => go.X == 24 && go.Y == 624 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var robotHomeEMPID = gmData.Rooms.ByName("rm_a5c10").GameObjects.First(go => go.X == 24 && go.Y == 80 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var a5RightTowerLeftDoorEMPID = gmData.Rooms.ByName("rm_a5c11").GameObjects.First(go => go.X == 24 && go.Y == 608 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var a5RightTowerRightDoorEMPID = gmData.Rooms.ByName("rm_a5c11").GameObjects.First(go => go.X == 296 && go.Y == 608 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var pipeHubEMPID = gmData.Rooms.ByName("rm_a5c15").GameObjects.First(go => go.X == 24 && go.Y == 128 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var nearSAEMPID = gmData.Rooms.ByName("rm_a5c21").GameObjects.First(go => go.X == 616 && go.Y == 320 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        var nearA5ExteriorEMPID = gmData.Rooms.ByName("rm_a5c33").GameObjects.First(go => go.X == 24 && go.Y == 128 && go.ObjectDefinition.Name.Content.StartsWith("oDoor")).InstanceID;
+        foreach (uint doorID in new uint[] { a1EMPID, a2EMPID, a3EMPID, nearEscapeEMPID, robotHomeEMPID, a5RightTowerLeftDoorEMPID, a5RightTowerRightDoorEMPID, pipeHubEMPID, nearSAEMPID, nearA5ExteriorEMPID })
         {
             if (!seedObject.DoorLocks.ContainsKey(doorID)) empBatteryCellCondition += $" || id == {doorID}";
         }
@@ -262,7 +269,7 @@ public class Patcher
             $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
 
 
-        //Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors and to "water should be here" if entering from the top.
+        // Destroy turbines and set the event to fully complete if entering "Water Turbine Station" at bottom doors and to "water should be here" if entering from the top.
         gmData.Code.ByName("gml_Room_rm_a2a08_Create").PrependGMLInCode("""
                                                                         if (global.targety == 160 && global.event[101] < 1)
                                                                             global.event[101] = 1;
