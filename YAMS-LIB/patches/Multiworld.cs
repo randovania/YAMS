@@ -148,7 +148,7 @@ public class Multiworld
 
 
 
-        oControl.EventHandlerFor(EventType.Other, EventSubtypeOther.User4, gmData).AppendGMLInCode("""
+        oControl.EventHandlerFor(EventType.Other, EventSubtypeOther.RoomStart, gmData).AppendGMLInCode("""
         mw_debug("Player has changed their room")
         send_room_info_packet();
         """);

@@ -44,7 +44,7 @@ public class DisplayRoomNameOnHUD
             draw_surface_ext(rnh_surface, (oControl.displayx - d[0]), (oControl.displayy - d[1]), oControl.display_scale, oControl.display_scale, 0, -1, 1)
         """);
 
-        var roomNameHudRoomStart = roomHudObject.EventHandlerFor(EventType.Other, EventSubtypeOther.User4, gmData);
+        var roomNameHudRoomStart = roomHudObject.EventHandlerFor(EventType.Other, EventSubtypeOther.RoomStart, gmData);
         roomNameHudRoomStart.SubstituteGMLCode( """
         var newRoomName = ds_map_find_value(roomNames, room_get_name(room))
         if (global.ingame && textToDisplay != newRoomName)
