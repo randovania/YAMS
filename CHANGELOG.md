@@ -1,7 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project (tries to) adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+
+## [2.7.0] - 2024-06-25
+
+### Added
+- Following offworld sprites for Metroid Samus Returns: Bombs, Grapple, Aeion Tank and Morph Ball
+- A way to use the game's default liquid value for a room rather than using YAMS' default values.
+
+### Fixed
+- Doors that are put over open transitions will now properly show again if they're on the right side of a room.
+- Edge case where when specifying custom a custom liquid state, it will use the previous room's state
+- Suits not being enabled by default when set as a starting item.
+- Room HUD and Multiworld room change not triggering when switching rooms.
+- `wave_speed` and `wave_height` being int's instead of double's.
 
 ## [2.6.2] - 2024-06-22
 
