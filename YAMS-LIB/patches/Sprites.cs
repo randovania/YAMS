@@ -513,11 +513,13 @@ public class Sprites
         #endregion
 
         #region Samus Returns
+        CreateAndAddItemSprite("sItemAeionTankMSR");
         CreateAndAddItemSprite("sItemBombsMSR");
         CreateAndAddItemSprite("sItemBabyMetroidMSR");
         CreateAndAddItemSprite("sItemBeamBurstMSR");
         CreateAndAddItemSprite("sItemGrappleBeamMSR");
         CreateAndAddItemSprite("sItemLightningArmorMSR");
+        CreateAndAddItemSprite("sItemMorphMSR");
         CreateAndAddItemSprite("sItemPhaseDriftMSR");
         CreateAndAddItemSprite("sItemScanPulseMSR");
         CreateAndAddItemSprite("sItemSpiderBallMSR");
