@@ -16,6 +16,12 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Room HUD and Multiworld room change not triggering when switching rooms.
 - `wave_speed` and `wave_height` being int's instead of double's.
 
+
+## [2.6.3] - 2024-06-28
+
+### Fixed
+- Custom liquid info now properly applies for rooms that originally called `make_deep_water()`.
+
 ## [2.6.2] - 2024-06-22
 
 ### Fixed

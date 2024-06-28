@@ -42,6 +42,8 @@ public class CustomWaterLevel
 
             with (oWater)
                 instance_destroy()
+            with (oWater2)
+                instance_destroy()
             with (oWaterFXV2)
                 instance_destroy()
             with (oLavaSurface)
@@ -51,7 +53,11 @@ public class CustomWaterLevel
 
             // Water level 0 is considered by the game as "doesnt exist".
             if (splitted[1] == 0)
+            {
+                global.watertype = 0;
+                global.waterlevel = 0;
                 exit;
+            }
 
             make_liquid(splitted[0], splitted[1], splitted[2], splitted[3], splitted[4], splitted[5], splitted[6]);
             """);
