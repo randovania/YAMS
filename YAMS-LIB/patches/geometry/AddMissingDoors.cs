@@ -20,7 +20,7 @@ public class AddMissingDoors
         gmData.Code.Add(thothRightDoorCC);
         var a8door = gmData.GameObjects.ByName("oDoorA8");
         gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(CreateRoomObject(24, 96, a8door, thothLeftDoorCC, 1, 1, ThothBridgeLeftDoorID));
-        gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(CreateRoomObject(616, 96, a8door, thothRightDoorCC, 1, 1, ThothBridgeRightDoorID));
+        gmData.Rooms.ByName("rm_a8a03").GameObjects.Add(CreateRoomObject(616, 96, a8door, thothRightDoorCC, -1, 1, ThothBridgeRightDoorID));
         // Make doors appear in front, so you can see them in door lock rando
         gmData.Code.ByName("gml_Room_rm_a8a03_Create").AppendGMLInCode("with (oDoor) depth = -200");
 
