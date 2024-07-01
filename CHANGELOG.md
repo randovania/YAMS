@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project (tries to) adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.7.5] - 2024-07-01
+
+### Fixed
+- Crash when a Research Site Hatch gets shuffled over a Research Site.
+
 ## [2.7.4] - 2024-06-30
 
 ### Fixed
