@@ -231,7 +231,7 @@ public class DoorLockRando
                                                        $"if (global.event[eventToSet] > 0)" +
                                                        $"{{ if (!wasAlreadyDestroyed) {{ with (wall) instance_destroy(); }} instance_destroy();}} " +
                                                        $"if (wasAlreadyDestroyed && global.event[eventToSet] < 1) global.event[eventToSet] = 1;",
-                        DoorLockType.ResearchHatch => door.ObjectDefinition != researchHatchObject ? $"facing = {(door.ScaleX >= 0 ? 1 : -1)}" : "",
+                        DoorLockType.ResearchHatch => door.ObjectDefinition != researchHatchObject ? $"facing = {(door.ScaleX >= 0 ? 1 : -1)}" : door.CreationCode.GetGMLCode(),
                         _ => throw new NotSupportedException($"Door {id} has an unsupported door lock ({doorEntry.Lock})!")
                     };
 
