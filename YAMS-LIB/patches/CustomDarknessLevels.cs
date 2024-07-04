@@ -27,9 +27,9 @@ public class CustomDarknessLevels
             else if (lightLevelFoundValue == "tower")
             {
               if (global.event[200])
-                lightLevelValue = 3
-              else
                 lightLevelValue = 0
+              else
+                lightLevelValue = 3
             }
             else
             {
