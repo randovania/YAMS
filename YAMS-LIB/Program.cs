@@ -596,6 +596,7 @@ public class Patcher
 
         // Multiworld stuff
         Multiworld.Apply(gmData, decompileContext, seedObject);
+        AddBossMWTracking.Apply(gmData, decompileContext, seedObject);
 
         // Write back to disk
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
