@@ -544,6 +544,7 @@ public class Patcher
         BombBeforeA3.Apply(gmData, decompileContext, seedObject);
         SoftlockPrevention.Apply(gmData, decompileContext, seedObject, isHorde);
         DontRespawnBombBlocks.Apply(gmData, decompileContext, seedObject);
+        EnforceScrewForBG2.Apply(gmData, decompileContext, seedObject);
 
 
         // On start, make all rooms show being "unexplored" similar to prime/super rando

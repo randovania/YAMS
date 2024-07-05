@@ -288,6 +288,10 @@ public class GamePatches
     public bool ScrewPipeBlocks;
 
     [JsonInclude]
+    [JsonPropertyName("enforce_screw_for_bg2")]
+    public bool EnforceScrewForBG2;
+
+    [JsonInclude]
     [JsonPropertyName("sabre_designed_skippy")]
     public bool SabreSkippy;
 
