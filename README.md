@@ -4,7 +4,7 @@ A patcher for providing a different randomization experience to AM2R different t
 Usage:  
 `./YAMS-CLI [path-to-original-data-file] [path-to-output-data-file] [path-to-json-file]`
 
-The API/Schema for the input json file will soon be documented.
+The API/Schema for the input json file will soon be documented. In the meantime, one can look at [this source file](https://github.com/randovania/YAMS/blob/main/YAMS-LIB/SeedObject.cs).
 
 # Compilation
 This project uses git submodules. So before compiling, please ensure you have cloned them (either by doing `git clone --recursive https://github.com/randovania/YAMS`, or if you have already cloned the repo, `git submodule update --init`).  
