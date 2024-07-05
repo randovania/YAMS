@@ -310,6 +310,14 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("required_amount_of_dna")]
     public int RequiredDNAmount = 46;
+
+    [JsonInclude]
+    [JsonPropertyName("one_suit_damage_multiplier")]
+    public double OneSuitDamageMultiplier = 0.5;
+
+    [JsonInclude]
+    [JsonPropertyName("two_suits_damage_multiplier")]
+    public double TwoSuitsDamageMultiplier = 0.25;
 }
 
 public class ConfigurationIdentifier

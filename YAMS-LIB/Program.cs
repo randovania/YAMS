@@ -596,6 +596,8 @@ public class Patcher
         // Add patch to see room names on minimap
         DisplayRoomNamesOnMap.Apply(gmData, decompileContext, seedObject);
 
+        // Apply custom suit damage reductions
+        CustomSuitDamageReduction.Apply(gmData, decompileContext, seedObject);
 
         // Add spoiler log in credits when finished game normally
         gmData.Code.ByName("gml_Object_oCreditsText_Create_0")
