@@ -561,6 +561,9 @@ public class Patcher
         // Patch to add room name display near health
         DisplayRoomNameOnHUD.Apply(gmData, decompileContext, seedObject);
 
+        // Make the septogg in BG3 spawn directly when killing the Gamma
+        BG3MakeSeptoggSpawnImmediately.Apply(gmData, decompileContext, seedObject);
+
         // Set fusion mode value
         gmData.Code.ByName("gml_Object_oControl_Step_0").ReplaceGMLInCode("mod_fusion = 0", $"mod_fusion = {(seedObject.Patches.FusionMode ? 1 : 0)}");
 
