@@ -75,6 +75,11 @@ class Wrapper:
         if profile_xml_path.exists():
             profile_xml_path.unlink()
 
+        # Remove music files if they exist in the output path, but not in the input path, to avoid music rando side effects
+        for f in ["mustester.ogg", "musitemamb2.ogg"]:
+            if output_path.joinpath(f).is_file() and not tempdir.name.joinpath(f).is_file():
+                output_path.joinpath(f).unlink()
+
         # Patch data.win
         progress_update("Patching data file...", 0.6)
         self.csharp_patcher.Main(input_data_win, output_data_win, json_file)
