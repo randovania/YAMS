@@ -95,5 +95,28 @@ public class GameplayCutsceneSkip
                                                                                     """);
         gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("instance_create(x, y, oA5BotSpawnCutscene)",
             "instance_create(x, y, oA5BotSpawnCutscene); if (global.skipCutscenes) statetime = 319");
+
+        // Skip tower activation cutscene to not have to wait a long time
+        gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("""
+                    if (oCharacter.x < 320)
+                    {
+                        with (oCharacter)
+                            x += 1
+                    }
+
+            """,
+            """
+                    if (oCharacter.x < 320)
+                    {
+                        with (oCharacter)
+                            x += 1
+                    }
+                    if (oCharacter.x == 320 && global.skipCutscenes)
+                    {
+                         instance_create(320, 144, oA4SwitchCables);
+                         statetime = 119;
+                    }
+            """);
+        gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("mus_change(musArea4A)", "mus_change(musArea4A); if (global.skipCutscenes) statetime = 319;");
     }
 }
