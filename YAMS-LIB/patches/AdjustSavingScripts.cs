@@ -56,6 +56,7 @@ public class AdjustSavingScripts
                                           ds_list_add(list, global.hasWJ)
                                           ds_list_add(list, global.hasIBJ)
                                           ds_list_add(list, global.hasLongBeam)
+                                          ds_list_add(list, global.historyLogEntryText)
                                           str_list = ds_list_write(list)
                                           ds_list_clear(list)
                                           return str_list;
@@ -120,6 +121,9 @@ public class AdjustSavingScripts
                                           global.hasLongBeam = readline()
                                           if (global.hasLongBeam == undefined)
                                             global.hasLongBeam = 1
+                                          global.historyLogEntryText = readline()
+                                          if (global.historyLogEntryText == undefined)
+                                            global.historyLogEntryText = ""
                                           ds_list_clear(list)
                                           """);
 

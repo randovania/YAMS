@@ -577,8 +577,11 @@ public class Patcher
 
         // TODO: For the future, with room rando, go through each door and modify where it leads to
 
-        // Ad in-game Hints
+        // Add in-game Hints
         AddInGameHints.Apply(gmData, decompileContext, seedObject);
+
+        // Add history log entry
+        HistoryLogEntry.Apply(gmData, decompileContext, seedObject);
 
         // Pipe rando
         PipeRando.Apply(gmData, decompileContext, seedObject);
