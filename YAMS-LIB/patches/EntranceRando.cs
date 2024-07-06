@@ -8,6 +8,29 @@ public class EntranceRando
 {
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
+        gmData.Code.ByName("gml_Script_characterCreateEvent").PrependGMLInCode("global.standAfterTransition = false;");
+
+        gmData.Code.ByName("gml_Object_oCharacter_Other_4").ReplaceGMLInCode("y = (global.targety + global.offsety)",
+           """
+           y = (global.targety + global.offsety)
+           if global.standAfterTransition
+           {
+               scr_disableplayercontrol()
+               x = global.targetx
+               y = global.targety
+               xVel = 0
+               yVel = 0
+               state = IDLE
+               facing = 0
+               global.standAfterTransition = 0
+               alarm[3] = 30
+           }
+           """
+            );
+
+        gmData.GameObjects.ByName("oGotoRoom").EventHandlerFor(EventType.Create, gmData).SubstituteGMLCode("standAfterTransition = false");
+        gmData.Code.ByName("gml_Object_oGotoRoom_Step_2").ReplaceGMLInCode("global.camstarty = camstarty", "global.camstarty = camstarty; global.standAfterTransition = standAfterTransition;");
+
         foreach (var entrance in seedObject.EntranceObjects)
         {
             foreach (UndertaleRoom? room in gmData.Rooms)
@@ -67,6 +90,7 @@ public class EntranceRando
                     camstarty = {{camStartY}}
                     transitionx = {{transX}}
                     transitiony = {{transY}}
+                    {{(entrance.Value.ForceIdleAfterTransition ? "standAfterTransition = true;" : "")}}
                     """);
                 }
             }

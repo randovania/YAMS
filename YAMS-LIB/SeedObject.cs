@@ -681,6 +681,10 @@ public class EntranceObject
     public uint DestEntranceID;
 
     [JsonInclude]
+    [JsonPropertyName("force_idle_after_transition")]
+    public bool ForceIdleAfterTransition;
+
+    [JsonInclude]
     [JsonPropertyName("dest_direction")]
     public DoorFacingDirection Direction;
 
