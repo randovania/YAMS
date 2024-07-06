@@ -579,8 +579,6 @@ public class Patcher
         // Set option on whether supers can destroy missile doors
         if (seedObject.Patches.CanUseSupersOnMissileDoors) characterVarsCode.ReplaceGMLInCode("global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
 
-        // TODO: For the future, with room rando, go through each door and modify where it leads to
-
         // Add in-game Hints
         AddInGameHints.Apply(gmData, decompileContext, seedObject);
 
@@ -589,6 +587,9 @@ public class Patcher
 
         // Pipe rando
         PipeRando.Apply(gmData, decompileContext, seedObject);
+
+        // Entrance rando
+        EntranceRando.Apply(gmData, decompileContext, seedObject);
 
         // Make Bosses now spawns PB drops on death
         gmData.Code.ByName("gml_Script_spawn_many_powerups").ReplaceGMLInCode("if ((global.hasBombs == 0 && global.maxpbombs > 0) || (oControl.mod_insanitymode == 1 && global.maxpbombs > 0))", "if (global.maxpbombs > 0)");
