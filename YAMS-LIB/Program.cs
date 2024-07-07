@@ -9,6 +9,7 @@ using UndertaleModLib.Models;
 using YAMS_LIB.patches;
 using YAMS_LIB.patches.geometry;
 using YAMS_LIB.patches.misc;
+using System.Diagnostics;
 using YAMS_LIB.patches.qol;
 
 namespace YAMS_LIB;
@@ -22,10 +23,21 @@ public class Patcher
 
     private static string CreateVersionString()
     {
-        Version? assembly = Assembly.GetExecutingAssembly().GetName().Version;
-        if (assembly is null) return "";
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+        string? version = fileVersionInfo.ProductVersion;
 
-        return $"{assembly.Major}.{assembly.Minor}.{assembly.Build}";
+        if (version is null) return "";
+
+        string[] split = version.Split('.');
+        string major = split[0];
+        string minor = split[1];
+        string build = split[2];
+        if (build.Contains('+'))
+            build = build[..build.IndexOf('+')];
+        build = build.Replace('-', '.');
+
+        return $"{major}.{minor}.{build}";
     }
 
     public static void Main(string am2rPath, string outputAm2rPath, string jsonPath)
