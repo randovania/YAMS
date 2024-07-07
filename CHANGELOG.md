@@ -3,6 +3,24 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project (tries to) adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.8.0] - 2024-07-??
+
+## Added
+- Bosses can now be tracked by the Multiworld connector
+- The first log entry in the game, now displays a history of the collected items.
+- An option to enforce Screw Attack for exiting Breeding Grounds 2 Overgrown Alley.
+- An option for custom suit damage reduction.
+- A very basic Entrance rando.
+- Option to change the Hue of Tilesets and Backgrounds.
+
+## Changed
+- When "Skip Gameplay cutscenes" is on, the Tower activation cutscene will also be skipped.
+- The Septogg in Breeding Grounds 3 South Gamma will now spawn instantly after defeating the Gamma.
+
+## Fixed
+- Python wrapper: Using Music Rando now doesn't leave side effects anymore.
+- The baby now requires all DNA in order to be collected again.
+
 ## [2.7.6] - 2024-07-05
 
 ### Fixed
