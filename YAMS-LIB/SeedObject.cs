@@ -214,6 +214,14 @@ public class GameCosmetics
     public int DNAHUDRotation;
 
     [JsonInclude]
+    [JsonPropertyName("tileset_rotation")]
+    public int BackgroundRotation;
+
+    [JsonInclude]
+    [JsonPropertyName("background_rotation")]
+    public int TilesetRotation;
+
+    [JsonInclude]
     [JsonPropertyName("room_names_on_hud")]
     public RoomNameHudEnum RoomNameHud;
 
