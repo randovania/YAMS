@@ -76,7 +76,7 @@ public class GameplayCutsceneSkip
         gmData.Code.ByName("gml_Object_oMusicV2_Other_4").AppendGMLInCode("sfx_stop(sndStoneLoop)");
         // Skip baby collected cutscene
         gmData.Code.ByName("gml_Object_oHatchlingTrigger_Collision_267")
-            .PrependGMLInCode("if (global.skipCutscenes) { global.event[304] = 1; instance_create(x, y, oHatchling); instance_destroy(); exit; }");
+            .PrependGMLInCode("if (global.skipCutscenes && global.dna >= 46) { global.event[304] = 1; instance_create(x, y, oHatchling); instance_destroy(); exit; }");
         // Skip A5 activation cutscene to not have to wait a long time
         gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("""
                                                                                        if (oCharacter.x < 480)

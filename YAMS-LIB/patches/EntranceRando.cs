@@ -10,7 +10,7 @@ public class EntranceRando
     {
         gmData.Code.ByName("gml_Script_characterCreateEvent").PrependGMLInCode("global.standAfterTransition = false;");
 
-        gmData.Code.ByName("gml_Object_oCharacter_Other_4").ReplaceGMLInCode("y = (global.targety + global.offsety)",
+        gmData.Code.ByName("gml_Object_oCharacter_Other_4").ReplaceGMLInCode("y = global.targety + global.offsety",
            """
            y = (global.targety + global.offsety)
            if global.standAfterTransition
