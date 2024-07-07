@@ -70,7 +70,7 @@ public class Patcher
         // Import new Sprites (can't run it parallel, 'cause some edits rely on this being done first.)
         Sprites.Apply(gmData, decompileContext, seedObject);
         // Apply cosmetic patches
-        nonCodeTasks.Add(Task.Run(() => CosmeticHud.Apply(gmData, decompileContext, seedObject)));
+        nonCodeTasks.Add(Task.Run(() => CosmeticRotation.Apply(gmData, decompileContext, seedObject)));
         // Shuffle Music
         nonCodeTasks.Add(Task.Run(() => MusicShuffle.ShuffleMusic(Path.GetDirectoryName(outputAm2rPath), seedObject.Cosmetics.MusicShuffleDict)));
 
