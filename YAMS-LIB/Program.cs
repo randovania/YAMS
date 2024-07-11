@@ -153,7 +153,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oDoor_Alarm_0").ReplaceGMLInCode("event_user(2)",
             "{ event_user(2); if(event > 0 && lock < 4) global.event[event] = 1; }");
         // ...But don't make them automatically opened for non-ammo doors!
-        gmData.Code.ByName("gml_Object_oDoor_Alarm_0").ReplaceGMLInCode("lock = 0", "if (lock < 4) lock = 0;");
+        gmData.Code.ByName("gml_Object_oDoor_Alarm_0").ReplaceGMLInCode("lock = 0", "if (lock <= 4) lock = 0;");
 
         // Make doors when unlocked, go to the type they were before except for ammo doors
         gmData.Code.ByName("gml_Object_oDoor_Create_0").AppendGMLInCode("originalLock = lock;");
@@ -163,7 +163,7 @@ public class Patcher
         gmData.Code.ByName("gml_Room_rm_a2a04_Create").AppendGMLInCode("if (!global.event[103]) {with (oDoor) lock = 4;}");
         gmData.Code.ByName("gml_Room_rm_a3a01_Create").AppendGMLInCode("if (!global.event[152]) {with (oDoor) lock = 4;}");
         gmData.Code.ByName("gml_Room_rm_a4a05_Create").AppendGMLInCode("if (!global.event[207]) {with (oDoor) lock = 4;}");
-        gmData.Code.ByName("gml_Object_oErisBossTrigger_Create_0").AppendGMLInCode("else { with (oDoor) lock = 4; }");
+        gmData.GameObjects.ByName("oErisBossTrigger").EventHandlerFor(EventType.Step, gmData).SubstituteGMLCode("with (oDoor) lock = 4;");
         gmData.Code.ByName("gml_Room_rm_a8a11_Create").AppendGMLInCode("if (!global.event[307]) {with (oDoor) lock = 4;}");
 
         // Fix doors in tester to be always blue
