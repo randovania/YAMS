@@ -291,7 +291,7 @@ public class DoorLockRando
                     else
                         door.ObjectDefinition = doorObject;
 
-                    door.CreationCode.SubstituteGMLCode(codeText);
+                    door.CreationCode.AppendGMLInCode(codeText);
                     doorEventIndex++;
                     break;
                 }
