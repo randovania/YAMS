@@ -127,5 +127,9 @@ public class SoftlockPrevention
 
         // Crumble blocks in plasma chamber
         gmData.Code.ByName("gml_Room_rm_a4a10_Create").AppendGMLInCode("if (global.softlockPrevention) { with (oBlockStep) instance_destroy(); }");
+
+        // Super Missile chamber - make first two crumble blocks shoot blocks
+        gmData.Code.ByName("gml_Room_rm_a3a23a_Create").AppendGMLInCode("if (global.softlockPrevention) { with (119465) instance_destroy(); with (119466) instance_destroy(); instance_create(304, 96, oBlockShoot); instance_create(304, 112, oBlockShoot);}");
+
     }
 }
