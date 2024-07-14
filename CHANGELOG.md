@@ -20,6 +20,11 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## Fixed
 - Python wrapper: Using Music Rando now doesn't leave side effects anymore.
 - The baby now requires all DNA in order to be collected again.
+- When using Door Lock rando, doors in boss rooms will not close instantly when stepping into the room, but instead stay open until the proper event starts.
+- Fixed doors in boss rooms locking themselves when reentering the boss room.
+- In Door Lock Rando, when doors unlock in labs rooms, they will now properly switch to ammo doors rather than switching to blue doors.
+- The softlock prevention in Super Missile Chamber now doesn't have a shot block overlapping with a crumble block.
+- In Door Lock Rando, if another Water Turbine has been destroyed, it will now not cause the vanilla Water Turbine to get destroyed.
 
 ## [2.7.6] - 2024-07-05
 
