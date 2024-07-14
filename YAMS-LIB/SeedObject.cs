@@ -215,11 +215,11 @@ public class GameCosmetics
 
     [JsonInclude]
     [JsonPropertyName("tileset_rotation")]
-    public int BackgroundRotation;
+    public int TilesetRotation;
 
     [JsonInclude]
     [JsonPropertyName("background_rotation")]
-    public int TilesetRotation;
+    public int BackgroundRotation;
 
     [JsonInclude]
     [JsonPropertyName("room_names_on_hud")]
