@@ -155,9 +155,10 @@ public class Patcher
         // ...But don't make them automatically opened for non-ammo doors!
         gmData.Code.ByName("gml_Object_oDoor_Alarm_0").ReplaceGMLInCode("lock = 0", "if (lock <= 4) lock = 0;");
 
-        // Make doors when unlocked, go to the type they were before except for ammo doors
-        gmData.Code.ByName("gml_Object_oDoor_Create_0").AppendGMLInCode("originalLock = lock;");
-        gmData.Code.ByName("gml_Object_oDoor_Other_13").ReplaceGMLInCode("lock = 0", "lock = originalLock; if (originalLock < 4) lock = 0");
+        // Make doors when unlocked, go to the type they were. Only go to ammo doors, if they haven't been destroyed yet
+        gmData.Code.ByName("gml_Object_oDoor_Create_0").AppendGMLInCode("originalLock = lock; wasPassedThrough = false;");
+        gmData.Code.ByName("gml_Object_oDoor_Alarm_0").ReplaceGMLInCode("event_user(2)", "event_user(2); wasPassedThrough = true;");
+        gmData.Code.ByName("gml_Object_oDoor_Other_13").ReplaceGMLInCode("lock = 0", "lock = originalLock; if (originalLock < 4 && wasPassedThrough) lock = 0");
 
         // Fix doors unlocking in arachnus/torizo/tester/serris/genesis
         gmData.Code.ByName("gml_Room_rm_a2a04_Create").AppendGMLInCode("if (!global.event[103]) {with (oDoor) lock = 4;}");
