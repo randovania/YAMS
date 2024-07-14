@@ -46,7 +46,8 @@ public class DoorLockRando
             if (((((global.targetx - (32 * facingDirection)) == x) && ((global.targety - 64) == y))) ||
                 (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] != 0))
             {
-                if (global.event[eventToSet] < 1)
+                // Only set the event when it's vanilla
+                if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[eventToSet] < 1)
                     global.event[eventToSet] = 1;
                 wasAlreadyDestroyed = 1;
                 instance_destroy();

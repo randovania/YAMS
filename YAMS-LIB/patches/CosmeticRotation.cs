@@ -335,7 +335,6 @@ public class CosmeticRotation
         // Hue shift tilesets
         if (seedObject.Cosmetics.TilesetRotation != 0)
         {
-            Console.WriteLine(seedObject.Cosmetics.TilesetRotation);
             foreach (UndertaleBackground bg in gmData.Backgrounds.Where(bg => Tilesets.Contains(bg.Name.Content)))
             {
                 var texture = bg.Texture;
