@@ -595,6 +595,9 @@ public class Patcher
         // Add in-game Hints
         AddInGameHints.Apply(gmData, decompileContext, seedObject);
 
+        // Flip game
+        FlippedGame.Apply(gmData, decompileContext, seedObject);
+
         // Add history log entry
         HistoryLogEntry.Apply(gmData, decompileContext, seedObject);
 

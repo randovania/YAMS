@@ -330,6 +330,15 @@ public class GamePatches
     [JsonInclude]
     [JsonPropertyName("two_suits_damage_multiplier")]
     public double TwoSuitsDamageMultiplier = 0.25;
+
+    [JsonInclude]
+    [JsonPropertyName("flip_vertically")]
+    public bool FlipVertically;
+
+    [JsonInclude]
+    [JsonPropertyName("flip_horizontally")]
+    public bool FlipHorizontally;
+
 }
 
 public class ConfigurationIdentifier
