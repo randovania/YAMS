@@ -20,7 +20,7 @@ public class HistoryLogEntry
         gmData.Code.ByName("gml_Object_oControl_Create_0").AppendGMLInCode(DSMapCoordRoomname);
 
         UndertaleCode? characterVarsCode = gmData.Code.ByName("gml_Script_load_character_vars");
-        characterVarsCode.PrependGMLInCode("global.historyLogEntryText = \"\"");
+        characterVarsCode.PrependGMLInCode($"global.historyLogEntryText = \"{(seedObject.Identifier.StartingMemoText is null ? "" : seedObject.Identifier.StartingMemoText.Description + " as extra starting items.#")}\"");
         gmData.Code.ByName("gml_Object_oItem_Other_10").ReplaceGMLInCode("instance_destroy()", "var roomName = ds_map_find_value(oControl.roomNameDict, room_get_name(room)); if (roomName == undefined) roomName = \"ERROR!!!\"; global.historyLogEntryText = (\"{yellow}\" + string(itemName) + \"{white} was found in {fuchsia}\" + roomName + \"{white}#\") + global.historyLogEntryText; instance_destroy();");
 
         gmData.Code.ByName("gml_Script_load_logs_list").ReplaceGMLInCode("get_text(\"Logs\", \"Briefing\")", "\"Item History\"");
