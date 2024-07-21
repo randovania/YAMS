@@ -6,16 +6,20 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [2.8.0] - 2024-07-??
 
 ## Added
-- Bosses can now be tracked by the Multiworld connector
+- Bosses can now be tracked by the Multiworld connector.
 - The first log entry in the game, now displays a history of the collected items.
 - An option to enforce Screw Attack for exiting Breeding Grounds 2 Overgrown Alley.
 - An option for custom suit damage reduction.
 - A very basic Entrance rando.
 - Option to change the Hue of Tilesets and Backgrounds.
+- Options to change the gameplay vertically and horizontally.
+- The seed hash will be displayed on the clear screen as well.
+- The following offworld sprites: Charge Beam, Energy Tank and Missile Expansion for Prime 1, Missile Launcher for Samus Returns.
 
 ## Changed
 - When "Skip Gameplay cutscenes" is on, the Tower activation cutscene will also be skipped.
 - The Septogg in Breeding Grounds 3 South Gamma will now spawn instantly after defeating the Gamma.
+- The offworld sprite for Prime 1 Bombs has been to better fit within the existing styles.
 
 ## Fixed
 - Python wrapper: Using Music Rando now doesn't leave side effects anymore.
