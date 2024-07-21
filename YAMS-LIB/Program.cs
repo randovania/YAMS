@@ -36,6 +36,8 @@ public class Patcher
         if (build.Contains('+'))
             build = build[..build.IndexOf('+')];
         build = build.Replace('-', '.');
+        if (build[1..].StartsWith("rc"))
+            build = build[1..];
 
         return $"{major}.{minor}.{build}";
     }
