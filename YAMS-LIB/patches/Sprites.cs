@@ -431,12 +431,15 @@ public class Sprites
         CreateAndAddItemSprite("sItemArtifactWorldPrime");
         CreateAndAddItemSprite("sItemBombsPrime");
         CreateAndAddItemSprite("sItemBoostBallPrime");
+        CreateAndAddItemSprite("sItemChargeBeamPrime");
         CreateAndAddItemSprite("sItemCombatVisorPrime");
+        CreateAndAddItemSprite("sItemEnergyTankPrime");
         CreateAndAddItemSprite("sItemFlamethrowerPrime");
         CreateAndAddItemSprite("sItemGrappleBeamPrime");
         CreateAndAddItemSprite("sItemGravitySuitPrime");
         CreateAndAddItemSprite("sItemIceBeamPrime");
         CreateAndAddItemSprite("sItemIceSpreaderPrime");
+        CreateAndAddItemSprite("sItemMissileExpansionPrime");
         CreateAndAddItemSprite("sItemMorphBallPrime");
         CreateAndAddItemSprite("sItemPhazonSuitPrime");
         CreateAndAddItemSprite("sItemPlasmaBeamPrime");
@@ -519,6 +522,7 @@ public class Sprites
         CreateAndAddItemSprite("sItemBeamBurstMSR");
         CreateAndAddItemSprite("sItemGrappleBeamMSR");
         CreateAndAddItemSprite("sItemLightningArmorMSR");
+        CreateAndAddItemSprite("sItemMissileLauncherMSR");
         CreateAndAddItemSprite("sItemMorphMSR");
         CreateAndAddItemSprite("sItemPhaseDriftMSR");
         CreateAndAddItemSprite("sItemScanPulseMSR");
