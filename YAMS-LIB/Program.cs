@@ -580,7 +580,7 @@ public class Patcher
         // Set fusion mode value
         gmData.Code.ByName("gml_Object_oControl_Step_0").ReplaceGMLInCode("mod_fusion = 0", $"mod_fusion = {(seedObject.Patches.FusionMode ? 1 : 0)}");
 
-        // Display Seed hash
+        // Display Seed hash on title and credits
         gmData.Code.ByName("gml_Object_oGameSelMenu_Draw_0").AppendGMLInCode($"""
                                                                               draw_set_font(global.fontGUI2)
                                                                               draw_set_halign(fa_center)
@@ -588,6 +588,8 @@ public class Patcher
                                                                               draw_cool_text(160, 15, "{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})", c_black, c_white, c_white, 1)
                                                                               draw_set_halign(fa_left)
                                                                               """);
+
+        gmData.Code.ByName("gml_Object_oScoreScreen_Draw_0").ReplaceGMLInCode("draw_text(tx1x, (tx1y + 52), text2a)", $"draw_text(tx1x, (tx1y + 52), text2a); draw_text(tx1x, (tx1y + 80), \"{seedObject.Identifier.RDVVersion}\"); draw_text(tx1x, (tx1y + 92), \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\")");
 
         // Set option on whether supers can destroy missile doors
         if (seedObject.Patches.CanUseSupersOnMissileDoors) characterVarsCode.ReplaceGMLInCode("global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
