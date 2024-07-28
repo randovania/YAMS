@@ -136,19 +136,19 @@ public class AdjustSavingScripts
         UndertaleCode? sv6load = gmData.Code.ByName("gml_Script_sv6_load");
         sv6load.ReplaceGMLInCode("V7.0", "RDV V8.0");
         sv6load.ReplaceGMLInCode("sv6_get_seed(fid)", "sv6_get_seed(fid); file_text_readln(fid); sv6_get_newglobals(fid);");
-        sv6load.ReplaceGMLInCode("global.maxhealth = 99 + global.etanks * 100 * oControl.mod_etankhealthmult", "");
+        sv6load.ReplaceGMLInCode("global.maxhealth = 99 + (global.etanks * 100 * oControl.mod_etankhealthmult)", "");
         sv6load.ReplaceGMLInCode("""
                                      if (global.difficulty < 2)
                                      {
-                                         global.maxmissiles = oControl.mod_Mstartingcount + global.mtanks * 5
-                                         global.maxsmissiles = global.stanks * 2
-                                         global.maxpbombs = global.ptanks * 2
+                                         global.maxmissiles = oControl.mod_Mstartingcount + (global.mtanks * 5);
+                                         global.maxsmissiles = global.stanks * 2;
+                                         global.maxpbombs = global.ptanks * 2;
                                      }
                                      else
                                      {
-                                         global.maxmissiles = oControl.mod_Mstartingcount + global.mtanks * 2
-                                         global.maxsmissiles = global.stanks
-                                         global.maxpbombs = global.ptanks
+                                         global.maxmissiles = oControl.mod_Mstartingcount + (global.mtanks * 2);
+                                         global.maxsmissiles = global.stanks;
+                                         global.maxpbombs = global.ptanks;
                                      }
                                  """, "");
 

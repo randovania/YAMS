@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAMS-CLI", "YAMS-CLI\YAMS-C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateTexturePage", "GenerateTexturePage\GenerateTexturePage.csproj", "{CAB600BD-1104-40A4-852F-93BB4BBD5178}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Underanalyzer", "UndertaleModTool\Underanalyzer\Underanalyzer\Underanalyzer.csproj", "{8990080D-E5EB-40A7-9EB8-C19BE7F9FD44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{CAB600BD-1104-40A4-852F-93BB4BBD5178}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAB600BD-1104-40A4-852F-93BB4BBD5178}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAB600BD-1104-40A4-852F-93BB4BBD5178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8990080D-E5EB-40A7-9EB8-C19BE7F9FD44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8990080D-E5EB-40A7-9EB8-C19BE7F9FD44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8990080D-E5EB-40A7-9EB8-C19BE7F9FD44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8990080D-E5EB-40A7-9EB8-C19BE7F9FD44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

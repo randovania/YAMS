@@ -1,6 +1,7 @@
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
+using Underanalyzer.Decompiler;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -20,12 +21,12 @@ public static class ExtensionMethods
 
     public static string GetGMLCode(this UndertaleCode code)
     {
-        return Decompiler.Decompile(code, decompileContext);
+        return new DecompileContext(decompileContext, code).DecompileToString();
     }
 
     public static void ReplaceGMLInCode(this UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        var codeText = new DecompileContext(decompileContext, code).DecompileToString();
         if (!codeText.Contains(textToReplace))
         {
             if (ignoreErrors)
@@ -39,14 +40,14 @@ public static class ExtensionMethods
 
     public static void PrependGMLInCode(this UndertaleCode code, string prependedText)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        var codeText = new DecompileContext(decompileContext, code).DecompileToString();
         codeText = prependedText + "\n" + codeText;
         code.ReplaceGML(codeText, gmData);
     }
 
     public static void AppendGMLInCode(this UndertaleCode code, string appendedText)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        var codeText = new DecompileContext(decompileContext, code).DecompileToString();
         codeText = codeText + appendedText + "\n";
         code.ReplaceGML(codeText, gmData);
     }

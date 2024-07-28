@@ -14,11 +14,11 @@ public class DoorLockRando
 
         // Adjust global event array to be 900
         characterVarsCode.ReplaceGMLInCode( $$"""
-            i = {{(!isHorde ? "350" : "400")}}
+            i = {{(!isHorde ? "350" : "400")}};
             repeat ({{(!isHorde ? "350" : "400")}})
             {
-                i -= 1
-                global.event[i] = 0
+                i -= 1;
+                global.event[i] = 0;
             }
             """, """
             i = 900
@@ -39,7 +39,9 @@ public class DoorLockRando
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").PrependGMLInCode("facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("""
                                                                                  if (global.event[101] > 0)
-                                                                                     instance_destroy()
+                                                                                 {
+                                                                                     instance_destroy();
+                                                                                 }
                                                                                  """,
             """
             eventToSet = 101;
@@ -53,24 +55,24 @@ public class DoorLockRando
                 instance_destroy();
             }
             """);
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("wall = instance_create((x + 16), y, oSolid1x4)",
+        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("wall = instance_create(x + 16, y, oSolid1x4)",
             "var xWallOffset = 16; if (facingDirection == -1) xWallOffset = -32; wall = instance_create(x + xWallOffset, y, oSolid1x4);");
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Other_11").ReplaceGMLInCode(
             """
-            o = instance_create(x, y, oMoveWater)
-            o.targety = 1552
-            o.delay = 2
-            global.event[101] = 1
-            instance_create((x - 120), y, oBubbleSpawner)
+            o = instance_create(x, y, oMoveWater);
+            o.targety = 1552;
+            o.delay = 2;
+            global.event[101] = 1;
+            instance_create(x - 120, y, oBubbleSpawner);
             """,
             """
             global.event[eventToSet] = 1;
             if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 1)
             {
-                o = instance_create(x, y, oMoveWater)
-                o.targety = 1552
-                o.delay = 2
-                instance_create((x - 120), y, oBubbleSpawner)
+                o = instance_create(x, y, oMoveWater);
+                o.targety = 1552;
+                o.delay = 2;
+                instance_create((x - 120), y, oBubbleSpawner);
             }
             """);
 

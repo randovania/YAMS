@@ -13,9 +13,9 @@ public class MoveGeothermalPB
 
         // Modify minimap for power plant because of pb movement
         gmData.Code.ByName("gml_Script_map_init_07").ReplaceGMLInCode("""
-                                                                      global.map[35, 43] = "0112300"
-                                                                      global.map[35, 44] = "1210300"
-                                                                      global.map[35, 45] = "1210300"
+                                                                      global.map[35, 43] = "0112300";
+                                                                      global.map[35, 44] = "1210300";
+                                                                      global.map[35, 45] = "1210300";
                                                                       """, """
                                                                            global.map[35, 43] = "0101330"
                                                                            global.map[35, 44] = "0101300"

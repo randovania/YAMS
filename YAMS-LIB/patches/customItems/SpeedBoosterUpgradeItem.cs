@@ -15,12 +15,12 @@ public class SpeedBoosterUpgradeItem
             .ReplaceGMLInCode("speedboost_steps > 75", "speedboost_steps >= 1 && speedboost_steps > (75 - global.speedBoosterFramesReduction)");
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("dash == 30", "dash >= 1 && dash >= (30 - (max(global.speedBoosterFramesReduction, 76)-76))");
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode("""
-                                                                                 speedboost = 1
-                                                                                 canturn = 0
-                                                                                 sjball = 0
-                                                                                 charge = 0
-                                                                                 sfx_play(sndSBStart)
-                                                                                 alarm[2] = 30
+                                                                                 speedboost = 1;
+                                                                                 canturn = 0;
+                                                                                 sjball = 0;
+                                                                                 charge = 0;
+                                                                                 sfx_play(19);
+                                                                                 alarm[2] = 30;
                                                                              """, """
                                                                                       dash = 30
                                                                                       speedboost = 1
