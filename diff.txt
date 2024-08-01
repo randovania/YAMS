@@ -1,0 +1,40 @@
+diff --git a/UndertaleModLib/Compiler/Compiler.cs b/UndertaleModLib/Compiler/Compiler.cs
+index 3fa2ae6b..72e3d7c9 100644
+--- a/UndertaleModLib/Compiler/Compiler.cs
++++ b/UndertaleModLib/Compiler/Compiler.cs
+@@ -142,8 +142,11 @@ namespace UndertaleModLib.Compiler
+                 for (int i = 0; i < list.Count; i++)
+                 {
+                     string name = list[i].Name?.Content;
+-                    if (name != null)
+-                        assetIds[name] = i;
++                    if (name is not null)
++                    {
++                        assetIds.Add(name, i);
++                    }
++                    //assetIds[name] = i;
+                 }
+             }
+         }
+@@ -154,6 +157,8 @@ namespace UndertaleModLib.Compiler
+         public delegate void MainThreadFunc();
+         public delegate void MainThreadDelegate(MainThreadFunc f);
+ 
++        private static Dictionary<UndertaleData, CompileContext> codeToContextMapping = new Dictionary<UndertaleData, CompileContext>();
++
+         // A simple matching convenience
+         public static bool In<T>(this T obj, params T[] args)
+         {
+@@ -169,7 +174,11 @@ namespace UndertaleModLib.Compiler
+ 
+         public static CompileContext CompileGMLText(string input, UndertaleData data, UndertaleCode code)
+         {
+-            return CompileGMLText(input, new CompileContext(data, code));
++            bool isInMapping = codeToContextMapping.TryGetValue(data, out CompileContext ctx);
++            var returnedContext = CompileGMLText(input, ctx ?? new CompileContext(data, code));
++            if (!isInMapping)
++                codeToContextMapping.Add(data, returnedContext);
++            return returnedContext;
+         }
+ 
+         public static CompileContext CompileGMLText(string input, CompileContext context, bool redoAssets = false)
