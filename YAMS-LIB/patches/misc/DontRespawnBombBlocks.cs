@@ -19,7 +19,7 @@ public class DontRespawnBombBlocks
         // The bomb block puzzle in te room before varia don't need to have their special handling from am2random
         var rm_a2a06 = gmData.Rooms.ByName("rm_a2a06");
         rm_a2a06.GameObjects.First(go => go.X == 608 && go.Y == 112 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.ReplaceGMLInCode(
-            "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && (!global.hasJumpball) && global.hasGravity == 0)",
+            "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && !global.hasJumpball && global.hasGravity == 0)",
             "if (false)");
         rm_a2a06.GameObjects.First(go => go.X == 624 && go.Y == 48 && go.ObjectDefinition.Name.Content == "oBlockBomb").CreationCode.ReplaceGMLInCode(
             "if (oControl.mod_randomgamebool == 1 && global.hasBombs == 0 && global.hasGravity == 0)",
