@@ -51,13 +51,17 @@ public class Patcher
 
         SeedObject? seedObject = JsonSerializer.Deserialize<SeedObject>(File.ReadAllText(jsonPath));
 
-        // Read 1.5.x data
-        gmData = new UndertaleData();
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
 
+        // Read 1.5.x data
         using (FileStream fs = new FileInfo(am2rPath).OpenRead())
         {
             gmData = UndertaleIO.Read(fs);
         }
+        sw.Stop();
+        var afterRead = sw.Elapsed;
+        sw.Start();
 
         Console.WriteLine("Read data file.");
         decompileContext = new GlobalDecompileContext(gmData, false);
@@ -633,9 +637,15 @@ public class Patcher
 
         // Write back to disk
         ExtensionMethods.FlushCode();
+        sw.Stop();
+        var beforeWrite = sw.Elapsed;
+        sw.Start();
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
         {
             UndertaleIO.Write(fs, gmData, Console.WriteLine);
         }
+        sw.Stop();
+        Console.WriteLine($"Total Time: {sw.Elapsed}");
+        Console.WriteLine($"Patching Time Only: {beforeWrite-afterRead}");
     }
 }
