@@ -25,7 +25,18 @@ public static class ExtensionMethods
 
     public static void ReplaceGMLInCode(this UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        string codeText;
+
+        if (Patcher.CodeCache.TryGetValue(code, out string? value))
+        {
+            codeText = value;
+        }
+        else
+        {
+            codeText = Decompiler.Decompile(code, decompileContext);
+            Patcher.CodeCache.Add(code, codeText);
+        }
+
         if (!codeText.Contains(textToReplace))
         {
             if (ignoreErrors)
@@ -34,26 +45,52 @@ public static class ExtensionMethods
             throw new ApplicationException($"The text \"{textToReplace}\" was not found in \"{code.Name.Content}\"!");
         }
         codeText = codeText.Replace(textToReplace, replacementText);
-        code.ReplaceGML(codeText, gmData);
+        Patcher.CodeCache[code] = codeText;
     }
 
     public static void PrependGMLInCode(this UndertaleCode code, string prependedText)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        string codeText;
+        if (Patcher.CodeCache.TryGetValue(code, out string? value))
+        {
+            codeText = value;
+        }
+        else
+        {
+            codeText = Decompiler.Decompile(code, decompileContext);
+            Patcher.CodeCache.Add(code, codeText);
+        }
         codeText = prependedText + "\n" + codeText;
-        code.ReplaceGML(codeText, gmData);
+        Patcher.CodeCache[code] = codeText;
     }
 
     public static void AppendGMLInCode(this UndertaleCode code, string appendedText)
     {
-        var codeText = Decompiler.Decompile(code, decompileContext);
+        string codeText;
+        if (Patcher.CodeCache.TryGetValue(code, out string? value))
+        {
+            codeText = value;
+        }
+        else
+        {
+            codeText = Decompiler.Decompile(code, decompileContext);
+            Patcher.CodeCache.Add(code, codeText);
+        }
         codeText = codeText + appendedText + "\n";
-        code.ReplaceGML(codeText, gmData);
+        Patcher.CodeCache[code] = codeText;
     }
 
     public static void SubstituteGMLCode(this UndertaleCode code, string newGMLCode)
     {
-        code.ReplaceGML(newGMLCode, gmData);
+        Patcher.CodeCache[code] = newGMLCode;
+    }
+
+    public static void FlushCode()
+    {
+        foreach ((var codeName, var codeText) in Patcher.CodeCache)
+        {
+            codeName.ReplaceGML(codeText, gmData);
+        }
     }
 
     public static UndertaleRoom.Tile CreateRoomTile(int x, int y, int depth, UndertaleBackground tileset, uint sourceX, uint sourceY, uint width = 16, uint height = 16, uint? id = null)

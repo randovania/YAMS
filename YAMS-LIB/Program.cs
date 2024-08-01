@@ -21,6 +21,8 @@ public class Patcher
     internal static GlobalDecompileContext? decompileContext;
     internal static bool isHorde = false;
 
+    internal static Dictionary<UndertaleCode, string> CodeCache = new Dictionary<UndertaleCode, string>(1024);
+
     private static string CreateVersionString()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
@@ -628,7 +630,9 @@ public class Patcher
         Multiworld.Apply(gmData, decompileContext, seedObject);
         AddBossMWTracking.Apply(gmData, decompileContext, seedObject);
 
+
         // Write back to disk
+        ExtensionMethods.FlushCode();
         using (FileStream fs = new FileInfo(outputAm2rPath).OpenWrite())
         {
             UndertaleIO.Write(fs, gmData, Console.WriteLine);

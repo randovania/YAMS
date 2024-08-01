@@ -210,7 +210,7 @@ public class DecoupleItemsFromLocations
                                                }
                                                """);
         subscreenMenuStep.ReplaceGMLInCode("""
-                                           if (global.curropt == 7 && (!global.hasIbeam))
+                                           if (global.curropt == 7 && !global.hasIbeam)
                                                    global.curropt += 1
                                            """, """
                                                 if (global.curropt == 7 && (!global.hasIbeam))
@@ -219,7 +219,7 @@ public class DecoupleItemsFromLocations
                                                         global.curropt += 1
                                                 """);
         subscreenMenuStep.ReplaceGMLInCode("""
-                                           if (global.curropt == 7 && (!global.hasIbeam))
+                                           if (global.curropt == 7 && !global.hasIbeam)
                                                    global.curropt -= 1
                                            """, """
                                                 if (global.curropt == 8 && (!global.hasMorph))
