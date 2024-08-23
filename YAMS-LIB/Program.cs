@@ -596,7 +596,7 @@ public class Patcher
                                                                               draw_set_halign(fa_left)
                                                                               """);
 
-        gmData.Code.ByName("gml_Object_oScoreScreen_Draw_0").ReplaceGMLInCode("draw_text(tx1x, (tx1y + 52), text2a)", $"draw_text(tx1x, (tx1y + 52), text2a); draw_text(tx1x, (tx1y + 80), \"{seedObject.Identifier.RDVVersion}\"); draw_text(tx1x, (tx1y + 92), \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash})\")");
+        gmData.Code.ByName("gml_Object_oScoreScreen_Draw_0").ReplaceGMLInCode("draw_text(tx1x, (tx1y + 52), text2a)", $"draw_text(tx1x, (tx1y + 52), text2a); draw_text(tx1x, (tx1y + 80), \"{seedObject.Identifier.RDVVersion}\"); draw_text(tx1x, (tx1y + 92), \"{seedObject.Identifier.WordHash}\"); draw_text(tx1x, (tx1y + 104), \"({seedObject.Identifier.Hash})\")");
 
         // Set option on whether supers can destroy missile doors
         if (seedObject.Patches.CanUseSupersOnMissileDoors) characterVarsCode.ReplaceGMLInCode("global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
