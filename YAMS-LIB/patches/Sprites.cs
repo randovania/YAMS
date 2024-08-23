@@ -1,12 +1,11 @@
 using System.Reflection;
 using System.Text.Json;
+using ImageMagick;
 using NaturalSort.Extension;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Processing;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
+using UndertaleModLib.Util;
 
 namespace YAMS_LIB.patches;
 
@@ -18,13 +17,11 @@ public class Sprites
         var nameToPageItemDict = new Dictionary<string, int>();
         UndertaleEmbeddedTexture? utTexturePage = new UndertaleEmbeddedTexture();
 
-        using (MemoryStream ms = new MemoryStream())
+        using var texturePage = new MagickImage(new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites/texturepage.png"));
         {
-            var texturePage = Image.Load(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites/texturepage.png");
             utTexturePage.TextureWidth = texturePage.Width;
             utTexturePage.TextureHeight = texturePage.Height;
-            texturePage.Save(ms, PngFormat.Instance);
-            utTexturePage.TextureData = new UndertaleEmbeddedTexture.TexData { TextureBlob = ms.ToArray() };
+            utTexturePage.TextureData = new UndertaleEmbeddedTexture.TexData { Image = GMImage.FromPng(texturePage.ToByteArray(MagickFormat.Png)) };
         }
         gmData.EmbeddedTextures.Add(utTexturePage);
 
@@ -44,27 +41,25 @@ public class Sprites
         // Replace A4 doors
         {
             UndertaleTexturePageItem? a4DoorTex = gmData.TexturePageItems[nameToPageItemDict["newA4Doors"]];
-            Image a4DoorImage = Image.Load(a4DoorTex.TexturePage.TextureData.TextureBlob);
-            a4DoorImage.Mutate(i => i.Crop(new Rectangle(a4DoorTex.SourceX, a4DoorTex.SourceY, a4DoorTex.SourceWidth, a4DoorTex.SourceHeight)));
-            UndertaleTexturePageItem? a4Tex = gmData.Backgrounds.ByName("tlArea4Tech").Texture;
-            Image a4PageImage = Image.Load(a4Tex.TexturePage.TextureData.TextureBlob);
-            a4PageImage.Mutate(i => i.DrawImage(a4DoorImage, new Point(a4Tex.SourceX + 104, a4Tex.SourceY), 1));
-            using (MemoryStream ms = new MemoryStream())
+            using var a4DoorImage = a4DoorTex.TexturePage.TextureData.Image.GetMagickImage();
             {
-                a4PageImage.Save(ms, PngFormat.Instance);
-                a4Tex.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                a4DoorImage.Crop(new MagickGeometry(a4DoorTex.SourceX, a4DoorTex.SourceY, a4DoorTex.SourceWidth, a4DoorTex.SourceHeight));
+                a4DoorImage.RePage();
+                UndertaleTexturePageItem? a4Tex = gmData.Backgrounds.ByName("tlArea4Tech").Texture;
+                using var a4PageImage = a4Tex.TexturePage.TextureData.Image.GetMagickImage();
+                a4PageImage.Composite(a4DoorImage, a4Tex.SourceX + 104, a4Tex.SourceY, CompositeOperator.Over);
+                a4Tex.TexturePage.TextureData.Image = GMImage.FromPng(a4PageImage.ToByteArray(MagickFormat.Png));
             }
 
             UndertaleTexturePageItem? a4door2Tex = gmData.TexturePageItems[nameToPageItemDict["newA4Doors2"]];
-            Image a4Door2Image = Image.Load(a4door2Tex.TexturePage.TextureData.TextureBlob);
-            a4Door2Image.Mutate(i => i.Crop(new Rectangle(a4door2Tex.SourceX, a4door2Tex.SourceY, a4door2Tex.SourceWidth, a4door2Tex.SourceHeight)));
-            UndertaleTexturePageItem? a4Tex2 = gmData.Backgrounds.ByName("tlArea4Tech2").Texture;
-            Image a4Page2Image = Image.Load(a4Tex2.TexturePage.TextureData.TextureBlob);
-            a4Page2Image.Mutate(i => i.DrawImage(a4Door2Image, new Point(a4Tex2.SourceX + 104, a4Tex2.SourceY), 1));
-            using (MemoryStream ms = new MemoryStream())
+            using var a4Door2Image = a4door2Tex.TexturePage.TextureData.Image.GetMagickImage();
             {
-                a4Page2Image.Save(ms, PngFormat.Instance);
-                a4Tex2.TexturePage.TextureData.TextureBlob = ms.ToArray();
+                a4Door2Image.Crop(new MagickGeometry(a4door2Tex.SourceX, a4door2Tex.SourceY, a4door2Tex.SourceWidth, a4door2Tex.SourceHeight));
+                a4Door2Image.RePage();
+                UndertaleTexturePageItem? a4Tex2 = gmData.Backgrounds.ByName("tlArea4Tech2").Texture;
+                using var a4Page2Image = a4Tex2.TexturePage.TextureData.Image.GetMagickImage();
+                a4Page2Image.Composite(a4Door2Image, a4Tex2.SourceX + 104, a4Tex2.SourceY, CompositeOperator.Over);
+                a4Tex2.TexturePage.TextureData.Image = GMImage.FromPng(a4Page2Image.ToByteArray(MagickFormat.Png));
             }
         }
 
