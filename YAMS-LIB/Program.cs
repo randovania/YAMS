@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using SixLabors.ImageSharp.Processing;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
