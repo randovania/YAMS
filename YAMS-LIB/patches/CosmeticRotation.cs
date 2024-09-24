@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using ImageMagick;
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
@@ -257,11 +258,9 @@ public class CosmeticRotation
         using MagickImage texturePage = texture.TextureData.Image.GetMagickImage();
         foreach ((var rectangle, var rotation) in rectangleRotationTuple)
         {
-            using var mask = new MagickImage(MagickColors.White, texturePage.Width, texturePage.Height);
-            mask.Draw(new DrawableFillColor(MagickColors.Black), new DrawableRectangle(rectangle.X, rectangle.Y, rectangle.X+rectangle.Width, rectangle.Y+rectangle.Height));
-            texturePage.SetWriteMask(mask);
-            texturePage.Modulate((Percentage)100.0, (Percentage)100.0, (Percentage)((rotation * 100 / 180) + 100));
-            texturePage.RemoveWriteMask();
+            var region = texturePage.Clone(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+            region.Modulate((Percentage)100.0, (Percentage)100.0, (Percentage)((rotation * 100 / 180) + 100));
+            texturePage.Composite(region);
         }
 
         texture.TextureData.Image = GMImage.FromPng(texturePage.ToByteArray(MagickFormat.Png));
@@ -271,7 +270,8 @@ public class CosmeticRotation
     public static void Apply(UndertaleData gmData, GlobalDecompileContext decompileContext, SeedObject seedObject)
     {
         var textureDict = new Dictionary<UndertaleEmbeddedTexture, List<Tuple<MagickGeometry, int>>>();
-
+        var sw = new Stopwatch();
+        sw.Start();
         // TODO: less copypaste
         // Hue shift etanks
         if (seedObject.Cosmetics.EtankHUDRotation != 0)
@@ -362,10 +362,14 @@ public class CosmeticRotation
                 textureDict[texture.TexturePage] = tupleList;
             }
         }
-
+        sw.Stop();
+        Console.WriteLine($"collecting data: {sw.Elapsed}");
+        sw.Restart();
         foreach ((var texturePage, var rectangles) in textureDict)
         {
             RotateTextureAndSaveToTexturePage(texturePage, rectangles);
         }
+        sw.Stop();
+        Console.WriteLine($"cosmetic rotation: {sw.Elapsed}");
     }
 }
