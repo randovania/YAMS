@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "am2r_yams"
-version = "2.9.0-rc2"
+version = "2.9.0-rc3"
 authors = [
     {name = "Miepee"},
 ]

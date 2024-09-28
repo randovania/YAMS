@@ -15,8 +15,41 @@ from contextlib import contextmanager
 # 2. While we figured out how to deal with non system installations via the DOTNET_ROOT env var,
 #    should we also provide a way to just pass a `dotnet_root` param to the wrapper which gets
 #    passed to pythonnet?
+dotnet_os = "unknown"
+dotnet_arch = "unknown"
+system = platform.system()
+if system == "Windows":
+    dotnet_os = "win"
+elif system == "Darwin":
+    dotnet_os = "osx"
+elif system == "Linux":
+    dotnet_os = "linux"  # Might break for musl, I dont care.
+else:
+    raise ValueError("Couldn't determine the OS handle for dotnet cleanup!")
+
+arch = platform.machine()
+if arch == "AMD64" or arch == "x86_64":
+    dotnet_arch = "x64"
+elif arch == "arm64" or arch == "aarch64":
+    dotnet_arch = "arm64"
+else:
+    raise ValueError("Couldn't determine the architecture handle for dotnet cleanup!")
+
+dotnet_rid = dotnet_os + "-" + dotnet_arch
+
 yams_path = os.fspath(Path(__file__).with_name(name="yams"))
 sys.path.append(yams_path)
+for os_dir in Path(__file__).parent.joinpath("yams", "runtimes").iterdir():
+    if not os_dir.is_dir():
+        continue
+    if os_dir.name != dotnet_rid:
+        continue
+
+    for dll in os_dir.iterdir():
+        if not dll.is_file():
+            continue
+        sys.path.append(os.fspath(dll))
+
 from pythonnet import load, unload
 
 
