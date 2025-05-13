@@ -343,6 +343,10 @@ public class GamePatches
     [JsonPropertyName("flip_horizontally")]
     public bool FlipHorizontally;
 
+
+    [JsonInclude]
+    [JsonPropertyName("random_knockback")]
+    public bool RandomKnockback;
 }
 
 public class ConfigurationIdentifier
