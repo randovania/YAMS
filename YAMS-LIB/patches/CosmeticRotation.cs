@@ -295,6 +295,17 @@ public class CosmeticRotation
         "sMonsterInside",
         "sMonsterEyes",
         "sMonsterFangs",
+        "sMAlpha",
+        "sMGamma",
+        "sMZeta",
+        "sMOmega",
+        "sQueen",
+        "sBoss1",
+        "sArachnus",
+        "sTorizo",
+        "sTester",
+        "sEris",
+        "sGenesis",
     ];
 
     private static readonly string[] EnemiesIgnore = [
