@@ -6,7 +6,7 @@ Authors are as follows:
 
 - Everything in the `doors` folder was made by [AbyssalCreature](https://github.com/AbyssalCreature)
 - Everything in the `misc` folder, with the exception of the `hud` subfolder, was made by [AbyssalCreature](https://github.com/AbyssalCreature)
-  - The `hud` subfolder in the `misc` folder was made by [Miepee](https://github.com/Miepee).
+  - The `hud` subfolder in the `misc` folder were made by [Miepee](https://github.com/Miepee).
 - The DNA, Nothing, Power Bomb Launcher, Shiny Screw Attack, Shiny Hi-Jump, Shiny Ice beam, Shiny Missile, Super Missile
   Launcher. Progressive Jump, Progressive Suit and Unknown sprites 
   (`items/dna`, `items/nothing`, `items/pbLauncher`, `items/screwAttackShiny`, `items/shinyHijump`, `items/shinyIcebeam`, `items/shinyMissile`, `items/superMissileLauncher`
@@ -24,6 +24,7 @@ Authors are as follows:
   by [Miepee](https://github.com/Miepee)
 - The Walljump Boots sprites (`items/walljump`) were made by jakoliath and [AbyssalCreature](https://github.com/AbyssalCreature).
 - The Infinite Bomb Propulsion sprites (`items/ibj`) were made by [LaKompetenzia](https://www.twitch.tv/ilakompetenzia), [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554.
+- The Arm Cannon sprites (`items/armCannon`) were made by [AbyssalCreature](https://github.com/AbyssalCreature) and ShirtyScarab554. 
 
 Offworld items
 - The RDV item sprite (`offworld items/default`) was made by [Miepee](https://github.com/Miepee). It's a modification of the Unknown sprite by [AbyssalCreature](https://github.com/AbyssalCreature) and the [Randovania logo](https://github.com/randovania/randovania/tree/main/tools/icons) by [Uncle Reggie](https://www.threads.net/@unclereggiegames)
