@@ -253,6 +253,60 @@ public class CosmeticRotation
         "bgWFilter2",
     ];
 
+    private static readonly string[] Enemies = [
+        "sHornoad",
+        "sYumbo",
+        "sTsumuri",
+        "sSeerook",
+        "sMoheek",
+        "sChuteLeech",
+        "sCavedropper",
+        "sMumbo",
+        "sGawron",
+        "sGullugg",
+        "sNeedler",
+        "sWallfire",
+        "sSenjoo",
+        "sBlob",
+        "sAutrack",
+        "sAutoad",
+        "sGravitt",
+        "sYumee",
+        "sTPO",
+        "sShirk",
+        "sAutom",
+        "sOctroll",
+        "sFlitt",
+        "sSkorp",
+        "sMoto",
+        "sSkreek",
+        "sHalzyn",
+        "sGunzoo",
+        "sShielder",
+        "sProboscum",
+        "sMeboid",
+        "sIceBarrier",
+        "sBladeBot",
+        "sRobotMine",
+        "sDrivel",
+        "sGlowFly",
+        "sRamulken",
+        "sMonsterShell",
+        "sMonsterInside",
+        "sMonsterEyes",
+        "sMonsterFangs",
+    ];
+
+    private static readonly string[] EnemiesIgnore = [
+        "sHoarnoadXFall",
+        "sAutoadP",
+        "sAutoadPFang",
+        "sAutoadPClaw",
+        "sGravittShellMask",
+        "sMotoMask",
+
+    ];
+
     static void RotateTextureAndSaveToTexturePage(UndertaleEmbeddedTexture texture, List<Tuple<MagickGeometry, int>> rectangleRotationTuple)
     {
         using MagickImage texturePage = texture.TextureData.Image.GetMagickImage();
@@ -362,6 +416,32 @@ public class CosmeticRotation
                 textureDict[texture.TexturePage] = tupleList;
             }
         }
+
+        // Hue shift enemies
+        if (seedObject.Cosmetics.EnemyRotation != 0)
+        {
+            foreach (var enemyEntry in Enemies)
+            {
+                foreach (UndertaleSprite sprite in gmData.Sprites.Where(s => s.Name.Content.StartsWith(enemyEntry) && !EnemiesIgnore.Contains(s.Name.Content)))
+                {
+                    foreach (UndertaleSprite.TextureEntry textureEntry in sprite.Textures)
+                    {
+                        var texture = textureEntry.Texture;
+                        bool wasInDict = textureDict.TryGetValue(texture.TexturePage, out var tupleList);
+                        if (tupleList is null)
+                            tupleList = new List<Tuple<MagickGeometry, int>>();
+                        tupleList.Add(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
+                            seedObject.Cosmetics.EnemyRotation));
+                        if (!wasInDict)
+                            textureDict.Add(texture.TexturePage, null);
+
+                        textureDict[texture.TexturePage] = tupleList;
+                    }
+                }
+            }
+            
+        }
+
         sw.Stop();
         Console.WriteLine($"collecting data: {sw.Elapsed}");
         sw.Restart();

@@ -222,6 +222,10 @@ public class GameCosmetics
     public int BackgroundRotation;
 
     [JsonInclude]
+    [JsonPropertyName("enemy_rotation")]
+    public int EnemyRotation;
+
+    [JsonInclude]
     [JsonPropertyName("room_names_on_hud")]
     public RoomNameHudEnum RoomNameHud;
 
