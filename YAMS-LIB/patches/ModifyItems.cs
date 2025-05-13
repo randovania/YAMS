@@ -146,6 +146,7 @@ public class ModifyItems
         gmData.Scripts.AddScript("get_walljump_upgrade", "global.hasWJ = 1;");
         gmData.Scripts.AddScript("get_IBJ_upgrade", "global.hasIBJ = 1;");
         gmData.Scripts.AddScript("get_long_beam", "global.hasLongBeam = 1;");
+        gmData.Scripts.AddScript("get_arm_cannon", "global.hasArmCannon = 1;");
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((string pickupName, PickupObject pickup) in seedObject.PickupObjects)
@@ -230,6 +231,7 @@ public class ModifyItems
                 ItemEnum.WalljumpBoots => "event_inherited(); if (active) { get_walljump_upgrade(); }",
                 ItemEnum.InfiniteBombPropulsion => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
                 ItemEnum.LongBeam => "event_inherited(); if (active) { get_long_beam(); }",
+                ItemEnum.ArmCannon => "event_inherited(); if (active) { get_arm_cannon(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect),
             };

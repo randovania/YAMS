@@ -159,6 +159,9 @@ public class StartingItems
                 case ItemEnum.LongBeam:
                     textToAppend.AppendLine($"global.hasLongBeam = {quantity};");
                     break;
+                case ItemEnum.ArmCannon:
+                    textToAppend.AppendLine($"global.hasArmCannon = {quantity}");
+                    break;
                 case ItemEnum.Nothing:
                     break;
                 default:

@@ -460,6 +460,9 @@ public class Multiworld
                             case "{{ItemEnum.LongBeam.GetEnumMemberValue()}}":
                                 get_long_beam()
                                 break
+                            case "{{ItemEnum.ArmCannon.GetEnumMemberValue()}}":
+                                get_arm_cannon()
+                                break
                             default:
                                 if (string_count("Metroid DNA", itemName) > 0)
                                 {

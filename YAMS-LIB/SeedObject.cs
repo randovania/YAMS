@@ -571,6 +571,8 @@ public enum ItemEnum
     InfiniteBombPropulsion,
     [EnumMember(Value = "Long Beam")]
     LongBeam,
+    [EnumMember(Value = "Arm Cannon")]
+    ArmCannon,
 }
 
 public class PickupObject

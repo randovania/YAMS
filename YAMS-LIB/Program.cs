@@ -495,6 +495,7 @@ public class Patcher
         LongBeamItem.Apply(gmData, decompileContext, seedObject);
         SpeedBoosterUpgradeItem.Apply(gmData, decompileContext, seedObject);
         WallJumpBootsItem.Apply(gmData, decompileContext, seedObject);
+        ArmCannonItem.Apply(gmData, decompileContext, seedObject);
 
         // Modify save scripts to load our new globals / stuff we modified
         AdjustSavingScripts.Apply(gmData, decompileContext, seedObject);
