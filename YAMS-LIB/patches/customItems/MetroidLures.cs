@@ -13,10 +13,8 @@ public class MetroidLures
         characterVarsCode.PrependGMLInCode("global.hasAlphaLure = 0; global.hasGammaLure = 0; global.hasZetaLure = 0; global.hasOmegaLure = 0;");
 
         // Alpha
-        foreach (var codeEntry in new[] {"gml_Object_oMAlphaTriggerProx_Create_0", "gml_Object_oMAlpha2TriggerProx_Create_0", "gml_Object_oMalpha3TriggerProx_Create_0"})
-        {
-            gmData.Code.ByName(codeEntry).AppendGMLInCode("if (!global.hasAlphaLure) {instance_destroy() exit} ");
-        }
+        // Triggerprox2 and triggerprox3 inherit from triggerprox
+        gmData.Code.ByName("gml_Object_oMAlphaTriggerProx_Create_0").AppendGMLInCode("if (!global.hasAlphaLure) {instance_destroy() exit} ");
         gmData.Code.ByName("gml_Object_oMAlphaTriggerA2_Create_0").AppendGMLInCode("if (!global.hasAlphaLure) {instance_destroy(); exit}");
         gmData.Code.ByName("gml_Object_oMAlphaTriggerFirstCocoon_Create_0").ReplaceGMLInCode("global.metdead[0]", "(global.metdead[0]) || !global.hasAlphaLure");
         gmData.Code.ByName("gml_Object_oMAlphaTriggerA3A_Create_0").AppendGMLInCode("if (!global.hasAlphaLure) instance_destroy()");

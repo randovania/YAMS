@@ -496,6 +496,7 @@ public class Patcher
         SpeedBoosterUpgradeItem.Apply(gmData, decompileContext, seedObject);
         WallJumpBootsItem.Apply(gmData, decompileContext, seedObject);
         ArmCannonItem.Apply(gmData, decompileContext, seedObject);
+        MetroidLures.Apply(gmData, decompileContext, seedObject);
 
         // Modify save scripts to load our new globals / stuff we modified
         AdjustSavingScripts.Apply(gmData, decompileContext, seedObject);
