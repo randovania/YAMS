@@ -58,6 +58,10 @@ public class AdjustSavingScripts
                                           ds_list_add(list, global.hasLongBeam)
                                           ds_list_add(list, global.historyLogEntryText)
                                           ds_list_add(list, global.hasArmCannon)
+                                          ds_list_add(list, global.hasAlphaLure)
+                                          ds_list_add(list, global.hasGammaLure)
+                                          ds_list_add(list, global.hasZetaLure)
+                                          ds_list_add(list, global.hasOmegaLure)
                                           str_list = ds_list_write(list)
                                           ds_list_clear(list)
                                           return str_list;
@@ -128,6 +132,18 @@ public class AdjustSavingScripts
                                           global.hasArmCannon = readline()
                                           if (global.hasArmCannon == undefined)
                                             global.hasArmCannon = 1
+                                          global.hasAlphaLure = readline()
+                                          if (global.hasAlphaLure == undefined)
+                                            global.hasAlphaLure = 1
+                                          global.hasGammaLure = readline()
+                                          if (global.hasGammaLure == undefined)
+                                            global.hasGammaLure = 1
+                                          global.hasZetaLure = readline()
+                                          if (global.hasZetaLure == undefined)
+                                            global.hasZetaLure = 1
+                                          global.hasOmegaLure = readline()
+                                          if (global.hasOmegaLure == undefined)
+                                            global.hasOmegaLure = 1
                                           ds_list_clear(list)
                                           """);
 

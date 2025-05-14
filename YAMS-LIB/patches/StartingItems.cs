@@ -162,6 +162,18 @@ public class StartingItems
                 case ItemEnum.ArmCannon:
                     textToAppend.AppendLine($"global.hasArmCannon = {quantity}");
                     break;
+                case ItemEnum.AlphaLure:
+                    textToAppend.AppendLine($"global.hasAlphaLure = {quantity}");
+                    break;
+                case ItemEnum.GammaLure:
+                    textToAppend.AppendLine($"global.hasGammaLure = {quantity}");
+                    break;
+                case ItemEnum.ZetaLure:
+                    textToAppend.AppendLine($"global.hasZetaLure = {quantity}");
+                    break;
+                case ItemEnum.OmegaLure:
+                    textToAppend.AppendLine($"global.hasOmegaLure = {quantity}");
+                    break;
                 case ItemEnum.Nothing:
                     break;
                 default:

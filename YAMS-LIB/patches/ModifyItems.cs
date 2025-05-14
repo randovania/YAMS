@@ -147,6 +147,11 @@ public class ModifyItems
         gmData.Scripts.AddScript("get_IBJ_upgrade", "global.hasIBJ = 1;");
         gmData.Scripts.AddScript("get_long_beam", "global.hasLongBeam = 1;");
         gmData.Scripts.AddScript("get_arm_cannon", "global.hasArmCannon = 1;");
+        gmData.Scripts.AddScript("get_alpha_lure", "global.hasAlphaLure = 1;");
+        gmData.Scripts.AddScript("get_gamma_lure", "global.hasGammaLure = 1;");
+        gmData.Scripts.AddScript("get_zeta_lure", "global.hasZetaLure = 1;");
+        gmData.Scripts.AddScript("get_omega_lure", "global.hasOmegaLure = 1;");
+
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
         foreach ((string pickupName, PickupObject pickup) in seedObject.PickupObjects)
@@ -232,6 +237,10 @@ public class ModifyItems
                 ItemEnum.InfiniteBombPropulsion => "event_inherited(); if (active) { get_IBJ_upgrade(); }",
                 ItemEnum.LongBeam => "event_inherited(); if (active) { get_long_beam(); }",
                 ItemEnum.ArmCannon => "event_inherited(); if (active) { get_arm_cannon(); }",
+                ItemEnum.AlphaLure => "event_inherited(); if (active) {get_alpha_lure(); }",
+                ItemEnum.GammaLure => "event_inherited(); if (active) {get_gamma_lure(); }",
+                ItemEnum.ZetaLure => "event_inherited(); if (active) {get_zeta_lure(); }",
+                ItemEnum.OmegaLure => "event_inherited(); if (active) {get_omega_lure(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect),
             };

@@ -577,6 +577,14 @@ public enum ItemEnum
     LongBeam,
     [EnumMember(Value = "Arm Cannon")]
     ArmCannon,
+    [EnumMember(Value = "Alpha Lure")]
+    AlphaLure,
+    [EnumMember(Value = "Gamma Lure")]
+    GammaLure,
+    [EnumMember(Value = "Zeta Lure")]
+    ZetaLure,
+    [EnumMember(Value = "Omega Lure")]
+    OmegaLure,
 }
 
 public class PickupObject
