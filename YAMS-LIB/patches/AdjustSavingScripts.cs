@@ -181,7 +181,7 @@ public class AdjustSavingScripts
             var hashToCompare = string_copy(global.gameHash, open_paran_occurence, closed_paran_occurence-open_paran_occurence)
             if (hashToCompare != uniqueCharHash) 
             {
-              show_message("Save file is from another seed or Multiworld word! (" + global.gameHash + ")");
+              show_message("Save file is from another seed or Multiworld world! (" + global.gameHash + ")");
               file_text_close(fid); 
               file_delete((filename + "d")); 
               room_goto(titleroom); 
