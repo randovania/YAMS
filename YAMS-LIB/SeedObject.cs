@@ -650,6 +650,11 @@ public class RoomObject
     [JsonInclude]
     [JsonPropertyName("liquid_info")]
     public LiquidInfo? LiquidInfo = new LiquidInfo();
+
+    [JsonInclude]
+    [JsonPropertyName("change_instance_ids")]
+    public Dictionary<uint, string> ChangeInstanceIDs = new Dictionary<uint, string>();
+
 }
 
 public class LiquidInfo

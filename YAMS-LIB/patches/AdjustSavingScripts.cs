@@ -177,7 +177,7 @@ public class AdjustSavingScripts
         sv6load.ReplaceGMLInCode("global.playerhealth = global.maxhealth",
             "if (global.gameHash != uniqueGameHash) { " +
             "show_message(\"Save file is from another seed or Multiworld word! (\" + global.gameHash + \")\"); " +
-            "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); exit;" +
+            "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); global.shouldLoadFromStart = false; exit;" +
             "} global.playerhealth = global.maxhealth");
         // TODO: instead of just show_messsage, have an actual proper in-game solution. Maybe do this after MW
         // reference: https://cdn.discordapp.com/attachments/914294505107251231/1121816654385516604/image.png

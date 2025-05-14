@@ -618,6 +618,9 @@ public class Patcher
         // Entrance rando
         EntranceRando.Apply(gmData, decompileContext, seedObject);
 
+        // EnemyRando
+        EnemyRando.Apply(gmData, decompileContext, seedObject);
+
         // Make Bosses now spawns PB drops on death
         gmData.Code.ByName("gml_Script_spawn_many_powerups").ReplaceGMLInCode("if ((global.hasBombs == 0 && global.maxpbombs > 0) || (oControl.mod_insanitymode == 1 && global.maxpbombs > 0))", "if (global.maxpbombs > 0)");
 
