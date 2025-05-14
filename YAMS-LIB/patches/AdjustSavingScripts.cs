@@ -173,12 +173,23 @@ public class AdjustSavingScripts
                                  """, "");
 
         //complain if invalid game hash
-        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"");
+        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"; var uniqueCharHash = \"{seedObject.Identifier.Hash}\";");
         sv6load.ReplaceGMLInCode("global.playerhealth = global.maxhealth",
-            "if (global.gameHash != uniqueGameHash) { " +
-            "show_message(\"Save file is from another seed or Multiworld word! (\" + global.gameHash + \")\"); " +
-            "file_text_close(fid); file_delete((filename + \"d\")); room_goto(titleroom); global.shouldLoadFromStart = false; exit;" +
-            "} global.playerhealth = global.maxhealth");
+            """
+            var open_paran_occurence = string_pos("(", global.gameHash)+1
+            var closed_paran_occurence = string_pos(")", global.gameHash)
+            var hashToCompare = string_copy(global.gameHash, open_paran_occurence, closed_paran_occurence-open_paran_occurence)
+            if (hashToCompare != uniqueCharHash) 
+            {
+              show_message("Save file is from another seed or Multiworld word! (" + global.gameHash + ")");
+              file_text_close(fid); 
+              file_delete((filename + "d")); 
+              room_goto(titleroom); 
+              global.shouldLoadFromStart = false; 
+              exit;
+            } 
+            global.playerhealth = global.maxhealth
+            """);
         // TODO: instead of just show_messsage, have an actual proper in-game solution. Maybe do this after MW
         // reference: https://cdn.discordapp.com/attachments/914294505107251231/1121816654385516604/image.png
 
