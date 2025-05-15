@@ -251,27 +251,39 @@ public class ModifyItems
         // Modify how much expansions give
         missileCharacterEvent.ReplaceGMLInCode("""
                                                    if (global.difficulty < 2)
-                                                       global.maxmissiles += 5
+                                                   {
+                                                       global.maxmissiles += 5;
+                                                   }
                                                    if (global.difficulty == 2)
-                                                       global.maxmissiles += 2
+                                                   {
+                                                       global.maxmissiles += 2;
+                                                   }
                                                """, $"""
                                                          global.maxmissiles += argument0
                                                      """);
 
         superMissileCharacterEvent.ReplaceGMLInCode("""
                                                         if (global.difficulty < 2)
-                                                            global.maxsmissiles += 2
+                                                        {
+                                                            global.maxsmissiles += 2;
+                                                        }
                                                         if (global.difficulty == 2)
-                                                            global.maxsmissiles += 1
+                                                        {
+                                                            global.maxsmissiles += 1;
+                                                        }
                                                     """, $"""
                                                               global.maxsmissiles += argument0
                                                           """);
 
         pBombCharacterEvent.ReplaceGMLInCode("""
                                                  if (global.difficulty < 2)
-                                                     global.maxpbombs += 2
+                                                 {
+                                                     global.maxpbombs += 2;
+                                                 }
                                                  if (global.difficulty == 2)
-                                                     global.maxpbombs += 1
+                                                 {
+                                                     global.maxpbombs += 1;
+                                                 }
                                              """, $"""
                                                        global.maxpbombs += argument0
                                                    """);

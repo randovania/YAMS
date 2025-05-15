@@ -19,8 +19,6 @@ public class Sprites
 
         using var texturePage = new MagickImage(new FileInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/sprites/texturepage.png"));
         {
-            utTexturePage.TextureWidth = texturePage.Width;
-            utTexturePage.TextureHeight = texturePage.Height;
             utTexturePage.TextureData = new UndertaleEmbeddedTexture.TexData { Image = GMImage.FromPng(texturePage.ToByteArray(MagickFormat.Png)) };
         }
         gmData.EmbeddedTextures.Add(utTexturePage);
@@ -44,7 +42,7 @@ public class Sprites
             using var a4DoorImage = a4DoorTex.TexturePage.TextureData.Image.GetMagickImage();
             {
                 a4DoorImage.Crop(new MagickGeometry(a4DoorTex.SourceX, a4DoorTex.SourceY, a4DoorTex.SourceWidth, a4DoorTex.SourceHeight));
-                a4DoorImage.RePage();
+                a4DoorImage.ResetPage();
                 UndertaleTexturePageItem? a4Tex = gmData.Backgrounds.ByName("tlArea4Tech").Texture;
                 using var a4PageImage = a4Tex.TexturePage.TextureData.Image.GetMagickImage();
                 a4PageImage.Composite(a4DoorImage, a4Tex.SourceX + 104, a4Tex.SourceY, CompositeOperator.Over);
@@ -55,7 +53,7 @@ public class Sprites
             using var a4Door2Image = a4door2Tex.TexturePage.TextureData.Image.GetMagickImage();
             {
                 a4Door2Image.Crop(new MagickGeometry(a4door2Tex.SourceX, a4door2Tex.SourceY, a4door2Tex.SourceWidth, a4door2Tex.SourceHeight));
-                a4Door2Image.RePage();
+                a4Door2Image.ResetPage();
                 UndertaleTexturePageItem? a4Tex2 = gmData.Backgrounds.ByName("tlArea4Tech2").Texture;
                 using var a4Page2Image = a4Tex2.TexturePage.TextureData.Image.GetMagickImage();
                 a4Page2Image.Composite(a4Door2Image, a4Tex2.SourceX + 104, a4Tex2.SourceY, CompositeOperator.Over);

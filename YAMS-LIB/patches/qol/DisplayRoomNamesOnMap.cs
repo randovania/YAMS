@@ -23,9 +23,9 @@ public class DisplayRoomNamesOnMap
         gmData.Code.ByName("gml_Object_oControl_Create_0").PrependGMLInCode(DSMapCoordRoomname);
 
         gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0").ReplaceGMLInCode("""
-            draw_text((view_xview[0] + 161), (view_yview[0] + 30 - rectoffset), maptext)
-            draw_set_color(c_white)
-            draw_text((view_xview[0] + 160), (view_yview[0] + 29 - rectoffset), maptext)
+            draw_text(view_xview[0] + 161, (view_yview[0] + 30) - rectoffset, maptext);
+            draw_set_color(c_white);
+            draw_text(view_xview[0] + 160, (view_yview[0] + 29) - rectoffset, maptext);
         ""","""
             draw_set_font(global.fontMenuSmall2)
             var titleText = maptext;

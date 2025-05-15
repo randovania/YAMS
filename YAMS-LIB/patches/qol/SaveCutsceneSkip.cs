@@ -15,15 +15,17 @@ public class SaveCutsceneSkip
         gmData.Code.ByName("gml_Script_characterStepEvent").ReplaceGMLInCode($$"""
                                                                                  if (statetime == 1)
                                                                                  {
-                                                                                     sfx_play(sndSave)
-                                                                                     instance_create(x, y, oSaveFX)
-                                                                                     instance_create(x, y, oSaveSparks)
-                                                                                     popup_text(get_text("Notifications", "GameSaved"))
-                                                                                     save_game({{(!isHorde ? "\"save\"" : "working_directory + \"/TheHorde/save\"")}} + (string(global.saveslot + 1)))
-                                                                                     refill_heath_ammo()
+                                                                                     sfx_play(32);
+                                                                                     instance_create(x, y, oSaveFX);
+                                                                                     instance_create(x, y, oSaveSparks);
+                                                                                     popup_text(get_text("Notifications", "GameSaved"));
+                                                                                     save_game({{(!isHorde ? "\"save\"" : "working_directory + \"/TheHorde/save\"")}} + string(global.saveslot + 1));
+                                                                                     refill_heath_ammo();
                                                                                  }
                                                                                  if (statetime == 230)
-                                                                                     state = IDLE
+                                                                                 {
+                                                                                     state = IDLE;
+                                                                                 }
                                                                              """, $$"""
                                                                                       if (statetime == 1)
                                                                                       {

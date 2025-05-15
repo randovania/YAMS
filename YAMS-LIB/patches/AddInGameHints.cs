@@ -52,7 +52,7 @@ public class AddInGameHints
             """);
         // Another array extension
         gmData.Code.ByName("gml_Script_reset_logs_list").ReplaceGMLInCode( """
-            i = 49
+            i = 49;
             repeat (50)
             """, """
             i = 99
@@ -75,19 +75,19 @@ public class AddInGameHints
             """);
         // This stuff is for the menu. The array thing might not be needed, but did it anyway, increasing by the same amount as the global.log arrays.
         gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode("""
-            i = 59
+            i = 59;
             repeat (60)
             """, """
             i = 109
             repeat (110)
             """);
         gmData.Code.ByName("gml_Object_oLogScreenControl_Create_0").ReplaceGMLInCode("""
-            j += 1
-            create_log_label(cat[4])
-            create_log_entry(41)
-            create_log_entry(42)
-            create_log_entry(43)
-            create_log_entry(45)
+            j += 1;
+            create_log_label(cat[4]);
+            create_log_entry(41);
+            create_log_entry(42);
+            create_log_entry(43);
+            create_log_entry(45);
             """, """
             if (global.log[41] > 0 || global.log[42] > 0 || global.log[43] > 0 || global.log[45] > 0)
             {
@@ -145,9 +145,9 @@ public class AddInGameHints
             Sprite = gmData.Sprites.ByName("sWisdomSeptogg"),
             Depth = 90,
         };
-        var wisdomSeptoggCreate = oWisdomSeptogg.EventHandlerFor(EventType.Create, gmData.Strings, gmData.Code, gmData.CodeLocals);
+        var wisdomSeptoggCreate = oWisdomSeptogg.EventHandlerFor(EventType.Create, gmData);
         wisdomSeptoggCreate.SubstituteGMLCode("image_speed = 0.1666; origY = y; timer = 0;");
-        UndertaleCode wisdomSeptoggStep = oWisdomSeptogg.EventHandlerFor(EventType.Step, EventSubtypeStep.Step, gmData.Strings, gmData.Code, gmData.CodeLocals);
+        UndertaleCode wisdomSeptoggStep = oWisdomSeptogg.EventHandlerFor(EventType.Step, EventSubtypeStep.Step, gmData);
         wisdomSeptoggStep.SubstituteGMLCode("y = origY + (sin((timer) * 0.08) * 2); timer++; if (timer > 9990) timer = 0;");
         gmData.GameObjects.Add(oWisdomSeptogg);
 

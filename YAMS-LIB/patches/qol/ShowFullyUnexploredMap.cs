@@ -40,13 +40,19 @@ public class ShowFullyUnexploredMap
 
         // Don't ever draw the debug pipe tiles
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode($$"""
-                if (argument7 == "H"{{(isHorde ? " || argument8 == \"H\"" : "")}})
-                    draw_sprite(sMapSP, 12, argument0, argument1)
-                if (argument7 == "V")
-                    draw_sprite(sMapSP, 13, argument0, argument1)
-                if (argument7 == "C")
-                    draw_sprite(sMapSP, 14, argument0, argument1)
-            """, "");
+            if (argument7 == "H"{{(isHorde ? " || argument8 == \"H\"" : "")}})
+            {
+                draw_sprite(sMapSP, 12, argument0, argument1);
+            }
+            if (argument7 == "V")
+            {
+                draw_sprite(sMapSP, 13, argument0, argument1);
+            }
+            if (argument7 == "C")
+            {
+                draw_sprite(sMapSP, 14, argument0, argument1);
+            }
+        """, "");
 
         // Also show item pickups and metroids
         gmData.Code.ByName("gml_Script_draw_mapblock").ReplaceGMLInCode( "if (argument7 == \"3\" && argument8 == 1)", "if (argument7 == \"3\" && (argument8 == 1 || argument8 == 0))");
