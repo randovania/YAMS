@@ -43,7 +43,9 @@ public class RequiredMains
         drawGuiCode.ReplaceGMLInCode(
             $$"""
                         if (global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
-                            draw_sprite({{mslSprite}}, 0, (0 + xoff + 1), 4)
+                        {
+                            draw_sprite({{mslSprite}}, 0, 0 + xoff + 1, 4);
+                        }
             """,
             """
                         if (((global.currentweapon != 1 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && (!global.missileLauncher)))
@@ -54,7 +56,9 @@ public class RequiredMains
             """);
         drawGuiCode.ReplaceGMLInCode($$"""
                                                      if (oCharacter.armmsl == 0)
-                                                         draw_sprite({{mslSprite}}, 1, (0 + xoff + 1), 4)
+                                                     {
+                                                         draw_sprite({{mslSprite}}, 1, 0 + xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 0 && global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
@@ -63,7 +67,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode($$"""
                                                      if (oCharacter.armmsl == 1)
-                                                         draw_sprite({{mslSprite}}, 2, (0 + xoff + 1), 4)
+                                                     {
+                                                         draw_sprite({{mslSprite}}, 2, 0 + xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 1 && global.missileLauncher)
                                                               draw_sprite(sGUIMissile, 2, (0 + xoff + 1), 4)
@@ -72,7 +78,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode($$"""
                                                  if (global.currentweapon == 1)
-                                                     draw_sprite({{mslSprite}}, 1, (0 + xoff + 1), 4)
+                                                 {
+                                                     draw_sprite({{mslSprite}}, 1, 0 + xoff + 1, 4);
+                                                 }
                                      """, """
                                                       if (global.currentweapon == 1 && global.missileLauncher)
                                                           draw_sprite(sGUIMissile, 1, (0 + xoff + 1), 4)
@@ -86,7 +94,9 @@ public class RequiredMains
         drawGuiCode.ReplaceGMLInCode(
             """
                         if (global.currentweapon != 2 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball)
-                            draw_sprite(sGUISMissile, 0, (xoff + 1), 4)
+                        {
+                            draw_sprite(sGUISMissile, 0, xoff + 1, 4);
+                        }
             """,
             """
                         if ((global.currentweapon != 2 || oCharacter.state == 23 || oCharacter.state == 24 || oCharacter.state == 27 || oCharacter.state == 54 || oCharacter.state == 55 || oCharacter.sjball) && !global.SMissileLauncher)
@@ -97,7 +107,9 @@ public class RequiredMains
             """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 0)
-                                                         draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
+                                                     {
+                                                         draw_sprite(sGUISMissile, 1, xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 0 && global.SMissileLauncher)
                                                               draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
@@ -106,7 +118,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
-                                                         draw_sprite(sGUISMissile, 2, (xoff + 1), 4)
+                                                     {
+                                                         draw_sprite(sGUISMissile, 2, xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 1 && global.SMissileLauncher)
                                                               draw_sprite(sGUISMissile, 2, (xoff + 1), 4)
@@ -115,7 +129,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                  if (global.currentweapon == 2)
-                                                     draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
+                                                 {
+                                                     draw_sprite(sGUISMissile, 1, xoff + 1, 4);
+                                                 }
                                      """, """
                                                       if (global.currentweapon == 2 && global.SMissileLauncher)
                                                           draw_sprite(sGUISMissile, 1, (xoff + 1), 4)
@@ -129,7 +145,9 @@ public class RequiredMains
         drawGuiCode.ReplaceGMLInCode(
             """
                         if (oCharacter.state != 23 && oCharacter.state != 24 && oCharacter.state != 27 && oCharacter.state != 54 && oCharacter.state != 55 && oCharacter.sjball == 0)
-                            draw_sprite(sGUIPBomb, 0, (xoff + 1), 4)
+                        {
+                            draw_sprite(sGUIPBomb, 0, xoff + 1, 4);
+                        }
             """,
             """
                         if ((global.PBombLauncher) && oCharacter.state != 23 && oCharacter.state != 24 && oCharacter.state != 27 && oCharacter.state != 54 && oCharacter.state != 55 && oCharacter.sjball == 0)
@@ -139,7 +157,9 @@ public class RequiredMains
             """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 0)
-                                                         draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
+                                                     {
+                                                         draw_sprite(sGUIPBomb, 1, xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 0 && global.PBombLauncher)
                                                               draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
@@ -148,7 +168,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                      if (oCharacter.armmsl == 1)
-                                                         draw_sprite(sGUIPBomb, 2, (xoff + 1), 4)
+                                                     {
+                                                         draw_sprite(sGUIPBomb, 2, xoff + 1, 4);
+                                                     }
                                      """, """
                                                           if (oCharacter.armmsl == 1 && global.PBombLauncher)
                                                               draw_sprite(sGUIPBomb, 2, (xoff + 1), 4)
@@ -157,7 +179,9 @@ public class RequiredMains
                                           """);
         drawGuiCode.ReplaceGMLInCode("""
                                                  if (global.currentweapon == 3)
-                                                     draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
+                                                 {
+                                                     draw_sprite(sGUIPBomb, 1, xoff + 1, 4);
+                                                 }
                                      """, """
                                                       if (global.currentweapon == 3 && global.PBombLauncher)
                                                           draw_sprite(sGUIPBomb, 1, (xoff + 1), 4)
@@ -180,7 +204,9 @@ public class RequiredMains
         // Fix weapon selection with hold
         chStepControlCode.ReplaceGMLInCode("""
                                                if (global.currentweapon == 0)
-                                                   global.currentweapon = 1
+                                               {
+                                                   global.currentweapon = 1;
+                                               }
                                            """, """
                                                 if (global.currentweapon == 0)
                                                 {

@@ -124,7 +124,7 @@ public class AddA6Pipes
         gmData.Code.ByName("gml_Script_map_init_04").ReplaceGMLInCode(@"global.map[21, 53] = ""1210100""", @"global.map[21, 53] = ""12104U0""");
         gmData.Code.ByName("gml_Script_map_init_03").ReplaceGMLInCode(@"global.map[20, 53] = ""1012100""", @"global.map[20, 53] = ""1012400""");
         // Depths lower
-        gmData.Code.ByName("gml_Script_map_init_04").ReplaceGMLInCode("global.map[21, 44] = \"1102100\"\nglobal.map[21, 45] = \"0112100\"",
+        gmData.Code.ByName("gml_Script_map_init_04").ReplaceGMLInCode("global.map[21, 44] = \"1102100\";\nglobal.map[21, 45] = \"0112100\";",
             "global.map[21, 44] = \"1102400\"\nglobal.map[21, 45] = \"01124D0\"");
         // Depths upper
         gmData.Code.ByName("gml_Script_map_init_02").ReplaceGMLInCode(@"global.map[16, 34] = ""1012100""", @"global.map[16, 34] = ""10124L0""");

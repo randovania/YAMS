@@ -37,18 +37,18 @@ public class LoadFromStart
         gmData.Code.ByName("gml_Object_oPauseMenuOptions_Step_0").ReplaceGMLInCode("""
                                                                                            if (global.curropt == 1)
                                                                                            {
-                                                                                               instance_create(50, 92, oOptionsReload)
-                                                                                               instance_destroy()
+                                                                                               instance_create(50, 92, oOptionsReload);
+                                                                                               instance_destroy();
                                                                                            }
                                                                                            if (global.curropt == 2)
                                                                                            {
-                                                                                               instance_create(50, 92, oOptionsMain)
-                                                                                               instance_destroy()
+                                                                                               instance_create(50, 92, oOptionsMain);
+                                                                                               instance_destroy();
                                                                                            }
                                                                                            if (global.curropt == 3)
                                                                                            {
-                                                                                               instance_create(50, 92, oOptionsQuit)
-                                                                                               instance_destroy()
+                                                                                               instance_create(50, 92, oOptionsQuit);
+                                                                                               instance_destroy();
                                                                                            }
                                                                                    """, """
                                                                                                 if (global.curropt == 1)

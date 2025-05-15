@@ -9,6 +9,7 @@ using YAMS_LIB.patches;
 using YAMS_LIB.patches.geometry;
 using YAMS_LIB.patches.misc;
 using System.Diagnostics;
+using Underanalyzer.Decompiler;
 using YAMS_LIB.patches.qol;
 
 namespace YAMS_LIB;
@@ -63,7 +64,7 @@ public class Patcher
         sw.Start();
 
         Console.WriteLine("Read data file.");
-        decompileContext = new GlobalDecompileContext(gmData, false);
+        decompileContext = new GlobalDecompileContext(gmData);
 
         // Check for 1.5.5 before doing *anything*
         string controlCreate = gmData.Code.ByName("gml_Object_oControl_Create_0").GetGMLCode();
@@ -146,10 +147,10 @@ public class Patcher
 
         // For pause menu, draw now the same as equipment menu because doing determining what max total health/missiles/etc. are would be spoilery and insane to figure out
         UndertaleCode? ssDraw = gmData.Code.ByName("gml_Object_oSS_Fg_Draw_0");
-        ssDraw.ReplaceGMLInCode("(string(global.etanks) + \"/10\")", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
-        ssDraw.ReplaceGMLInCode("(string(global.mtanks) + \"/44\")", "( string(global.missiles) + \"/\" + string(global.maxmissiles) )");
-        ssDraw.ReplaceGMLInCode("(string(global.stanks) + \"/10\")", "( string(global.smissiles) + \"/\" + string(global.maxsmissiles) )");
-        ssDraw.ReplaceGMLInCode(" (string(global.ptanks) + \"/10\")", "( string(global.pbombs) + \"/\" + string(global.maxpbombs) )");
+        ssDraw.ReplaceGMLInCode("string(global.etanks) + \"/10\"", "( string(ceil(global.playerhealth)) + \"/\" + string(global.maxhealth) )");
+        ssDraw.ReplaceGMLInCode("string(global.mtanks) + \"/44\"", "( string(global.missiles) + \"/\" + string(global.maxmissiles) )");
+        ssDraw.ReplaceGMLInCode("string(global.stanks) + \"/10\"", "( string(global.smissiles) + \"/\" + string(global.maxsmissiles) )");
+        ssDraw.ReplaceGMLInCode("string(global.ptanks) + \"/10\"", "( string(global.pbombs) + \"/\" + string(global.maxpbombs) )");
         foreach (string? code in new[] { ssDraw.Name.Content, "gml_Script_scr_SubScrTop_swap", "gml_Script_scr_SubScrTop_swap2" })
         {
             gmData.Code.ByName(code).ReplaceGMLInCode("global.stanks > 0", "true");
@@ -223,7 +224,7 @@ public class Patcher
         // Implement other weapon doors (bomb = 10, spider = 11, screw = 12)
         gmData.Code.ByName("gml_Object_oDoor_Collision_435").ReplaceGMLInCode("lock == 0", "(lock == 0 || lock == 10 )");
         // 267 is oCharacter ID
-        UndertaleCode doorSamusCollision = gmData.GameObjects.ByName("oDoor").EventHandlerFor(EventType.Collision, 267, gmData.Strings, gmData.Code, gmData.CodeLocals);
+        UndertaleCode doorSamusCollision = gmData.GameObjects.ByName("oDoor").EventHandlerFor(EventType.Collision, 267, gmData);
         doorSamusCollision.SubstituteGMLCode("if (!open && ((lock == 11 && other.state == other.SPIDERBALL) || " +
                                              "(lock == 12 && global.screwattack && other.state == other.JUMPING && !other.vjump && !other.walljumping && (!other.inwater || global.currentsuit >= 2))))" +
                                              "event_user(1)");
@@ -269,12 +270,16 @@ public class Patcher
 
         gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_0").ReplaceGMLInCode("""
                                                                                with (oDoor)
-                                                                                   event_user(3)
+                                                                               {
+                                                                                   event_user(3);
+                                                                               }
                                                                                """,
             $"with (oDoor) {{ if ({empBatteryCellCondition}) event_user(3) }}");
         gmData.Code.ByName("gml_Object_oBatterySlot_Alarm_1").ReplaceGMLInCode("""
                                                                                    with (oDoor)
-                                                                                       lock = 0
+                                                                                   {
+                                                                                       lock = 0;
+                                                                                   }
                                                                                """,
             $"with (oDoor) {{ if ({empBatteryCellCondition}) lock = 0 }}");
 
@@ -286,12 +291,16 @@ public class Patcher
 
         gmData.Code.ByName("gml_Object_oA5MainSwitch_Step_0").ReplaceGMLInCode("""
                                                                                        with (oDoor)
-                                                                                           event_user(3)
+                                                                                       {
+                                                                                           event_user(3);
+                                                                                       }
                                                                                """,
             $"with (oDoor) {{ if ({a5ActivateCondition}) event_user(3) }}");
         gmData.Code.ByName("gml_Object_oA5MainSwitch_Alarm_0").ReplaceGMLInCode("""
                                                                                     with (oDoor)
-                                                                                        lock = 0
+                                                                                    {
+                                                                                        lock = 0;
+                                                                                    }
                                                                                 """,
             $"with (oDoor) {{ if ({a5ActivateCondition}) lock = 0 }}");
 
@@ -330,7 +339,7 @@ public class Patcher
         gmData.Code.ByName("gml_Object_oGameSelMenu_Other_12").ReplaceGMLInCode("if (oControl.mod_fusion == 1)", "if (oControl.mod_diffmult == 4)");
 
         // Make the popup text display during the pause for item acquisitions for less awkwardness
-        gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").ReplaceGMLInCode("sfx_play(sndMessage)",
+        gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").ReplaceGMLInCode("sfx_play(29)",
             "popup_text(global.itmtext1); sfx_play(sndMessage);");
 
 
@@ -404,7 +413,9 @@ public class Patcher
         UndertaleCode? missileCharacterEvent = gmData.Code.ByName("gml_Script_scr_missile_character_event");
         missileCharacterEvent.ReplaceGMLInCode("""
                                                    if (global.maxmissiles == oControl.mod_Mstartingcount)
-                                                       event_inherited()
+                                                   {
+                                                       event_inherited();
+                                                   }
                                                """, """
                                                         if (!global.firstMissileCollected) {
                                                             event_inherited();
@@ -416,7 +427,9 @@ public class Patcher
         UndertaleCode? superMissileCharacterEvent = gmData.Code.ByName("gml_Script_scr_supermissile_character_event");
         superMissileCharacterEvent.ReplaceGMLInCode("""
                                                         if (global.maxsmissiles == 0)
-                                                            event_inherited()
+                                                        {
+                                                            event_inherited();
+                                                        }
                                                     """, """
                                                              if (!global.firstSMissileCollected) {
                                                                  event_inherited();
@@ -428,7 +441,9 @@ public class Patcher
         UndertaleCode? pBombCharacterEvent = gmData.Code.ByName("gml_Script_scr_powerbomb_character_event");
         pBombCharacterEvent.ReplaceGMLInCode("""
                                                  if (global.maxpbombs == 0)
-                                                     event_inherited()
+                                                 {
+                                                     event_inherited();
+                                                 }
                                              """, """
                                                       if (!global.firstPBombCollected) {
                                                           event_inherited();
@@ -440,7 +455,9 @@ public class Patcher
         UndertaleCode? eTankCharacterEvent = gmData.Code.ByName("gml_Script_scr_energytank_character_event");
         eTankCharacterEvent.ReplaceGMLInCode("""
                                                  if (global.maxhealth < 100)
-                                                     event_inherited()
+                                                 {
+                                                     event_inherited();
+                                                 }
                                              """, """
                                                       if (!global.firstETankCollected) {
                                                           event_inherited();
@@ -454,7 +471,7 @@ public class Patcher
         // Add starting equipment memo
         characterVarsCode.PrependGMLInCode("global.showStartingMemo = 1; global.startingHeader = \"\"; global.startingText = \"\";");
         gmData.Code.ByName("gml_Object_oCharacter_Create_0").AppendGMLInCode("if (!global.showStartingMemo) display_itemmsg(global.startingHeader, global.startingText, \"\", \"\");");
-        gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").ReplaceGMLInCode("mus_play_once(musItemGet)", "if (global.showStartingMemo) mus_play_once(musItemGet); global.showStartingMemo = 1;");
+        gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").ReplaceGMLInCode("mus_play_once(264)", "if (global.showStartingMemo) mus_play_once(musItemGet); global.showStartingMemo = 1;");
         if (seedObject.Identifier.StartingMemoText is not null)
         {
             characterVarsCode.ReplaceGMLInCode("global.showStartingMemo = 1", "global.showStartingMemo = 0");
@@ -481,9 +498,9 @@ public class Patcher
         characterVarsCode.PrependGMLInCode("global.startingSave = 0;");
         UndertaleCode? startNewGame = gmData.Code.ByName("gml_Script_start_new_game");
         startNewGame.ReplaceGMLInCode("""
-                                      global.start_room = 21
-                                      global.save_x = 3408
-                                      global.save_y = 1184
+                                      global.start_room = 21;
+                                      global.save_x = 3408;
+                                      global.save_y = 1184;
                                       """, "load_character_vars(); global.save_room = global.startingSave; set_start_location();");
 
         // Add a "load from start" option
@@ -522,7 +539,9 @@ public class Patcher
         // Also change how gui health is drawn
         gmData.Code.ByName("gml_Script_gui_health").ReplaceGMLInCode("""
                                                                      if (ceil(guih) == 100)
-                                                                         guih = 99
+                                                                     {
+                                                                         guih = 99;
+                                                                     }
                                                                      """, $"""
                                                                            guih = ceil((global.playerhealth % {seedObject.Patches.EnergyPerTank}));
                                                                            if (ceil(guih) == {seedObject.Patches.EnergyPerTank})
@@ -532,7 +551,7 @@ public class Patcher
         // Draw_gui has a huge fucking block that does insane etank shenanigans
         // because i dont want to copypaste the whole thing into here, i'll get the index where it starts, where it ends, and replace that section with my own
         UndertaleCode? drawGuiCode = gmData.Code.ByName("gml_Script_draw_gui");
-        string? drawGuiText = Decompiler.Decompile(drawGuiCode, decompileContext);
+        string? drawGuiText = new DecompileContext(decompileContext, drawGuiCode).DecompileToString();
         int drawStartIndex = drawGuiText.IndexOf("if (global.etanks >= 1)");
         int drawEndIndex = drawGuiText.IndexOf("draw_set_font(global.guifont2)");
         string etankSnippet = drawGuiText.Substring(drawStartIndex, drawEndIndex - drawStartIndex);
@@ -598,7 +617,7 @@ public class Patcher
                                                                               draw_set_halign(fa_left)
                                                                               """);
 
-        gmData.Code.ByName("gml_Object_oScoreScreen_Draw_0").ReplaceGMLInCode("draw_text(tx1x, (tx1y + 52), text2a)", $"draw_text(tx1x, (tx1y + 52), text2a); draw_text(tx1x, (tx1y + 80), \"{seedObject.Identifier.RDVVersion}\"); draw_text(tx1x, (tx1y + 92), \"{seedObject.Identifier.WordHash}\"); draw_text(tx1x, (tx1y + 104), \"({seedObject.Identifier.Hash})\")");
+        gmData.Code.ByName("gml_Object_oScoreScreen_Draw_0").ReplaceGMLInCode("draw_text(tx1x, tx1y + 52, text2a)", $"draw_text(tx1x, (tx1y + 52), text2a); draw_text(tx1x, (tx1y + 80), \"{seedObject.Identifier.RDVVersion}\"); draw_text(tx1x, (tx1y + 92), \"{seedObject.Identifier.WordHash}\"); draw_text(tx1x, (tx1y + 104), \"({seedObject.Identifier.Hash})\")");
 
         // Set option on whether supers can destroy missile doors
         if (seedObject.Patches.CanUseSupersOnMissileDoors) characterVarsCode.ReplaceGMLInCode("global.canUseSupersOnMissileDoors = 0", "global.canUseSupersOnMissileDoors = 1");
@@ -637,7 +656,6 @@ public class Patcher
         // Multiworld stuff
         Multiworld.Apply(gmData, decompileContext, seedObject);
         AddBossMWTracking.Apply(gmData, decompileContext, seedObject);
-
 
         // Write back to disk
         ExtensionMethods.FlushCode();
