@@ -251,6 +251,13 @@ public class CosmeticRotation
         "bgWFilter0",
         "bgWFilter1",
         "bgWFilter2",
+        "bgLogDNA0",
+        "bgLogDNA1",
+        "bgLogDNA2",
+        "bgLogDNA3",
+        "bgLogDNA4",
+        "bgLogDNA5",
+        "bgLogDNA6",
     ];
 
     private static readonly string[] Enemies = [
@@ -325,7 +332,7 @@ public class CosmeticRotation
         {
             var region = texturePage.Clone(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
             region.Modulate((Percentage)100.0, (Percentage)100.0, (Percentage)((rotation * 100 / 180) + 100));
-            texturePage.Composite(region);
+            texturePage.Composite(region, rectangle.X, rectangle.Y);
         }
 
         texture.TextureData.Image = GMImage.FromPng(texturePage.ToByteArray(MagickFormat.Png));
