@@ -24,40 +24,26 @@ public class SoftlockPrevention
                                                                             if (oControl.mod_septoggs_bombjumps_easy == 0 && global.hasBombs == 1)
                                                                             {
                                                                                 with ({{(!isHorde ? 121234 : 121259)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                                 with ({{(!isHorde ? 121235 : 121260)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                                 with ({{(!isHorde ? 121236 : 121261)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                             }
                                                                             else if (global.item[2] == 1 || global.item[6] == 1 || global.hasHijump == 1)
                                                                             {
                                                                                 with ({{(!isHorde ? 121234 : 121259)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                                 with ({{(!isHorde ? 121235 : 121260)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                                 with ({{(!isHorde ? 121236 : 121261)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
+                                                                                    instance_destroy()
                                                                             }
                                                                             else
                                                                             {
                                                                                 with ({{(!isHorde ? 121151 : 121176)}})
-                                                                                {
-                                                                                    instance_destroy();
-                                                                                }
-                                                                                tile_layer_delete_at(-105, 848, 192);
+                                                                                    instance_destroy()
+                                                                                tile_layer_delete_at(-105, 848, 192)
                                                                             }
                                                                         """, $$"""
             if (global.softlockPrevention)
@@ -86,9 +72,7 @@ public class SoftlockPrevention
             {
                 gameObject.CreationCode.ReplaceGMLInCode("""
                                                          if (oControl.mod_randomgamebool == 1 && global.hasSpeedbooster == 0)
-                                                         {
-                                                             instance_destroy();
-                                                         }
+                                                             instance_destroy()
                                                          """, "");
             }
 
@@ -132,11 +116,9 @@ public class SoftlockPrevention
             {
                 gameObject.CreationCode.ReplaceGMLInCode("""
                                                          if (oControl.mod_randomgamebool == 1 && oControl.mod_previous_room == 301 && global.hasGravity == 0 && global.item[oControl.mod_gravity] == 1 && global.ptanks == 0)
-                                                         {
-                                                             instance_destroy();
-                                                         }
+                                                             instance_destroy()
                                                          else
-                                                         """, "if (true)");
+                                                         """, "");
             }
 
             // Bottom bomb block

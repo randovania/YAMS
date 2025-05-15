@@ -1,10 +1,8 @@
 using UndertaleModLib;
 using UndertaleModLib.Decompiler;
 using UndertaleModLib.Models;
-using Underanalyzer.Decompiler;
 using System.Reflection;
 using System.Runtime.Serialization;
-using UndertaleModLib.Compiler;
 
 namespace YAMS_LIB;
 
@@ -22,7 +20,7 @@ public static class ExtensionMethods
 
     public static string GetGMLCode(this UndertaleCode code)
     {
-        return new DecompileContext(decompileContext, code).DecompileToString();
+        return Decompiler.Decompile(code, decompileContext);
     }
 
     public static void ReplaceGMLInCode(this UndertaleCode code, string textToReplace, string replacementText, bool ignoreErrors = false)
@@ -35,7 +33,7 @@ public static class ExtensionMethods
         }
         else
         {
-            codeText = new DecompileContext(decompileContext, code).DecompileToString();
+            codeText = Decompiler.Decompile(code, decompileContext);
             Patcher.CodeCache.Add(code, codeText);
         }
 
@@ -59,7 +57,7 @@ public static class ExtensionMethods
         }
         else
         {
-            codeText = new DecompileContext(decompileContext, code).DecompileToString();
+            codeText = Decompiler.Decompile(code, decompileContext);
             Patcher.CodeCache.Add(code, codeText);
         }
         codeText = prependedText + "\n" + codeText;
@@ -75,7 +73,7 @@ public static class ExtensionMethods
         }
         else
         {
-            codeText = new DecompileContext(decompileContext, code).DecompileToString();
+            codeText = Decompiler.Decompile(code, decompileContext);
             Patcher.CodeCache.Add(code, codeText);
         }
         codeText = codeText + appendedText + "\n";
@@ -91,14 +89,11 @@ public static class ExtensionMethods
     {
         foreach ((var codeName, var codeText) in Patcher.CodeCache)
         {
-            CompileGroup compileGroup = new CompileGroup(gmData);
-            compileGroup.QueueCodeReplace(codeName, codeText);
-            var result = compileGroup.Compile();
-            //codeName.Replace() ReplaceGML(codeText, gmData);
+            codeName.ReplaceGML(codeText, gmData);
         }
     }
 
-    public static UndertaleRoom.Tile CreateRoomTile(int x, int y, int depth, UndertaleBackground tileset, int sourceX, int sourceY, uint width = 16, uint height = 16, uint? id = null)
+    public static UndertaleRoom.Tile CreateRoomTile(int x, int y, int depth, UndertaleBackground tileset, uint sourceX, uint sourceY, uint width = 16, uint height = 16, uint? id = null)
     {
         id ??= gmData.GeneralInfo.LastTile++;
         return new UndertaleRoom.Tile()

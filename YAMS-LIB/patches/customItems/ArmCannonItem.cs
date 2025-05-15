@@ -46,9 +46,9 @@ public class ArmCannonItem
         gmData.Code.ByName("gml_Script_characterStepEvent").PrependGMLInCode("if (!global.hasArmCannon) { if (!instance_exists(oBeamNoise)) instance_create(0, 0, oBeamNoise); else with (oBeamNoise) image_alpha = 1 - (0.5 * global.sensitivitymode) }");
 
 
-        fireCode.ReplaceGMLInCode("walljumping == 0 && monster_drain == 0 && !instance_exists(oEMPNoise)",
+        fireCode.ReplaceGMLInCode("walljumping == 0 && monster_drain == 0 && (!instance_exists(oEMPNoise))",
         "walljumping == 0 && monster_drain == 0 && !instance_exists(oEMPNoise) && !instance_exists(oBeamNoise)");    
-        fireCode.ReplaceGMLInCode("global.cbeam == 1 && monster_drain == 0 && !instance_exists(oEMPNoise)",
+        fireCode.ReplaceGMLInCode("global.cbeam == 1 && monster_drain == 0 && (!instance_exists(oEMPNoise))",
         "global.cbeam == 1 && monster_drain == 0 && !instance_exists(oEMPNoise) && !instance_exists(oBeamNoise)");
     }
 }

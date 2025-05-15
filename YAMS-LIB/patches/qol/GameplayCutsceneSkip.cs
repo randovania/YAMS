@@ -82,17 +82,13 @@ public class GameplayCutsceneSkip
                                                                                        if (oCharacter.x < 480)
                                                                                        {
                                                                                            with (oCharacter)
-                                                                                           {
-                                                                                               x += 1;
-                                                                                           }
+                                                                                               x += 1
                                                                                        }
                                                                                """, """
                                                                                             if (oCharacter.x < 480)
                                                                                             {
                                                                                                 with (oCharacter)
-                                                                                                {
-                                                                                                    x += 1;
-                                                                                                }
+                                                                                                    x += 1
                                                                                             }
                                                                                             if (oCharacter.x == 480 && global.skipCutscenes)
                                                                                                 statetime = 119
@@ -105,9 +101,7 @@ public class GameplayCutsceneSkip
                     if (oCharacter.x < 320)
                     {
                         with (oCharacter)
-                        {
-                            x += 1;
-                        }
+                            x += 1
                     }
 
             """,
@@ -123,6 +117,6 @@ public class GameplayCutsceneSkip
                          statetime = 119;
                     }
             """);
-        gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("mus_change(276)", "mus_change(musArea4A); if (global.skipCutscenes) statetime = 319;");
+        gmData.Code.ByName("gml_Object_oArea4PowerSwitch_Step_0").ReplaceGMLInCode("mus_change(musArea4A)", "mus_change(musArea4A); if (global.skipCutscenes) statetime = 319;");
     }
 }

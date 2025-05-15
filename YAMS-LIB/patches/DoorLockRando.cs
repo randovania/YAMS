@@ -14,11 +14,11 @@ public class DoorLockRando
 
         // Adjust global event array to be 900
         characterVarsCode.ReplaceGMLInCode( $$"""
-            i = {{(!isHorde ? "350" : "400")}};
+            i = {{(!isHorde ? "350" : "400")}}
             repeat ({{(!isHorde ? "350" : "400")}})
             {
-                i -= 1;
-                global.event[i] = 0;
+                i -= 1
+                global.event[i] = 0
             }
             """, """
             i = 900
@@ -39,9 +39,7 @@ public class DoorLockRando
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").PrependGMLInCode("facingDirection = 1; if (image_xscale < 0) facingDirection = -1; wasAlreadyDestroyed = 0;");
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("""
                                                                                  if (global.event[101] > 0)
-                                                                                 {
-                                                                                     instance_destroy();
-                                                                                 }
+                                                                                     instance_destroy()
                                                                                  """,
             """
             eventToSet = 101;
@@ -55,24 +53,24 @@ public class DoorLockRando
                 instance_destroy();
             }
             """);
-        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("wall = instance_create(x + 16, y, oSolid1x4)",
+        gmData.Code.ByName("gml_Object_oA2BigTurbine_Create_0").ReplaceGMLInCode("wall = instance_create((x + 16), y, oSolid1x4)",
             "var xWallOffset = 16; if (facingDirection == -1) xWallOffset = -32; wall = instance_create(x + xWallOffset, y, oSolid1x4);");
         gmData.Code.ByName("gml_Object_oA2BigTurbine_Other_11").ReplaceGMLInCode(
             """
-            o = instance_create(x, y, oMoveWater);
-            o.targety = 1552;
-            o.delay = 2;
-            global.event[101] = 1;
-            instance_create(x - 120, y, oBubbleSpawner);
+            o = instance_create(x, y, oMoveWater)
+            o.targety = 1552
+            o.delay = 2
+            global.event[101] = 1
+            instance_create((x - 120), y, oBubbleSpawner)
             """,
             """
             global.event[eventToSet] = 1;
             if (room == rm_a2h02 && x == 912 && y == 1536 && global.event[101] == 1)
             {
-                o = instance_create(x, y, oMoveWater);
-                o.targety = 1552;
-                o.delay = 2;
-                instance_create((x - 120), y, oBubbleSpawner);
+                o = instance_create(x, y, oMoveWater)
+                o.targety = 1552
+                o.delay = 2
+                instance_create((x - 120), y, oBubbleSpawner)
             }
             """);
 
@@ -145,7 +143,7 @@ public class DoorLockRando
                         // Place tiles
                         int tileDepth = -80;
                         var doorTileset = gmData.Backgrounds.ByName("tlDoorsExtended");
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? 0 : 128, 96, 32, 64));
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Left ? 32 : 0), gameObject.Y-64, tileDepth, doorTileset, doorEntry.FacingDirection == DoorFacingDirection.Left ? (uint)0 : 128, 96, 32, 64));
 
                         // Extend the tiles if goto object is on the edge of room or on special cases
                         // Top transition in waterfalls entryway
@@ -175,7 +173,7 @@ public class DoorLockRando
                             for (int i = 1; i <= maxIteration; i++)
                             {
                                 int tilesetCounter = i + (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 1);
-                                room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? 32 : 16, 96, 16, 80));
+                                room.Tiles.Add(CreateRoomTile(gameObject.X - (doorEntry.FacingDirection == DoorFacingDirection.Right ? 0 : 32) - (16 * i * (doorEntry.FacingDirection == DoorFacingDirection.Right ? 1 : -1)), gameObject.Y-64, tileDepth, doorTileset, tilesetCounter % 2 == 0 ? (uint)32 : 16, 96, 16, 80));
                             }
                         }
 
@@ -251,7 +249,7 @@ public class DoorLockRando
                         // Move door to be more visible and place tiles
                         door.X -= 16 * (flipped ? 1 : -1);
                         var doorTileset = gmData.Backgrounds.ByName("tlDoor");
-                        room.Tiles.Add(CreateRoomTile(gameObject.X - (flipped ? 8 : 24), gameObject.Y, -95, doorTileset, flipped ? 64 : 96, 0, 32, 64));
+                        room.Tiles.Add(CreateRoomTile(gameObject.X - (flipped ? 8 : 24), gameObject.Y, -95, doorTileset, flipped ? (uint)64 : 96, 0, 32, 64));
 
                     }
 
@@ -269,7 +267,7 @@ public class DoorLockRando
                         door.X += (24 * (int)door.ScaleX);
                         door.ScaleX *= -1;
                         bool leftFacing = door.ScaleX < 0;
-                        room.Tiles.Add(CreateRoomTile(door.X - (leftFacing ? 8 : 24), door.Y, -110, gmData.Backgrounds.ByName("tlDoor"), (leftFacing ? 0 : 32), 0, 32, 64));
+                        room.Tiles.Add(CreateRoomTile(door.X - (leftFacing ? 8 : 24), door.Y, -110, gmData.Backgrounds.ByName("tlDoor"), (leftFacing ? 0u : 32u), 0, 32, 64));
                         var tilesToDelete = room.Tiles.Where((t => (t is { X: 912, Y: 1584, SourceX: 48, SourceY: 304 } or { X: 928, Y: 1536, SourceX: 96, SourceY: 304 }))).ToList();
                         foreach (var tile in tilesToDelete)
                             room.Tiles.Remove(tile);

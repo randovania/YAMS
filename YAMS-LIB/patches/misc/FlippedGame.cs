@@ -44,12 +44,12 @@ public class FlippedGame
                 "draw_surface_ext_flipped(application_surface, argument0, argument1, argument2, argument2, 0, c_white, 1)");
 
         gmData.Code.ByName("gml_Object_oControl_Draw_77")
-            .ReplaceGMLInCode("draw_surface_ext(widescreen_surface, displayx + xShake, displayy + yShake, display_scale, display_scale, 0, c_white, 1)",
+            .ReplaceGMLInCode("draw_surface_ext(widescreen_surface, (displayx + xShake), (displayy + yShake), display_scale, display_scale, 0, c_white, 1)",
             "draw_surface_ext_flipped(widescreen_surface, (displayx + xShake), (displayy + yShake), display_scale, display_scale, 0, c_white, 1)");
 
         // Make logbook text look normal
         gmData.Code.ByName("gml_Object_oLogScreenControl_Draw_0")
-            .ReplaceGMLInCode("draw_surface(surf, (view_wview[0] / 2) + 150 + widescreen_space, view_yview[0] + 52)",
+            .ReplaceGMLInCode("draw_surface(surf, (view_wview[0] / 2 + 150 + widescreen_space), (view_yview[0] + 52))",
                 "draw_surface_ext_flipped(surf, (((view_wview[0] / 2) + 150) + widescreen_space), (view_yview[0] + 52), 1, 1, 0, c_white, 1);");
 
         // Make popup text look normal
@@ -98,9 +98,9 @@ public class FlippedGame
         gmData.Code.ByName("gml_Object_oControl_Create_0").ReplaceGMLInCode("gui_surface = 0", "gui_surface = 0; map_surface = 0;");
         gmData.Code.ByName("gml_Object_oControl_Step_0").ReplaceGMLInCode(
             """
-            if (surface_exists(gui_surface))
+            if surface_exists(gui_surface)
             {
-                surface_set_target(gui_surface);
+                surface_set_target(gui_surface)
             """,
             """
             if surface_exists(map_surface)
@@ -115,7 +115,7 @@ public class FlippedGame
                 surface_set_target(gui_surface)
             """
             );
-        gmData.Code.ByName("gml_Script_draw_gui").ReplaceGMLInCode("draw_gui_map(276 + widescreen_space, 0)", "{ surface_set_target(map_surface); draw_gui_map((276 + widescreen_space), 0); surface_reset_target(); }");
+        gmData.Code.ByName("gml_Script_draw_gui").ReplaceGMLInCode("draw_gui_map((276 + widescreen_space), 0)", "{ surface_set_target(map_surface); draw_gui_map((276 + widescreen_space), 0); surface_reset_target(); }");
         gmData.Code.ByName("gml_Object_oControl_Draw_64").ReplaceGMLInCode("d = application_get_position()", """
             d = application_get_position();
             if surface_exists(map_surface)

@@ -16,7 +16,7 @@ public class DecoupleItemsFromLocations
 
 
         // Fix spring showing up for a brief moment when killing arachnus
-        gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("if (temp_randitem == 453)", "if (false)");
+        gmData.Code.ByName("gml_Object_oArachnus_Alarm_11").ReplaceGMLInCode("if (temp_randitem == oItemJumpBall)", "if (false)");
 
         // Bombs
         UndertaleCode? subscreenMenuStep = gmData.Code.ByName("gml_Object_oSubscreenMenu_Step_0");
@@ -201,8 +201,8 @@ public class DecoupleItemsFromLocations
 
         // Morph Ball
         subscreenMiscDaw.ReplaceGMLInCode("""
-                                          draw_sprite(sSubScrButton, global.morphball, x - 28, y + 16);
-                                          draw_text(x - 20, y + 15 + oControl.subScrItemOffset, morph);
+                                          draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
+                                          draw_text((x - 20), (y + 15 + oControl.subScrItemOffset), morph)
                                           """, """
                                                if (global.hasMorph) {
                                                    draw_sprite(sSubScrButton, global.morphball, (x - 28), (y + 16))
@@ -210,10 +210,8 @@ public class DecoupleItemsFromLocations
                                                }
                                                """);
         subscreenMenuStep.ReplaceGMLInCode("""
-                                               if (global.curropt == 7 && !global.hasIbeam)
-                                               {
-                                                   global.curropt += 1;
-                                               }
+                                           if (global.curropt == 7 && !global.hasIbeam)
+                                                   global.curropt += 1
                                            """, """
                                                 if (global.curropt == 7 && (!global.hasIbeam))
                                                         global.curropt += 1
@@ -221,10 +219,8 @@ public class DecoupleItemsFromLocations
                                                         global.curropt += 1
                                                 """);
         subscreenMenuStep.ReplaceGMLInCode("""
-                                               if (global.curropt == 7 && !global.hasIbeam)
-                                               {
-                                                   global.curropt -= 1;
-                                               }
+                                           if (global.curropt == 7 && !global.hasIbeam)
+                                                   global.curropt -= 1
                                            """, """
                                                 if (global.curropt == 8 && (!global.hasMorph))
                                                         global.curropt -= 1
@@ -233,9 +229,7 @@ public class DecoupleItemsFromLocations
                                                 """);
         subscreenMenuStep.ReplaceGMLInCode("""
                                                else
-                                               {
-                                                   global.curropt = 14;
-                                               }
+                                                   global.curropt = 14
                                            """, """
                                                     else
                                                         global.curropt = 14
@@ -255,9 +249,7 @@ public class DecoupleItemsFromLocations
 
         subscreenMenuStep.ReplaceGMLInCode("""
                                                if (global.curropt > 16)
-                                               {
-                                                   global.curropt = 8;
-                                               }
+                                                   global.curropt = 8
                                            """, """
                                                     if (global.curropt > 16)
                                                         global.curropt = 8

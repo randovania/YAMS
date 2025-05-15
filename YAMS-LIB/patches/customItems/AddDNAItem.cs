@@ -24,17 +24,17 @@ public class AddDNAItem
             create.SubstituteGMLCode("event_inherited(); itemid = " + i + ";");
 
             // Add collision event with Samus
-            go.EventHandlerFor(EventType.Collision, 267u, gmData);
+            go.EventHandlerFor(EventType.Collision, 267u, gmData.Strings, gmData.Code, gmData.CodeLocals);
             gmData.GameObjects.Add(go);
         }
 
         // Adjust global item array to be 400
         characterVarsCode.ReplaceGMLInCode("""
-                                           i = 350;
+                                           i = 350
                                            repeat (350)
                                            {
-                                               i -= 1;
-                                               global.item[i] = 0;
+                                               i -= 1
+                                               global.item[i] = 0
                                            }
                                            """, """
                                                 i = 400
@@ -144,9 +144,9 @@ public class AddDNAItem
             """);
 
         // Make DNA count show on map
-        ssDraw.ReplaceGMLInCode("draw_text(view_xview[0] + 18, view_yview[0] + 198 + rectoffset, timetext)",
+        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 18), (view_yview[0] + 198 + rectoffset), timetext)",
             "draw_text((view_xview[0] + 18), (view_yview[0] + 198 + rectoffset), timetext); draw_text((view_xview[0] + 158), (view_yview[0] + 198 + rectoffset), string(global.dna) + \"/46\")");
-        ssDraw.ReplaceGMLInCode("draw_text(view_xview[0] + 17, view_yview[0] + 197 + rectoffset, timetext)",
+        ssDraw.ReplaceGMLInCode("draw_text((view_xview[0] + 17), (view_yview[0] + 197 + rectoffset), timetext)",
             "draw_text((view_xview[0] + 17), (view_yview[0] + 197 + rectoffset), timetext); draw_text((view_xview[0] + 157), (view_yview[0] + 197 + rectoffset), string(global.dna) + \"/46\")");
 
         // Fix item percentage now that more items have been added
