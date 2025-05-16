@@ -577,13 +577,13 @@ public enum ItemEnum
     LongBeam,
     [EnumMember(Value = "Arm Cannon")]
     ArmCannon,
-    [EnumMember(Value = "Alpha Lure")]
+    [EnumMember(Value = "Alpha Metroid Lure")]
     AlphaLure,
-    [EnumMember(Value = "Gamma Lure")]
+    [EnumMember(Value = "Gamma Metroid Lure")]
     GammaLure,
-    [EnumMember(Value = "Zeta Lure")]
+    [EnumMember(Value = "Zeta Metroid Lure")]
     ZetaLure,
-    [EnumMember(Value = "Omega Lure")]
+    [EnumMember(Value = "Omega Metroid Lure")]
     OmegaLure,
 }
 
