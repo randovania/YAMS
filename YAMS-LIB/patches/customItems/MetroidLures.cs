@@ -25,7 +25,7 @@ public class MetroidLures
         gmData.Code.ByName("gml_Object_oMGammaFirstTrigger_Create_0").ReplaceGMLInCode("global.metdead[11] == 0", "(global.metdead[11] == 0) || !global.hasGammaLure");
 
         // Zeta
-        gmData.Code.ByName("gml_Object_oMZeta_Cocoon_Alarm_0").AppendGMLInCode("if (!global.hasZetaLure) {state = 3; exit}");
+        gmData.Code.ByName("gml_Object_oMZeta_Cocoon_Alarm_0").PrependGMLInCode("if (!global.hasZetaLure) {state = 3; exit}");
 
         // Omega
         gmData.Code.ByName("gml_Object_oMOmega_Alarm_9").ReplaceGMLInCode("global.metdead[myid] > 0", "(global.metdead[myid] > 0) || !global.hasOmegaLure");
