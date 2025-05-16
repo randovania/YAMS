@@ -277,6 +277,7 @@ public class CosmeticRotation
         "sBlob",
         "sAutrack",
         "sAutoad",
+        "sPincherFly",
         "sGravitt",
         "sYumee",
         "sTPO",
@@ -408,6 +409,14 @@ public class CosmeticRotation
                 bool wasInDict = textureDict.TryGetValue(texture.TexturePage, out var tupleList);
                 if (tupleList is null)
                     tupleList = new List<Tuple<MagickGeometry, int>>();
+
+                // Some texture entries point to the same space on a texture page.
+                if (tupleList.Contains(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
+                    seedObject.Cosmetics.TilesetRotation)))
+                {
+                    continue;
+                }
+
                 tupleList.Add(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
                     seedObject.Cosmetics.TilesetRotation));
                 if (!wasInDict)
@@ -426,6 +435,14 @@ public class CosmeticRotation
                 bool wasInDict = textureDict.TryGetValue(texture.TexturePage, out var tupleList);
                 if (tupleList is null)
                     tupleList = new List<Tuple<MagickGeometry, int>>();
+
+                // Some texture entries point to the same space on a texture page.
+                if (tupleList.Contains(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
+                    seedObject.Cosmetics.BackgroundRotation)))
+                {
+                    continue;
+                }
+
                 tupleList.Add(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
                     seedObject.Cosmetics.BackgroundRotation));
                 if (!wasInDict)
@@ -448,6 +465,14 @@ public class CosmeticRotation
                         bool wasInDict = textureDict.TryGetValue(texture.TexturePage, out var tupleList);
                         if (tupleList is null)
                             tupleList = new List<Tuple<MagickGeometry, int>>();
+                        
+                        // Some texture entries point to the same space on a texture page.
+                        if (tupleList.Contains(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
+                            seedObject.Cosmetics.EnemyRotation)))
+                        {
+                            continue;
+                        }
+
                         tupleList.Add(new Tuple<MagickGeometry, int>(new MagickGeometry(texture.SourceX, texture.SourceY, texture.SourceWidth, texture.SourceHeight),
                             seedObject.Cosmetics.EnemyRotation));
                         if (!wasInDict)
