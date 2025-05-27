@@ -54,7 +54,7 @@ public class FlippedGame
 
         // Make popup text look normal
         gmData.Code.ByName("gml_Object_oPopupText_Create_0").AppendGMLInCode("surf = surface_create(320 + 53 * oControl.widescreen, 240);");
-        gmData.GameObjects.ByName("oPopupText").EventHandlerFor(EventType.Destroy, gmData).SubstituteGMLCode("surface_free(surf)");
+        gmData.GameObjects.ByName("oPopupText").EventHandlerFor(EventType.Destroy, gmData).SubstituteGMLCode("surface_set_target(surf); draw_clear_alpha(c_white,0); surface_reset_target(); surface_free(surf)");
         gmData.Code.ByName("gml_Object_oPopupText_Step_0").AppendGMLInCode("""
         if (!surface_exists(surf))
           surf = surface_create(320 + 53 * oControl.widescreen, 240);
@@ -76,7 +76,7 @@ public class FlippedGame
 
         // Make item cutscene look normal
         gmData.Code.ByName("gml_Object_oItemCutscene_Create_0").PrependGMLInCode("item_surf = surface_create(320 + 53 * oControl.widescreen, 240);");
-        gmData.GameObjects.ByName("oItemCutscene").EventHandlerFor(EventType.Destroy, gmData).SubstituteGMLCode("surface_free(item_surf)");
+        gmData.GameObjects.ByName("oItemCutscene").EventHandlerFor(EventType.Destroy, gmData).SubstituteGMLCode("surface_set_target(surf); draw_clear_alpha(c_white,0); surface_reset_target(); surface_free(surf)");
         gmData.Code.ByName("gml_Object_oItemCutscene_Draw_0").ReplaceGMLInCode("draw_set_alpha(0.8)",
             """
             if (!surface_exists(item_surf))
