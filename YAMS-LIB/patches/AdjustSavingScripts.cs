@@ -173,13 +173,13 @@ public class AdjustSavingScripts
                                  """, "");
 
         //complain if invalid game hash
-        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"; var uniqueCharHash = \"{seedObject.Identifier.Hash}\";");
+        sv6load.PrependGMLInCode($"var uniqueGameHash = \"{seedObject.Identifier.WordHash} ({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\"; var uniqueCharAndWorldIDHash = \"({seedObject.Identifier.Hash}) (World: {seedObject.Identifier.WorldUUID})\";");
         sv6load.ReplaceGMLInCode("global.playerhealth = global.maxhealth",
             """
-            var open_paran_occurence = string_pos("(", global.gameHash)+1
-            var closed_paran_occurence = string_pos(")", global.gameHash)
+            var open_paran_occurence = string_pos("(", global.gameHash)
+            var closed_paran_occurence = string_length(global.gameHash)+1
             var hashToCompare = string_copy(global.gameHash, open_paran_occurence, closed_paran_occurence-open_paran_occurence)
-            if (hashToCompare != uniqueCharHash) 
+            if (hashToCompare != uniqueCharAndWorldIDHash) 
             {
               show_message("Save file is from another seed or Multiworld world! (" + global.gameHash + ")");
               file_text_close(fid); 
