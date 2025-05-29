@@ -585,6 +585,12 @@ public enum ItemEnum
     ZetaLure,
     [EnumMember(Value = "Omega Metroid Lure")]
     OmegaLure,
+    [EnumMember(Value = "Knockdown Trap")]
+    KnockdownTrap,
+    [EnumMember(Value = "Flitt Trap")]
+    FlittTrap
+    
+    
 }
 
 public class PickupObject

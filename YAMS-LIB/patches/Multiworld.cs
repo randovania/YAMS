@@ -475,6 +475,12 @@ public class Multiworld
                             case "{{ItemEnum.OmegaLure.GetEnumMemberValue()}}":
                                 get_omega_lure()
                                 break
+                            case "{{ItemEnum.KnockdownTrap.GetEnumMemberValue()}}":
+                                get_knockdown_trap()
+                                break
+                            case "{{ItemEnum.FlittTrap.GetEnumMemberValue()}}":
+                                get_flitt_trap()
+                                break
                             default:
                                 if (string_count("Metroid DNA", itemName) > 0)
                                 {

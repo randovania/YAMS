@@ -151,6 +151,22 @@ public class ModifyItems
         gmData.Scripts.AddScript("get_gamma_lure", "global.hasGammaLure = 1;");
         gmData.Scripts.AddScript("get_zeta_lure", "global.hasZetaLure = 1;");
         gmData.Scripts.AddScript("get_omega_lure", "global.hasOmegaLure = 1;");
+        gmData.Scripts.AddScript("get_knockdown_trap", "if (instance_exists(oCharacter)) {var dir_to_push = -1; if (oCharacter.facing == oCharacter.LEFT) dir_to_push = 1; damage_player_knockdown(5, dir_to_push, 5, 0, 5)};");
+        gmData.Scripts.AddScript("get_flitt_trap", """
+        if (instance_exists(oCharacter)) {
+            for (var i = -1; i <= 1; i+=2)
+            {
+                for (var j = -1; j <= 1; j+=2)
+                {
+                    var flitt = instance_create(oCharacter.x + (8 * i), oCharacter.y-16+(8*j), oFlitt); 
+                    flitt.facing = 1; 
+                    flitt.hspeed = 1;
+                    if (oCharacter.facing == oCharacter.LEFT) { flitt.facing = -1; flitt.hspeed = -1; };
+                }
+            }
+            
+        }
+        """);
 
 
         // Modify every location item, to give the wished item, spawn the wished text and the wished sprite
@@ -241,6 +257,8 @@ public class ModifyItems
                 ItemEnum.GammaLure => "event_inherited(); if (active) {get_gamma_lure(); }",
                 ItemEnum.ZetaLure => "event_inherited(); if (active) {get_zeta_lure(); }",
                 ItemEnum.OmegaLure => "event_inherited(); if (active) {get_omega_lure(); }",
+                ItemEnum.KnockdownTrap => "event_inherited(); if (active) {get_knockdown_trap();}",
+                ItemEnum.FlittTrap => "event_inherited(); if (active) {get_flitt_trap(); }",
                 ItemEnum.Nothing => "event_inherited();",
                 _ => throw new NotSupportedException("Unsupported item! " + pickup.ItemEffect),
             };
