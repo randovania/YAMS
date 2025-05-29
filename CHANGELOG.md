@@ -3,6 +3,25 @@ All notable changes to this project will be documented in this file.
 
 This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project (tries to) adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
+## [2.9.0] - 2025-??-??
+
+## Added
+- Support for changing enemy hues.
+- Arm Cannon Item.
+- An option for random knockback.
+- Metroid Lure Items.
+- Option for a basic enemy randomizer.
+- A knockback trap and Flitt trap item
+
+## Changed
+- Project uses dotnet8.
+
+## Fixed
+- A crash when loading up a savegame from another seed.
+- Save files aren't compared against the word hash anymore.
+- A typo in the error message when loading a savegame from another seed.
+- Item acquisition messages overlapping with each other.
+
 ## [2.8.0] - 2024-09-01
 
 ## Added
@@ -33,7 +52,7 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [2.7.6] - 2024-07-05
 
 ### Fixed
-- Tower rooms are now have their correct lighting status.
+- Tower rooms now have their correct lighting status.
 
 ## [2.7.5] - 2024-07-01
 
