@@ -567,6 +567,16 @@ public enum ItemEnum
     InfiniteBombPropulsion,
     [EnumMember(Value = "Long Beam")]
     LongBeam,
+    [EnumMember(Value = "Arm Cannon")]
+    ArmCannon,
+    [EnumMember(Value = "Alpha Metroid Lure")]
+    AlphaLure,
+    [EnumMember(Value = "Gamma Metroid Lure")]
+    GammaLure,
+    [EnumMember(Value = "Zeta Metroid Lure")]
+    ZetaLure,
+    [EnumMember(Value = "Omega Metroid Lure")]
+    OmegaLure,
 }
 
 public class PickupObject
