@@ -9,7 +9,7 @@ namespace YAMS_LIB.patches;
 
 public class CosmeticRotation
 {
-    private static readonly string[]  Tilesets =
+    private static readonly string[]  Tilesets = new[]
     [
         "tlA1OutsideBG",
         "tlA1OutsideNB",
@@ -111,7 +111,7 @@ public class CosmeticRotation
         "tlWarpPipes",
     ];
 
-    private static readonly string[] Backgrounds =
+    private static readonly string[] Backgrounds = new[]
     [
         "bgA0Cave1BG",
         "bgA0Cave1FG",
