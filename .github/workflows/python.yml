@@ -1,12 +1,12 @@
 name: Python Package
 
 on:
+  workflow_dispatch:
   push:
     branches:
      - main
     tags:
       - '*'
-
   pull_request:
     branches:
       - main
