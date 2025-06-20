@@ -9,8 +9,8 @@ namespace YAMS_LIB.patches;
 
 public class CosmeticRotation
 {
-    private static readonly string[]  Tilesets =
-    [
+    private static readonly string[]  Tilesets = new[] 
+    {
         "tlA1OutsideBG",
         "tlA1OutsideNB",
         "tlA1Structures",
@@ -109,10 +109,10 @@ public class CosmeticRotation
         "tlSurfaceBG",
         "tlSurfaceBGTwilight",
         "tlWarpPipes",
-    ];
+    };
 
-    private static readonly string[] Backgrounds =
-    [
+    private static readonly string[] Backgrounds = new []
+    {
         "bgA0Cave1BG",
         "bgA0Cave1FG",
         "bgA0Cave2BG",
@@ -251,7 +251,7 @@ public class CosmeticRotation
         "bgWFilter0",
         "bgWFilter1",
         "bgWFilter2",
-    ];
+    };
 
     static void RotateTextureAndSaveToTexturePage(UndertaleEmbeddedTexture texture, List<Tuple<Rectangle, int>> rectangleRotationTuple)
     {
