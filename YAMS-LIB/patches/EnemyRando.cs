@@ -13,6 +13,7 @@ public class EnemyRando
             foreach (var (idToSearch, wishedObject) in roomEntry.ChangeInstanceIDs)
             {
                 var gameObject = gmData.Rooms.ByName(roomName).GameObjects.First(go => go.InstanceID == idToSearch);
+                var originalObject = gameObject.ObjectDefinition.Name.Content;
                 gameObject.ObjectDefinition = gmData.GameObjects.ByName(wishedObject);
                 if (wishedObject == "oFlitt")
                 {
@@ -21,6 +22,15 @@ public class EnemyRando
                         gameObject.CreationCode = gmData.Code.AddCodeEntry($"gml_RoomCC_{roomName}_{gmData.Code.Count}", "");
 
                     gameObject.CreationCode.AppendGMLInCode("facing = 1");
+                }
+
+                if (originalObject == "oRoboMine" && gameObject.CreationCode is not null)
+                {
+                    gameObject.CreationCode.PrependGMLInCode("startx = x; starty = y;");
+                }
+                if (originalObject == "oFlitt" && wishedObject != "oFlitt" && gameObject.CreationCode is not null)
+                {
+                    gameObject.CreationCode.ReplaceGMLInCode("alarm[", "dummyArrayVariable[");
                 }
 
             }
