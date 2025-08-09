@@ -13,7 +13,8 @@ public class RandomKnockback
         
         foreach (string codeEntry in new[] { "gml_Script_damage_player", "gml_Script_damage_player_push", "gml_Script_damage_player_knockdown" })
         {
-            gmData.Code.ByName(codeEntry).PrependGMLInCode("argument1 *= random_range(-5, 5); argument2 *= random_range(-5, 5);");
+            gmData.Code.ByName(codeEntry).PrependGMLInCode("argument1 *= irandom_range(-20, 20); argument2 *= irandom_range(-10, 10);");
+
         }
     }
 }
