@@ -24,7 +24,7 @@ public class EnemyRando
                     gameObject.CreationCode.AppendGMLInCode("facing = 1");
                 }
 
-                if (originalObject == "oRoboMine" && gameObject.CreationCode is not null)
+                if ((originalObject == "oRoboMine" || originalObject == "oMoheekWater") && gameObject.CreationCode is not null)
                 {
                     gameObject.CreationCode.PrependGMLInCode("startx = x; starty = y;");
                 }
