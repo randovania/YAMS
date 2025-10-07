@@ -22,6 +22,10 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - A typo in the error message when loading a savegame from another seed.
 - Item acquisition messages overlapping with each other.
 
+## [2.8.3] - 2025-10-07
+
+- Added: A credits item is sent via MultiWorld if the credits was reached.
+
 ## [2.8.2] - 2025-06-15
 
 - No functional changes.

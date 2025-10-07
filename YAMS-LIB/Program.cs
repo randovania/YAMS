@@ -637,6 +637,7 @@ public class Patcher
         // Multiworld stuff
         Multiworld.Apply(gmData, decompileContext, seedObject);
         AddBossMWTracking.Apply(gmData, decompileContext, seedObject);
+        AddCreditsTracking.Apply(gmData, decompileContext, seedObject);
 
 
         // Write back to disk
