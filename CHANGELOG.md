@@ -22,6 +22,15 @@ This format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - A typo in the error message when loading a savegame from another seed.
 - Item acquisition messages overlapping with each other.
 
+## [2.8.2] - 2025-06-15
+
+- No functional changes.
+
+## [2.8.1] - 2025-09-02
+
+## Fixed
+- Fixed a crash when getting the patcher version.
+
 ## [2.8.0] - 2024-09-01
 
 ## Added
