@@ -16,7 +16,7 @@
 
     <ItemGroup>
         <PackageReference Include="Macross.Json.Extensions" Version="3.0.0"/>
-        <PackageReference Include="NaturalSort.Extension" Version="4.3.0" />
+        <PackageReference Include="NaturalSort.Extension" Version="4.4.1" />
     </ItemGroup>
     
 
